@@ -13,10 +13,13 @@
   "Utilities to aid in working with an activity."
   {:author "Daniel Solano Gómez"}
   (:import android.app.Activity
-           android.view.View)
+           android.widget.Toast
+           android.view.View
+           clojure.lang.IFn)
   (:require [neko.context :as context])
   (:use neko.-protocols.resolvable
-        neko.-utils))
+        neko.-utils
+        [neko.context :only [*context*]]))
 
 (def 
   ^{:doc "The current activity to operate on."
@@ -100,3 +103,49 @@
                                         (format "‘%s’ is not a valid feature."
                                                 k))))))]
     (doall (map request-feature features))))
+
+(defmacro defactivity
+  "Creates an activity with the given the full package-qualified name.
+  Binds all `onSomething` methods from the parent Activity class to
+  the `superOnSomething` methods.
+
+Taken from clj-android by remvee."
+  [name]
+  `(gen-class
+    :name ~name
+    :main false
+    :extends ~'android.app.Activity
+    :exposes-methods {~'onCreate ~'superOnCreate
+                      ~'onStart ~'superOnStart
+                      ~'onRestart ~'superOnRestart
+                      ~'onResume ~'superOnResume
+                      ~'onPause ~'superOnPause
+                      ~'onStop ~'superOnStop
+                      ~'onDestroy ~'superOnDestroy}))
+
+(defn run-on-ui-thread*
+  "Runs the given nullary function on the UI thread.  If this function is
+  called on the UI thread, it will evaluate immediately.
+
+  Also dynamically binds the current values of `*activity*` and
+  `*context*` inside the thread. If they were not bound in the thread
+  called from, the values of `*activity*` and `*context*` would be
+  bound to the `activity` argument."
+  [^Activity activity ^IFn f]
+  (let [dynamic-activity (if (bound? #'*activity*) *activity* activity)
+        dynamic-context (if (bound? #'*context*) *context* activity)]
+    (.runOnUiThread activity
+                    (reify Runnable
+                      (run [this]
+                        (binding [*activity* dynamic-activity
+                                  *context* dynamic-context]
+                          (try (f)
+                               (catch Throwable e
+                                 (.show (Toast/makeText activity
+                                                        (str e) 1))))))))))
+
+(defmacro do-ui
+  "Runs the macro body on the UI thread.  If this macro is called on the UI
+  thread, it will evaluate immediately."
+  [activity & body]
+  `(run-on-ui-thread* ~activity (fn [] ~@body)))
