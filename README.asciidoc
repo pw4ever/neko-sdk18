@@ -2,10 +2,22 @@ Neko: The Clojure/Android Toolkit
 =================================
 Daniel Solano_Gómez
 
+Forked by Alexander Yakushev as part of Google Summer of Code 2012
+participation project.
+
 Neko is a toolkit designed to make Android development using Clojure easier and
 more fun.  It accomplishes this by making adding Clojure support to your
 Android project easy and providing functional wrappers and alternatives to
 Android’s Java API.
+
+Acknowledgement
+--------
+
+I thank Remco van 't Veer for his
+https://github.com/remvee/clj-android[clj-android] library which was
+one of the pioneer attempts to bring Clojure to Android development. My
+neko fork is inspired by ideas from his project and borrows some
+actual implementation code.
 
 Features
 --------
@@ -32,6 +44,9 @@ The toolkit comes as two components:
 
   * `neko.threading` will contain utilities to manage asynchronous tasks and
     working with UI threads.
+
+  * `neko.ui` contains tools to define and manage Android UI in
+    Clojure without touching the XML layouts.
 
 Requirements
 ------------
@@ -83,174 +98,35 @@ development.  The
 http://wiki.cyanogenmod.com/index.php?title=Howto:_Install_the_Android_SDK[CyanogenMod
 wiki] has some more detailed instructions.
 
-=== 2. Get Neko ===
+=== 2. Create an Android project ===
 
-Just clone the repository to your computer:
+You can use
+https://github.com/alexander-yakushev/lein-droid[lein-droid]. This
+https://github.com/alexander-yakushev/lein-droid/wiki/Tutorial[tutorial]
+explains how to get started with it.
 
-----
-% git clone https://github.com/sattvik/neko.git
-----
+=== 3. Get Neko ===
 
-If all went well, Neko should now be in a directory called `neko`.
+If you created a project using lein-droid then you already have neko
+dependency in your project. In other case put the following line in
+the list of your dependencies:
 
+---
+[neko/neko "1.1.0-SNAPSHOT"]
+---
 
-=== 3. Add Clojure ===
+=== 4. Write your first Android application in Clojure ===
 
-Now, go into the `neko` directory and created a directory called `libs`.  Copy
-`clojure.jar` into that directory.  If you don't already have Clojure
-installed, http://clojure.org/downloads[you can download it from the project’s
-page].
+The project created with lein-droid already contains a stub for an
+application with one activity and a few UI elements on it. You can
+change that file and then either recompile/redeploy the application or
+in application's runtime from the REPL.
 
-=== 4. Create your project ===
+=== 5. Build and run it ===
 
-Next, you will need to create a new Android project using the `android` command
-from the Android SDK, as follows:
+The build process is explained in detail in the lein-droid tutorial.
 
-----
-% android create project -p <directory> -t <target> -k <package> -a <activity>
-----
-
-The arguments to this command are:
-
-`<directory>`::
-
-  The name of the directory for your new project.
-
-`<target>`::
-
-  The target API version you will use for development.  For example, you could
-  use `android-15` to target the Android 4.0.3 platform.  You can see a list of
-  targets available by running `android list targets`.
-
-`<package>`::
-
-  This unique string will be used to identify your application.  You should follow the
-  http://www.oracle.com/technetwork/java/codeconventions-135099.html[package
-  naming conventions].  An example may be `com.example.cool_clojure_app`.
-
-`<activity>`::
-
-  This is the name of a class that will be the entry point of your application.
-
-
-Once you run this, you will see a bunch of output as the SDK generates your
-project, for example:
-
-----
-% android create project -p hello -k com.example.hello_clojure -a HelloActivity -t android-15
-Created project directory: hello
-Created directory /home/dan/devel/android/hello/src/com/example/hello_clojure
-Added file hello/src/com/example/hello_clojure/HelloActivity.java
-Created directory /home/dan/devel/android/hello/res
-Created directory /home/dan/devel/android/hello/bin
-Created directory /home/dan/devel/android/hello/libs
-Created directory /home/dan/devel/android/hello/res/values
-Added file hello/res/values/strings.xml
-Created directory /home/dan/devel/android/hello/res/layout
-Added file hello/res/layout/main.xml
-Created directory /home/dan/devel/android/hello/res/drawable-hdpi
-Created directory /home/dan/devel/android/hello/res/drawable-mdpi
-Created directory /home/dan/devel/android/hello/res/drawable-ldpi
-Added file hello/AndroidManifest.xml
-Added file hello/build.xml
-Added file hello/proguard-project.txt
-----
-
-=== 5. Add Neko as a library for your project ===
-
-Change into the new directory for your project and calculate the relative path
-to the directory where you cloned Neko.  Now, run the following command:
-
-----
-% android update project -p . -l <../relative/path/to/neko>
-----
-
-For example:
-
-----
-% cd hello
-% android update project -p . -l ../neko
-Resolved location of library project to: /home/user/work/neko
-Updated project.properties
-Updated local.properties
-Updated file ./proguard-project.txt
-----
-
-=== 6. Get Ant to build your Clojure code ===
-
-To enable Neko’s build support for Clojure, you will need to make two
-modifications to the `build.xml` file in your project directory.
-
-. You must add a line to similar to the following *before the line with `<import file="${sdk.dir}/tools/ant/build.xml" />`*.
-+
-----
-<import file="/path/to/neko/build-support/clojure.xml"/>
-----
-+
-The important thing is that the value of the `file` attribute should resolve to
-the `clojure.xml` in the `build-support` directory of this repository.  It may
-be either a relative or absolute path.
-
-. You must find the line that reads `<!-- version-tag: 1 -->` and change the
-  `1` to `custom`.  If you do not do this, Android may overwrite your changes.
-
-=== 7. Get rid of that Java file  ===
-
-You may have noticed that when you created the project file, Android generated
-a Java file corresponding to the package and activity name.  Delete it.  For
-example:
-
-----
-% rm -r src/com
-----
-
-=== 8. Create a source directory for you Clojure files ===
-
-By default, Neko looks in `src/clojure`.
-
-----
-% mkdir src/clojure
-----
-
-=== 9. Write your first Android application in Clojure ===
-
-For replicate the default activity that the SDK created in Clojure, you will
-need to create a source file with the same namespace as the original file.
-For example, given the package `com.example.hello_clojure` and the activity
-`HelloActivity`, you would create the file
-`src/clojure/com/example/hello_clojure/HelloActivity.clj` as follows:
-
-[source,lisp]
-----
-(ns com.example.hello_clojure.HelloActivity
-  (:gen-class :main false
-              :extends android.app.Activity
-              :exposes-methods {onCreate superOnCreate})
-  (:import [com.example.hello_clojure R$layout]))
-
-(defn -onCreate
-  [this bundle]
-  (doto this
-    (.superOnCreate bundle)
-    (.setContentView R$layout/main)))
-----
-
-As a gist: https://gist.github.com/2361385[]
-
-=== 10. Build and run it ===
-
-You can now run and install the application to a running emulator or a
-connected device using:
-
-----
-% ant debug install
-----
-
-If all went well, you should be able to find your application in the launcher.
-When you run it, after several seconds, you should see a simple `Hello World'
-appear.
-
-=== 11. Make something wonderful ===
+=== 6. Make something wonderful ===
 
 From this point on, it is up to you to create something wonderful.
 
