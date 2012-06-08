@@ -2,35 +2,23 @@
   "Tools for defining and manipulating Android UI elements."
   (:use [neko.activity :only [*activity*]]
         [neko.context :only [*context*]])
+  (:require [clojure.string :as string])
   (:import [android.widget Toast LinearLayout Button]
            [android.view View ViewGroup$LayoutParams]
+           android.widget.LinearLayout$LayoutParams
            android.content.Context))
-
-;; A map that contains the mapping of auxiliary keywords to the most
-;; used constants.
-;;
-(def ^{:private true}
-  attribute-values {;; LinearLayout orientation
-                    :horizontal LinearLayout/HORIZONTAL
-                    :vertical LinearLayout/VERTICAL
-
-                    ;; LayoutParams constants
-                    :fill-parent ViewGroup$LayoutParams/FILL_PARENT
-                    :fill ViewGroup$LayoutParams/FILL_PARENT
-                    :wrap-content ViewGroup$LayoutParams/WRAP_CONTENT
-                    :wrap ViewGroup$LayoutParams/WRAP_CONTENT})
 
 ;; ### Element relations
 
 ;; This section provides utilities to connect the keywords to the
-;; actual UI classes and define the hierarchy relations between the
-;; elements.
+;; actual UI classes, define the hierarchy relations between the
+;; elements and the values for the keywords representing values.
 
 ;; This atom keeps all the relations inside the map.
 (def ^{:private true} keyword-mapping
   (atom {}))
 
-(defn add-keyword-classname-relation
+(defn keyword-add-classname-relation
   "Connects the given keyword to the classname."
   [kw classname]
   (swap! keyword-mapping #(assoc-in % [kw :classname] classname)))
@@ -44,7 +32,7 @@
     (-> @keyword-mapping classname-or-kw :classname)
     classname-or-kw))
 
-(defn add-parent
+(defn keyword-add-parent
   "Defines the `parent-kw` to be the parent of `kw`."
   [kw parent-kw]
   (swap! keyword-mapping #(update-in % [kw :parents] conj parent-kw)))
@@ -58,16 +46,38 @@
       (mapcat all-parents)
       (concat first-level-parents)
       distinct)))
+  
+(defn keyword-add-value 
+  "Associate the value keyword with the provided value for the given keyword representing the UI element."
+  [element-kw value-kw value]
+  (swap! keyword-mapping #(assoc-in % [element-kw :values value-kw] value)))
 
+(defn kw-to-static-field
+  "Takes a keyword, capitalizes its name and replaces all dashes with underscores."
+  [kw]
+  (.toUpperCase (string/replace (name kw) \- \_)))
+
+(defn attribute-value
+  "If the value is a keyword then returns the value for it from the keyword-mapping. 
+If the value-keyword isn't present in the keyword-mapping, form the value as `classname-for-element-kw/CAPITALIZED-VALUE-KW`."
+  [element-kw value]
+  (if-not (keyword? value)
+    value
+    (or (-> @keyword-mapping element-kw :values value)
+        (symbol (str (.getName (classname element-kw)) \/ (kw-to-static-field value))))))
+      
 ;; These would be moved somewhere at some point.
 ;;
 (do
-  (add-keyword-classname-relation :button android.widget.Button)
-  (add-keyword-classname-relation :linear-layout android.widget.LinearLayout)
-  (add-parent :button :layout-params)
-  (add-parent :linear-layout :layout-params)
-  (add-parent :button :id)
-  (add-parent :linear-layout :id))
+  (keyword-add-classname-relation :button android.widget.Button)
+  (keyword-add-classname-relation :linear-layout android.widget.LinearLayout)
+  (keyword-add-classname-relation :layout-params android.view.ViewGroup$LayoutParams)
+  (keyword-add-parent :button :layout-params)
+  (keyword-add-parent :linear-layout :layout-params)
+  (keyword-add-parent :button :id)
+  (keyword-add-parent :linear-layout :id)
+  (keyword-add-value :layout-params :fill ViewGroup$LayoutParams/FILL_PARENT)
+  (keyword-add-value :layout-params :wrap ViewGroup$LayoutParams/WRAP_CONTENT))
 
 ;; ## Attributes
 
@@ -125,24 +135,20 @@ should remove the attributes it processed from the map."
 could be either actual values or keywords `:fill` and `:wrap`.
 
 Taken from clj-android by remvee."
-  ([both]
-    `(let [both# ~(or (attribute-values both)
-                                ViewGroup$LayoutParams/WRAP_CONTENT)]
-       (new ViewGroup$LayoutParams both# both#)))
-  ([width height]
-    `(let [width# ~(or (attribute-values width)
-                                 ViewGroup$LayoutParams/WRAP_CONTENT)
-           height# ~(or (attribute-values height)
-                                  ViewGroup$LayoutParams/WRAP_CONTENT)]
-       (new ViewGroup$LayoutParams width# height#))))
+  ([width height weight]
+    (let [real-width (attribute-value :layout-params (or width :wrap))
+          real-height (attribute-value :layout-params (or height :wrap))
+          real-weight (or weight 0)]
+      `(new LinearLayout$LayoutParams ~real-width ~real-height ~real-weight))))
 
 (defmethod transform-attributes :layout-params [el-type obj attributes
                                                 generated-code]
-  [(dissoc attributes :layout-width :layout-height)
+  [(dissoc attributes :layout-width :layout-height :layout-weight)
    (conj generated-code
          `(.setLayoutParams ~obj
                             ~(layout-params (:layout-width attributes)
-                                            (:layout-height attributes))))])
+                                            (:layout-height attributes)
+                                            (:layout-weight attributes))))])
 
 ;; ### Default attributes
 
@@ -158,16 +164,14 @@ Taken from clj-android by remvee."
   (str (.toUpperCase (.substring s 0 1)) (.substring s 1)))
 
 (defn default-setters-from-attributes
-  "Takes an object symbol and the attributes map after all
-  `transform-attributes` methods have been called on it. Transforms
+  "Takes an element type keyword, an object symbol and the attributes map after all `transform-attributes` methods have been called on it. Transforms
   each attribute into a call to (.set_CapitalizedKey_ obj value). If
-  value is a keyword then it is looked up in the attribute-values map.
-  Returns a list of setter calls. "
-  [obj attributes]
+  value is a keyword then it is looked up in the keyword-mapping or if it is not there, it is perceived as a static field of the class. 
+  Returns a list of setter calls."
+  [el-type obj attributes]
   (map (fn [[attr value]]
-         (let [real-value (if (and (keyword? value)
-                                   (contains? attribute-values value))
-                            (attribute-values value)
+         (let [real-value (if (keyword? value)
+                            (attribute-value el-type value)
                             value)]
            `(~(symbol (str ".set" (capitalize (name attr)))) ~obj ~real-value)))
          attributes))
@@ -185,16 +189,9 @@ Taken from clj-android by remvee."
                 [attributes ()]
                 (conj (all-parents el-type) el-type))]
     (concat generated-code
-            (default-setters-from-attributes obj rest-attributes))))
+            (default-setters-from-attributes el-type obj rest-attributes))))
 
 ;; ## Top-level code-generation facilities
-
-(defn- gen-meaningful-sym
-  "Generates a symbol with a prefix taken from the `class-name` without
-  the package path."
-  [class-name]
-  (let [[_ last-name] (re-find #".+\.(.+)" (str class-name))]
-    (gensym last-name)))
 
 (defn make-ui-element
   "Takes a tree of elements and generates the code to create a new
@@ -203,7 +200,7 @@ Taken from clj-android by remvee."
   internal element. Presumes the `*context*` var to be bound."
   [[el-type attributes & inside-elements]]
   (let [klass (classname el-type)
-        obj (gen-meaningful-sym klass)]
+        obj (gensym (.getSimpleName klass))]
     `(let [~obj (new ~klass *context*)]
        ~@(process-attributes el-type obj attributes)
        ~@(map (fn [el]
