@@ -105,23 +105,49 @@
     (doall (map request-feature features))))
 
 (defmacro defactivity
-  "Creates an activity with the given the full package-qualified name.
-  Binds all `onSomething` methods from the parent Activity class to
-  the `superOnSomething` methods.
+  "Creates an activity with the given full package-qualified name.
+  Optional arguments should be provided in a key-value fashion.
 
-Taken from clj-android by remvee."
-  [name]
-  `(gen-class
-    :name ~name
-    :main false
-    :extends ~'android.app.Activity
-    :exposes-methods {~'onCreate ~'superOnCreate
-                      ~'onStart ~'superOnStart
-                      ~'onRestart ~'superOnRestart
-                      ~'onResume ~'superOnResume
-                      ~'onPause ~'superOnPause
-                      ~'onStop ~'superOnStop
-                      ~'onDestroy ~'superOnDestroy}))
+  Available optional arguments:
+
+  :extends, :prefix - same as for `gen-class`.
+
+  :create - takes a two-argument function. Generates a handler for
+  activity's `onCreate` event which automatically calls the
+  superOnCreate method and creates a var with activity's simple name
+  to store the activity object. Then calls the provided function onto
+  the Application object.
+
+  :start, :restart, :resume, :pause, :stop, :destroy - same as :create
+  but require a one-argument function."
+  [name & {:keys [extends prefix create] :as options}]
+  (let [sname (simple-name name)
+        prefix (or prefix (str sname "-"))]
+    `(do
+       (gen-class
+        :name ~name
+        :main false
+        :prefix ~prefix
+        :extends ~(or extends android.app.Activity)
+        :exposes-methods {~'onCreate ~'superOnCreate
+                          ~'onStart ~'superOnStart
+                          ~'onRestart ~'superOnRestart
+                          ~'onResume ~'superOnResume
+                          ~'onPause ~'superOnPause
+                          ~'onStop ~'superOnStop
+                          ~'onDestroy ~'superOnDestroy})
+       ~(when create
+          `(defn ~(symbol (str prefix "onCreate")) [~'this ~'savedInstanceState]
+             (.superOnCreate ~'this ~'savedInstanceState)
+             (def ~(symbol sname) ~'this)
+             (~create ~'this ~'savedInstanceState)))
+       ~@(map #(let [func (options %)
+                     event-name (capitalize (.getName %))]
+                 (when func
+                   `(defn ~(symbol (str prefix "on" event-name)) [~'this]
+                      (~(symbol (str ".superOn" event-name)) ~'this)
+                      (~func ~'this))))
+              [:start :restart :resume :pause :stop :destroy]))))
 
 (defn run-on-ui-thread*
   "Runs the given nullary function on the UI thread.  If this function is

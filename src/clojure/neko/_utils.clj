@@ -38,3 +38,8 @@
   "Takes a possibly package-qualified class name symbol and returns a
   simple class name from it."
   (nth (re-find #"(.*\.)?(.+)" (str full-class-name)) 2))
+
+(defn capitalize
+  "Takes a string and upper-cases the first letter in it."
+  [s]
+  (str (.toUpperCase (.substring s 0 1)) (.substring s 1)))

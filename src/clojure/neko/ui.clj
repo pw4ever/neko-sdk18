@@ -1,7 +1,8 @@
 (ns neko.ui
   "Tools for defining and manipulating Android UI elements."
   (:use [neko.activity :only [*activity*]]
-        [neko.context :only [*context*]])
+        [neko.context :only [*context*]]
+        [neko.-utils :only [capitalize]])
   (:require [clojure.string :as string])
   (:import [android.widget Toast LinearLayout Button]
            [android.view View ViewGroup$LayoutParams]
@@ -157,11 +158,6 @@ Taken from clj-android by remvee."
 ;;
 (defmethod transform-attributes :default [_ _ attributes generated-code]
   [attributes generated-code])
-
-(defn capitalize
-  "Takes a string and upper-cases the first letter in it."
-  [s]
-  (str (.toUpperCase (.substring s 0 1)) (.substring s 1)))
 
 (defn default-setters-from-attributes
   "Takes an element type keyword, an object symbol and the attributes map after all `transform-attributes` methods have been called on it. Transforms
