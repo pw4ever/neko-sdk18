@@ -48,24 +48,29 @@
          (concat first-level-parents)
          distinct)))
 
-(defn keyword-add-value 
-  "Associate the value keyword with the provided value for the given keyword representing the UI element."
+(defn keyword-add-value
+  "Associate the value keyword with the provided value for the given
+  keyword representing the UI element."
   [element-kw value-kw value]
   (swap! keyword-mapping #(assoc-in % [element-kw :values value-kw] value)))
 
 (defn kw-to-static-field
-  "Takes a keyword, capitalizes its name and replaces all dashes with underscores."
+  "Takes a keyword, capitalizes its name and replaces all dashes with
+  underscores."
   [kw]
   (.toUpperCase (string/replace (name kw) \- \_)))
 
 (defn attribute-value
-  "If the value is a keyword then returns the value for it from the keyword-mapping. 
-If the value-keyword isn't present in the keyword-mapping, form the value as `classname-for-element-kw/CAPITALIZED-VALUE-KW`."
+  "If the value is a keyword then returns the value for it from the
+keyword-mapping. If the value-keyword isn't present in the
+keyword-mapping, form the value as
+`classname-for-element-kw/CAPITALIZED-VALUE-KW`."
   [element-kw value]
   (if-not (keyword? value)
     value
     (or (-> @keyword-mapping element-kw :values value)
-        (symbol (str (.getName (classname element-kw)) \/ (kw-to-static-field value))))))
+        (symbol (str (.getName (classname element-kw))
+                     \/ (kw-to-static-field value))))))
 
 ;; These would be moved somewhere at some point.
 ;;
@@ -160,10 +165,12 @@ Taken from clj-android by remvee."
   [attributes generated-code])
 
 (defn default-setters-from-attributes
-  "Takes an element type keyword, an object symbol and the attributes map after all `transform-attributes` methods have been called on it. Transforms
-  each attribute into a call to (.set_CapitalizedKey_ obj value). If
-  value is a keyword then it is looked up in the keyword-mapping or if it is not there, it is perceived as a static field of the class. 
-  Returns a list of setter calls."
+  "Takes an element type keyword, an object symbol and the attributes
+  map after all `transform-attributes` methods have been called on it.
+  Transforms each attribute into a call to (.set_CapitalizedKey_ obj
+  value). If value is a keyword then it is looked up in the
+  keyword-mapping or if it is not there, it is perceived as a static
+  field of the class. Returns a list of setter calls."
   [el-type obj attributes]
   (map (fn [[attr value]]
          (let [real-value (if (keyword? value)
