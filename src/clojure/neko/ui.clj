@@ -44,10 +44,10 @@
   [kw]
   (let [first-level-parents (-> @keyword-mapping kw :parents)]
     (->> first-level-parents
-      (mapcat all-parents)
-      (concat first-level-parents)
-      distinct)))
-  
+         (mapcat all-parents)
+         (concat first-level-parents)
+         distinct)))
+
 (defn keyword-add-value 
   "Associate the value keyword with the provided value for the given keyword representing the UI element."
   [element-kw value-kw value]
@@ -66,7 +66,7 @@ If the value-keyword isn't present in the keyword-mapping, form the value as `cl
     value
     (or (-> @keyword-mapping element-kw :values value)
         (symbol (str (.getName (classname element-kw)) \/ (kw-to-static-field value))))))
-      
+
 ;; These would be moved somewhere at some point.
 ;;
 (do
@@ -137,10 +137,10 @@ could be either actual values or keywords `:fill` and `:wrap`.
 
 Taken from clj-android by remvee."
   ([width height weight]
-    (let [real-width (attribute-value :layout-params (or width :wrap))
-          real-height (attribute-value :layout-params (or height :wrap))
-          real-weight (or weight 0)]
-      `(new LinearLayout$LayoutParams ~real-width ~real-height ~real-weight))))
+     (let [real-width (attribute-value :layout-params (or width :wrap))
+           real-height (attribute-value :layout-params (or height :wrap))
+           real-weight (or weight 0)]
+       `(new LinearLayout$LayoutParams ~real-width ~real-height ~real-weight))))
 
 (defmethod transform-attributes :layout-params [el-type obj attributes
                                                 generated-code]
@@ -170,7 +170,7 @@ Taken from clj-android by remvee."
                             (attribute-value el-type value)
                             value)]
            `(~(symbol (str ".set" (capitalize (name attr)))) ~obj ~real-value)))
-         attributes))
+       attributes))
 
 (defn process-attributes
   "Takes an UI element type, its object symbol and a map of
