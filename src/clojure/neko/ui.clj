@@ -4,9 +4,8 @@
         [neko.context :only [*context*]]
         [neko.-utils :only [capitalize]])
   (:require [clojure.string :as string])
-  (:import [android.widget Toast LinearLayout Button]
+  (:import [android.widget Toast LinearLayout Button LinearLayout$LayoutParams]
            [android.view View ViewGroup$LayoutParams]
-           android.widget.LinearLayout$LayoutParams
            android.content.Context))
 
 ;; ### Element relations
@@ -104,7 +103,8 @@ code this method generates should be appended to it.
 Returns a vector that looks like
 `[attributes-without-processed-ones new-generated-code]`. The method
 should remove the attributes it processed from the map."
-  (fn [el-type object-symbol attributes-map generated-code] el-type))
+  (fn [el-type object-symbol attributes-map generated-code container-type]
+    el-type))
 
 ;; ### ID attribute
 
@@ -128,7 +128,7 @@ should remove the attributes it processed from the map."
     (throw (Exception. (str "The element with the ID " id
                             " is not present in the elements map")))))
 
-(defmethod transform-attributes :id [el-type obj attributes generated-code]
+(defmethod transform-attributes :id [el-type obj attributes generated-code _]
   [(dissoc attributes :id)
    (if-let [id (:id attributes)]
      (conj generated-code `(register-ui-element ~id ~obj))
@@ -136,32 +136,48 @@ should remove the attributes it processed from the map."
 
 ;; ### Layout parameters attributes
 
-(defn layout-params
+(defn default-layout-params
   "Construct LayoutParams instance from the given arguments. Arguments
-could be either actual values or keywords `:fill` and `:wrap`.
+could be either actual values or keywords `:fill` and `:wrap`."
+  ([width height]
+     (let [real-width (attribute-value :layout-params (or width :wrap))
+           real-height (attribute-value :layout-params (or height :wrap))]
+       `(new ~ViewGroup$LayoutParams ~real-width ~real-height))))
 
-Taken from clj-android by remvee."
+(defn linear-layout-params
+  "Construct LinearLayout-specific LayoutParams instance from the
+given arguments. Arguments could be either actual values or keywords
+`:fill` and `:wrap`."
   ([width height weight]
      (let [real-width (attribute-value :layout-params (or width :wrap))
            real-height (attribute-value :layout-params (or height :wrap))
            real-weight (or weight 0)]
-       `(new LinearLayout$LayoutParams ~real-width ~real-height ~real-weight))))
+       `(new ~LinearLayout$LayoutParams
+             ~real-width ~real-height ~real-weight))))
 
 (defmethod transform-attributes :layout-params [el-type obj attributes
-                                                generated-code]
-  [(dissoc attributes :layout-width :layout-height :layout-weight)
-   (conj generated-code
-         `(.setLayoutParams ~obj
-                            ~(layout-params (:layout-width attributes)
-                                            (:layout-height attributes)
-                                            (:layout-weight attributes))))])
+                                                generated-code container-type]
+  (case container-type
+   :linear-layout
+   [(dissoc attributes :layout-width :layout-height :layout-weight)
+    (conj generated-code
+          `(.setLayoutParams ~obj
+             ~(linear-layout-params (:layout-width attributes)
+                                    (:layout-height attributes)
+                                    (:layout-weight attributes))))]
+
+   [(dissoc attributes :layout-width :layout-height :layout-weight)
+    (conj generated-code
+          `(.setLayoutParams ~obj
+             ~(default-layout-params (:layout-width attributes)
+                (:layout-height attributes))))]))
 
 ;; ### Default attributes
 
 ;; If there is no method for the given element type then return
 ;; unmodified `attributes` and `generated-code`.
 ;;
-(defmethod transform-attributes :default [_ _ attributes generated-code]
+(defmethod transform-attributes :default [_1 _2 attributes generated-code _3]
   [attributes generated-code])
 
 (defn default-setters-from-attributes
@@ -185,10 +201,10 @@ Taken from clj-android by remvee."
   element's parents, in the end calls
   `default-setters-from-attributes` on what is left from the
   attributes map. Returns the generated code for all attributes."
-  [el-type obj attributes]
+  [el-type obj attributes container-type]
   (let [[rest-attributes generated-code]
         (reduce (fn [[attrs gen-code] type]
-                  (transform-attributes type obj attrs gen-code))
+                  (transform-attributes type obj attrs gen-code container-type))
                 [attributes ()]
                 (conj (all-parents el-type) el-type))]
     (concat generated-code
@@ -200,16 +216,18 @@ Taken from clj-android by remvee."
   "Takes a tree of elements and generates the code to create a new
   element object, set all attributes onto it and add all inside
   elements to it. `make-ui-element` is called recursively on each
-  internal element. Presumes the `*context*` var to be bound."
-  [[el-type attributes & inside-elements]]
+  internal element. Presumes the `*context*` var to be bound. The
+  second argument is a keyword that represents the type of the
+  container UI element will be put in."
+  [[el-type attributes & inside-elements] container-type]
   (let [klass (classname el-type)
         obj (gensym (.getSimpleName klass))]
     `(let [~obj (new ~klass *context*)]
-       ~@(process-attributes el-type obj attributes)
+       ~@(process-attributes el-type obj attributes container-type)
        ~@(map (fn [el]
-                `(.addView ~obj ~(make-ui-element el)))
+                `(.addView ~obj ~(make-ui-element el el-type)))
               inside-elements)
        ~obj)))
 
 (defmacro defui [tree]
-  (make-ui-element tree))
+  (make-ui-element tree nil))
