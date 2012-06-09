@@ -33,3 +33,8 @@
   [x]
   (or (integer? x)
       (keyword? x)))
+
+(defn simple-name [full-class-name]
+  "Takes a possibly package-qualified class name symbol and returns a
+  simple class name from it."
+  (nth (re-find #"(.*\.)?(.+)" (str full-class-name)) 2))
