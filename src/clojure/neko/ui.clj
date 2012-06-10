@@ -3,86 +3,9 @@
   (:use [neko.activity :only [*activity*]]
         [neko.context :only [*context*]]
         [neko.-utils :only [capitalize]])
-  (:require [clojure.string :as string])
-  (:import [android.widget Toast LinearLayout Button LinearLayout$LayoutParams]
-           [android.view View ViewGroup$LayoutParams]
-           android.content.Context))
-
-;; ### Element relations
-
-;; This section provides utilities to connect the keywords to the
-;; actual UI classes, define the hierarchy relations between the
-;; elements and the values for the keywords representing values.
-
-;; This atom keeps all the relations inside the map.
-(def ^{:private true} keyword-mapping
-  (atom {}))
-
-(defn keyword-add-classname-relation
-  "Connects the given keyword to the classname."
-  [kw classname]
-  (swap! keyword-mapping #(assoc-in % [kw :classname] classname)))
-
-(defn classname
-  "Gets the classname from the keyword-mapping map if the argument is
-  a keyword. Otherwise considers the argument to already be a
-  classname."
-  [classname-or-kw]
-  (if (keyword? classname-or-kw)
-    (-> @keyword-mapping classname-or-kw :classname)
-    classname-or-kw))
-
-(defn keyword-add-parent
-  "Defines the `parent-kw` to be the parent of `kw`."
-  [kw parent-kw]
-  (swap! keyword-mapping #(update-in % [kw :parents] conj parent-kw)))
-
-(defn all-parents
-  "Returns the list of all unique parents for `kw`. The list is built
-  recursively."
-  [kw]
-  (let [first-level-parents (-> @keyword-mapping kw :parents)]
-    (->> first-level-parents
-         (mapcat all-parents)
-         (concat first-level-parents)
-         distinct)))
-
-(defn keyword-add-value
-  "Associate the value keyword with the provided value for the given
-  keyword representing the UI element."
-  [element-kw value-kw value]
-  (swap! keyword-mapping #(assoc-in % [element-kw :values value-kw] value)))
-
-(defn kw-to-static-field
-  "Takes a keyword, capitalizes its name and replaces all dashes with
-  underscores."
-  [kw]
-  (.toUpperCase (string/replace (name kw) \- \_)))
-
-(defn attribute-value
-  "If the value is a keyword then returns the value for it from the
-keyword-mapping. If the value-keyword isn't present in the
-keyword-mapping, form the value as
-`classname-for-element-kw/CAPITALIZED-VALUE-KW`."
-  [element-kw value]
-  (if-not (keyword? value)
-    value
-    (or (-> @keyword-mapping element-kw :values value)
-        (symbol (str (.getName (classname element-kw))
-                     \/ (kw-to-static-field value))))))
-
-;; These would be moved somewhere at some point.
-;;
-(do
-  (keyword-add-classname-relation :button android.widget.Button)
-  (keyword-add-classname-relation :linear-layout android.widget.LinearLayout)
-  (keyword-add-classname-relation :layout-params android.view.ViewGroup$LayoutParams)
-  (keyword-add-parent :button :layout-params)
-  (keyword-add-parent :linear-layout :layout-params)
-  (keyword-add-parent :button :id)
-  (keyword-add-parent :linear-layout :id)
-  (keyword-add-value :layout-params :fill ViewGroup$LayoutParams/FILL_PARENT)
-  (keyword-add-value :layout-params :wrap ViewGroup$LayoutParams/WRAP_CONTENT))
+  (:require [neko.ui.mapping :as kw])
+  (:import [android.widget Toast LinearLayout$LayoutParams]
+           [android.view View ViewGroup$LayoutParams]))
 
 ;; ## Attributes
 
@@ -140,8 +63,8 @@ should remove the attributes it processed from the map."
   "Construct LayoutParams instance from the given arguments. Arguments
 could be either actual values or keywords `:fill` and `:wrap`."
   ([width height]
-     (let [real-width (attribute-value :layout-params (or width :wrap))
-           real-height (attribute-value :layout-params (or height :wrap))]
+     (let [real-width (kw/value :layout-params (or width :wrap))
+           real-height (kw/value :layout-params (or height :wrap))]
        `(new ~ViewGroup$LayoutParams ~real-width ~real-height))))
 
 (defn linear-layout-params
@@ -149,11 +72,11 @@ could be either actual values or keywords `:fill` and `:wrap`."
 given arguments. Arguments could be either actual values or keywords
 `:fill` and `:wrap`."
   ([width height weight]
-     (let [real-width (attribute-value :layout-params (or width :wrap))
-           real-height (attribute-value :layout-params (or height :wrap))
+     (let [real-width (kw/value :layout-params (or width :wrap))
+           real-height (kw/value :layout-params (or height :wrap))
            real-weight (or weight 0)]
-       `(new ~LinearLayout$LayoutParams
-             ~real-width ~real-height ~real-weight))))
+       `(new ~LinearLayout$LayoutParams ~real-width
+             ~real-height ~real-weight))))
 
 (defmethod transform-attributes :layout-params [el-type obj attributes
                                                 generated-code container-type]
@@ -189,9 +112,7 @@ given arguments. Arguments could be either actual values or keywords
   field of the class. Returns a list of setter calls."
   [el-type obj attributes]
   (map (fn [[attr value]]
-         (let [real-value (if (keyword? value)
-                            (attribute-value el-type value)
-                            value)]
+         (let [real-value (kw/value el-type value)]
            `(~(symbol (str ".set" (capitalize (name attr)))) ~obj ~real-value)))
        attributes))
 
@@ -206,7 +127,7 @@ given arguments. Arguments could be either actual values or keywords
         (reduce (fn [[attrs gen-code] type]
                   (transform-attributes type obj attrs gen-code container-type))
                 [attributes ()]
-                (conj (all-parents el-type) el-type))]
+                (conj (kw/all-parents el-type) el-type))]
     (concat generated-code
             (default-setters-from-attributes el-type obj rest-attributes))))
 
@@ -220,7 +141,7 @@ given arguments. Arguments could be either actual values or keywords
   second argument is a keyword that represents the type of the
   container UI element will be put in."
   [[el-type attributes & inside-elements] container-type]
-  (let [klass (classname el-type)
+  (let [klass (kw/classname el-type)
         obj (gensym (.getSimpleName klass))]
     `(let [~obj (new ~klass *context*)]
        ~@(process-attributes el-type obj attributes container-type)
