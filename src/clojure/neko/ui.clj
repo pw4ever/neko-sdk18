@@ -140,15 +140,18 @@ given arguments. Arguments could be either actual values or keywords
   internal element. Presumes the `*context*` var to be bound. The
   second argument is a keyword that represents the type of the
   container UI element will be put in."
-  [[el-type attributes & inside-elements] container-type]
-  (let [klass (kw/classname el-type)
-        obj (gensym (.getSimpleName klass))]
-    `(let [~obj (new ~klass *context*)]
-       ~@(process-attributes el-type obj attributes container-type)
-       ~@(map (fn [el]
-                `(.addView ~obj ~(make-ui-element el el-type)))
-              inside-elements)
-       ~obj)))
+  [element container-type]
+  (if (vector? element)
+    (let [[el-type attributes & inside-elements] element
+          klass (kw/classname el-type)
+          obj (gensym (.getSimpleName klass))]
+      `(let [~obj (new ~klass *context*)]
+         ~@(process-attributes el-type obj attributes container-type)
+         ~@(map (fn [el]
+                  `(.addView ~obj ~(make-ui-element el el-type)))
+                inside-elements)
+         ~obj))
+    (make-ui-element (eval element) container-type)))
 
 (defmacro defui [tree]
   (make-ui-element tree nil))
