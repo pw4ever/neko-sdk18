@@ -7,7 +7,7 @@
 
 (defn init-common-elements []
   (defelement :button android.widget.Button
-    :parents [:layout-params :id])
+    :parents [:layout-params :id :on-click])
 
   (defelement :linear-layout android.widget.LinearLayout
     :parents [:layout-params :id])

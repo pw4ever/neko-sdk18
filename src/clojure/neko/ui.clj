@@ -2,7 +2,8 @@
   "Tools for defining and manipulating Android UI elements."
   (:use [neko.activity :only [*activity*]]
         [neko.context :only [*context*]]
-        [neko.-utils :only [capitalize]])
+        [neko.-utils :only [capitalize]]
+        [neko.listeners.view :only [on-click-call]])
   (:require [neko.ui.mapping :as kw])
   (:import [android.widget Toast LinearLayout$LayoutParams]
            [android.view View ViewGroup$LayoutParams]))
@@ -94,6 +95,16 @@ given arguments. Arguments could be either actual values or keywords
           `(.setLayoutParams ~obj
              ~(default-layout-params (:layout-width attributes)
                 (:layout-height attributes))))]))
+
+(defmethod transform-attributes :on-click [_1 obj attributes generated-code _2]
+  (if-let [handler (:on-click attributes)]
+    [(dissoc attributes :on-click)
+     (let [expr (if (sequential? handler)
+                  `(fn [view#] (~(first handler) view# ~@(rest handler)))
+                  `(fn [view#] (~handler view#)))]
+       (conj generated-code
+             `(.setOnClickListener ~obj (on-click-call ~expr))))]
+    [attributes generated-code]))
 
 ;; ### Default attributes
 
