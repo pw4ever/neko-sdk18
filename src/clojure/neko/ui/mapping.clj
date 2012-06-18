@@ -2,11 +2,22 @@
   "This namespace provides utilities to connect the keywords to the
   actual UI classes, define the hierarchy relations between the
   elements and the values for the keywords representing values."
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string])
+  (:import [android.widget LinearLayout Button EditText]
+           [android.view ViewGroup$LayoutParams]))
 
 ;; This atom keeps all the relations inside the map.
 (def ^{:private true} keyword-mapping
-  (atom {}))
+  (atom
+   {:button {:classname android.widget.Button
+             :parents [:layout-params :id :on-click]}
+    :linear-layout {:classname android.widget.LinearLayout
+                    :parents [:layout-params :id]}
+    :edit {:classname android.widget.EditText
+           :parents [:layout-params :id]}
+    :layout-params {:classname ViewGroup$LayoutParams
+                    :values {:fill ViewGroup$LayoutParams/FILL_PARENT
+                             :wrap ViewGroup$LayoutParams/WRAP_CONTENT}}}))
 
 (defn set-classname!
   "Connects the given keyword to the classname."
