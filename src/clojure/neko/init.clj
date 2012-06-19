@@ -18,36 +18,40 @@
   "Checks if the given property keyword is set to true during the
   compilation of neko."
   [property]
-  (= (System/getProperty property) "true"))
+  (= (System/getProperty (name property)) "true"))
+
+;; A list of all properties supported and tracked by neko.
+;;
+(def ^{:private true} properties-list
+  [:android-dynamic-compilation :android-start-nrepl-server
+   :android-release-build])
 
 ;; Gather JVM properties during the compile time that indicates the
 ;; parameters of the build.
 ;;
 (def ^{:private true} properties
-  {:enable-dynamic-compilation (property-set? "android_dynamic_compilation")
-   :start-nrepl-server (property-set? "android_start_nrepl_server")
-   :release-build (property-set? "android_release_build")})
+  (zipmap properties-list (map property-set? properties-list)))
 
 (defmacro enable-dynamic-compilation?
   "Returns true if the current build is a debuggable one or if
   either the dynamic compillation or nREPL server are enabled
   explicitly."
   []
-  (or (not (properties :release-build))
-      (properties :start-nrepl-server)
-      (properties :enable-dynamic-compilation)))
+  (or (not (properties :android-release-build))
+      (properties :android-start-nrepl-server)
+      (properties :android-enable-dynamic-compilation)))
 
 (defmacro start-nrepl-server?
   "Returns true if the current build is a debuggable one or if the
   nREPL server is enabled explicitly."
   []
-  (or (not (properties :release-build))
-      (properties :start-nrepl-server)))
+  (or (not (properties :android-release-build))
+      (properties :android-start-nrepl-server)))
 
 (defmacro is-debug?
   "Returns true if the current build is a debuggable one."
   []
-  (not (properties :release-build)))
+  (not (properties :android-release-build)))
 
 (defn start-repl
   "Starts a remote nREPL server. Creates a `user` namespace because
@@ -76,3 +80,20 @@
     ;; Ensure that `:port` is provided, pass all other arguments as-is.
     (apply start-repl :port port
            (mapcat identity (dissoc args :classes-dir :port)))))
+
+(defmacro with-properties
+  "Sets the given properties specified by keywords to the respective
+  values to run the code provided in `body`. At the end restore the
+  initial property values."
+  [bindings & body]
+  (let [bindings (partition 2 bindings)
+        initial (gensym)]
+    `(let [~initial (hash-map ~@(mapcat (fn [[prop _]]
+                                          [prop `(str (System/getProperty (name ~prop)))])
+                                        bindings))]
+       ~@(for [[prop newval] bindings]
+           `(System/setProperty (name ~prop) (str ~newval)))
+       (let [result# (do ~@body)]
+         ~@(for [[prop newval] bindings]
+             `(System/setProperty (name ~prop) (get ~initial ~prop)))
+         result#))))
