@@ -21,7 +21,8 @@
 (def ^{:private true} keyword-mapping
   (atom
    {:button {:classname android.widget.Button
-             :parents [:layout-params :id :on-click]}
+             :parents [:layout-params :id :on-click]
+             :attributes {:text "Default button"}}
     :linear-layout {:classname android.widget.LinearLayout
                     :parents [:layout-params :id]}
     :edit {:classname android.widget.EditText
@@ -85,13 +86,29 @@ keyword-mapping, form the value as
     (get-in @keyword-mapping [element-kw :values value]
             (kw-to-static-field (classname element-kw) value))))
 
+(defn add-default-atribute-value!
+  "Adds a default attribute value for the given element."
+  [element-kw attribute-kw value]
+  (swap! keyword-mapping
+         update-in [element-kw :attributes attribute-kw] value))
+
+(defn default-attributes [element-kw]
+  "Returns a map of default attributes for the given element keyword."
+  [element-kw]
+  (get-in @keyword-mapping [element-kw :attributes]))
+
 (defn defelement
   "Defines the element of the given class with the provided name to
   use in the UI construction. Takes the element's classname, a list of
   parents and a map of specific values as optional arguments."
-  [kw-name class-name & {:keys [parents values]}]
-  (set-classname! kw-name class-name)
+  [kw-name & {:keys [classname parents values attributes inherits]}]
+  (when inherits
+    (swap! keyword-mapping #(assoc % kw-name (inherits %))))
+  (when classname
+    (set-classname! kw-name classname))
   (when parents
-    (swap! keyword-mapping assoc-in [kw-name :parents] parents))
+    (swap! keyword-mapping update-in [kw-name :parents] concat parents))
   (when values
-    (swap! keyword-mapping assoc-in [kw-name :values] values)))
+    (swap! keyword-mapping update-in [kw-name :values] merge values))
+  (when attributes
+    (swap! keyword-mapping update-in [kw-name :attributes] merge attributes)))

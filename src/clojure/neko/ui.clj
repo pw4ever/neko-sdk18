@@ -145,10 +145,11 @@ given arguments. Arguments could be either actual values or keywords
   `default-setters-from-attributes` on what is left from the
   attributes map. Returns the generated code for all attributes."
   [el-type obj attributes container-type]
-  (let [[rest-attributes generated-code]
+  (let [all-attributes (merge (kw/default-attributes el-type) attributes)
+        [rest-attributes generated-code]
         (reduce (fn [[attrs gen-code] type]
                   (transform-attributes type obj attrs gen-code container-type))
-                [attributes ()]
+                [all-attributes ()]
                 (conj (kw/all-parents el-type) el-type))]
     (concat generated-code
             (default-setters-from-attributes el-type obj rest-attributes))))
