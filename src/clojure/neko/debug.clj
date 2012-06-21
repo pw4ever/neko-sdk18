@@ -11,8 +11,8 @@
 
 (ns neko.debug
   "Contains useful tools to be used while developing the application."
-  (:require [neko.application :as app])
-  (:use [neko.init :only [is-debug?]])
+  (:use [neko.init :only [is-debug?]]
+        [neko.notify :only [toast]])
   (:import clojure.lang.IFn android.widget.Toast))
 
 ;; This atom stores the last exception happened on the UI thread.
@@ -24,7 +24,7 @@
   exception for the future reference."
   [e]
   (reset! ui-exception e)
-  (.show (Toast/makeText app/context (str e) 1)))
+  (.show (toast (str e) :long)))
 
 (defn ui-e
   "Returns an uncaught exception happened on UI thread."
