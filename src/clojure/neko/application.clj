@@ -15,6 +15,11 @@
         [neko.init :only [init]])
   (:import android.app.Application))
 
+(defn define-context
+  "Define a var to store the application context."
+  [ctx]
+  (def context ctx))
+
 (defmacro defapplication
   "Creates an application class with the given full package-qualified
   name. Optional arguments should be provided in a key-value fashion.
@@ -40,4 +45,5 @@
      ~(when (not= create :later)
         `(defn ~(symbol (str prefix "onCreate")) [~'this]
            (.superOnCreate ~'this)
+           (define-context ~'this)
            (~create ~'this)))))
