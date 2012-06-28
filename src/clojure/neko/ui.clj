@@ -154,6 +154,13 @@ given arguments. Arguments could be either actual values or keywords
     (concat generated-code
             (default-setters-from-attributes el-type obj rest-attributes))))
 
+(defn make-constructor-call
+  "Takes an object class name and the attributes map to extract
+  additional arguments (if available) and returns a form that
+  constructs the object."
+  [klass {:keys [constructor-args]}]
+  `(new ~klass *context* ~@constructor-args))
+
 ;; ## Top-level code-generation facilities
 
 (defn make-ui-element
@@ -168,7 +175,7 @@ given arguments. Arguments could be either actual values or keywords
     (let [[el-type attributes & inside-elements] element
           klass (kw/classname el-type)
           obj (gensym (.getSimpleName klass))]
-      `(let [~obj (new ~klass *context*)]
+      `(let [~obj ~(make-constructor-call klass attributes)]
          ~@(process-attributes el-type obj attributes container-type)
          ~@(map (fn [el]
                   `(.addView ~obj ~(make-ui-element el el-type)))
