@@ -22,35 +22,32 @@
 
 ;; A list of all properties supported and tracked by neko.
 ;;
-(def ^{:private true} properties-list
+(def ^:private properties-list
   [:android-dynamic-compilation :android-start-nrepl-server
    :android-release-build])
 
 ;; Gather JVM properties during the compile time that indicates the
 ;; parameters of the build.
 ;;
-(def ^{:private true} properties
+(def ^:private properties
   (zipmap properties-list (map property-set? properties-list)))
 
-(defmacro enable-dynamic-compilation?
-  "Returns true if the current build is a debuggable one or if
-  either the dynamic compillation or nREPL server are enabled
-  explicitly."
-  []
+;; True if the current build is a debuggable one or if
+;; either the dynamic compillation or nREPL server are enabled
+;; explicitly.
+(def enable-dynamic-compilation
   (or (not (properties :android-release-build))
       (properties :android-start-nrepl-server)
       (properties :android-enable-dynamic-compilation)))
 
-(defmacro start-nrepl-server?
-  "Returns true if the current build is a debuggable one or if the
-  nREPL server is enabled explicitly."
-  []
+;; True if the current build is a debuggable one or if the
+;; nREPL server is enabled explicitly.
+(def start-nrepl-server
   (or (not (properties :android-release-build))
       (properties :android-start-nrepl-server)))
 
-(defmacro is-debug?
-  "Returns true if the current build is a debuggable one."
-  []
+;; True if the current build is a debuggable one.
+(def is-debug
   (not (properties :android-release-build)))
 
 (defn start-repl
@@ -74,9 +71,9 @@
   directly feeded to the nREPL's `start-server` function. "
   [context & {:keys [classes-dir port] :or {classes-dir "classes", port 9999}
               :as args}]
-  (when (enable-dynamic-compilation?)
+  (when enable-dynamic-compilation
     (neko.compilation/init context classes-dir))
-  (when (start-nrepl-server?)
+  (when start-nrepl-server
     ;; Ensure that `:port` is provided, pass all other arguments as-is.
     (apply start-repl :port port
            (mapcat identity (dissoc args :classes-dir :port)))))

@@ -11,7 +11,7 @@
 
 (ns neko.debug
   "Contains useful tools to be used while developing the application."
-  (:use [neko.init :only [is-debug?]]
+  (:use [neko.init :only [is-debug]]
         [neko.notify :only [toast]])
   (:import clojure.lang.IFn android.widget.Toast))
 
@@ -43,6 +43,6 @@
   if the code provided in `body` crashes on UI thread in the debug
   build. If the build is a release one returns `body` as is."
   [& body]
-  (if (is-debug?)
+  (if is-debug
     `(safe-for-ui* (fn [] ~@body))
     `(do ~@body)))
