@@ -181,7 +181,9 @@ given arguments. Arguments could be either actual values or keywords
                   `(.addView ~obj ~(make-ui-element el el-type)))
                 inside-elements)
          ~obj))
-    (make-ui-element (eval element) container-type)))
+    (if (and (sequential? element) (= (first element) 'quote))
+      (second element)
+      (make-ui-element (eval element) container-type))))
 
 (defmacro defui [tree]
   (make-ui-element tree nil))
