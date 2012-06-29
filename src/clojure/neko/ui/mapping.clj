@@ -71,7 +71,7 @@
 (defn kw-to-static-field
   "Takes a classname and a keyword, capitalizes the latter's name and
   replaces all dashes with underscores."
-  [class-name kw]
+  [^Class class-name, kw]
   (symbol (str (.getName class-name) \/
                (.toUpperCase (string/replace (name kw) \- \_)))))
 

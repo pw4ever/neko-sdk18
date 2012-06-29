@@ -173,7 +173,7 @@ given arguments. Arguments could be either actual values or keywords
   [element container-type]
   (if (vector? element)
     (let [[el-type attributes & inside-elements] element
-          klass (kw/classname el-type)
+          ^Class klass (kw/classname el-type)
           obj (gensym (.getSimpleName klass))]
       `(let [~obj ~(make-constructor-call klass attributes)]
          ~@(process-attributes el-type obj attributes container-type)

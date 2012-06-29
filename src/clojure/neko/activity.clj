@@ -137,12 +137,14 @@
                           ~'onStop ~'superOnStop
                           ~'onDestroy ~'superOnDestroy})
        ~(when create
-          `(defn ~(symbol (str prefix "onCreate")) [~'this ~'savedInstanceState]
+          `(defn ~(symbol (str prefix "onCreate"))
+             [~(vary-meta 'this assoc :tag name),
+              ^android.os.Bundle ~'savedInstanceState]
              (.superOnCreate ~'this ~'savedInstanceState)
              (def ~(symbol sname) ~'this)
              (~create ~'this ~'savedInstanceState)))
        ~@(map #(let [func (options %)
-                     event-name (capitalize (.getName %))]
+                     event-name (capitalize (.getName ^clojure.lang.Keyword %))]
                  (when func
                    `(defn ~(symbol (str prefix "on" event-name)) [~'this]
                       (~(symbol (str ".superOn" event-name)) ~'this)

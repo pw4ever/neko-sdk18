@@ -3,7 +3,8 @@
   (:require [neko.application :as app])
   (:import clojure.lang.Keyword android.content.Context
            android.widget.Toast android.app.Notification
-           android.content.Intent android.app.PendingIntent))
+           android.content.Intent android.app.PendingIntent
+           android.app.NotificationManager))
 
 ;; ### Toasts
 
@@ -16,9 +17,11 @@
   "Creates a Toast object using a text message and a keyword
   representing how long a toast should be visible (`:short` or
   `:long`). The application context wiil be used."
-  ^Toast [message length]
-  {:pre [(contains? toast-length length)]}
-  (Toast/makeText app/context message (toast-length length)))
+  ^Toast [^String message, length]
+  {:pre [(or (number? length) (contains? toast-length length))]}
+  (let [^int length (if (number? length)
+                      length (toast-length length))]
+    (Toast/makeText ^Context app/context message length)))
 
 ;; ### Notifications
 
@@ -29,18 +32,20 @@
 
 (defn- notification-manager
   "Returns the notification manager instance."
-  []
-  (.getSystemService app/context Context/NOTIFICATION_SERVICE))
+  ^NotificationManager []
+  (.getSystemService ^Context app/context Context/NOTIFICATION_SERVICE))
 
 (defn- construct-pending-intent
   "Creates a PendingIntent instance from a vector where the first
   element is a keyword representing the action type, and the second
   element is a action string to create an Intent from."
-  [[action-type action]]
-  (case action-type
-    :activity (PendingIntent/getActivity app/context 0 (Intent. action) 0)
-    :broadcast (PendingIntent/getBroadcast app/context 0 (Intent. action) 0)
-    :service (PendingIntent/getService app/context 0 (Intent. action) 0)))
+  [[action-type, ^String action]]
+  (let [^Context ctx app/context
+        ^Intent intent (Intent. action)]
+    (case action-type
+      :activity (PendingIntent/getActivity ctx 0 intent 0)
+      :broadcast (PendingIntent/getBroadcast ctx 0 intent 0)
+      :service (PendingIntent/getService ctx 0 intent 0))))
 
 (defn notification
   "Creates a Notification instance. If icon is not provided uses the
@@ -68,9 +73,9 @@
 (defn fire
   "Sends the notification to the status bar. ID is optional and could be
   either an integer or a keyword."
-  ([^Notification notification]
+  ([notification]
      (.notify (notification-manager) (new-id) notification))
-  ([id, ^Notification notification]
+  ([id notification]
      (let [id (if (keyword? id)
                 (if (contains? @notification-ids id)
                   (@notification-ids id)

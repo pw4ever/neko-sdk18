@@ -39,9 +39,9 @@
   [fn-name doc-string method-name]
   `(defn ~fn-name
      ~doc-string
-     ([tag# message#]
+     ([^String tag#, ^String message#]
       (. Log (~method-name tag# message#)))
-     ([tag# message# throwable#]
+     ([^String tag#, ^String, message#, ^Throwable throwable#]
       (. Log (~method-name tag# message# throwable#)))))
 
 (deflogfn log-debug "Sends a DEBUG log message." d)

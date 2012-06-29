@@ -43,7 +43,8 @@
       :extends ~extends
       :exposes-methods {~'onCreate ~'superOnCreate})
      ~(when (not= create :later)
-        `(defn ~(symbol (str prefix "onCreate")) [~'this]
+        `(defn ~(symbol (str prefix "onCreate"))
+           [~(vary-meta 'this assoc :tag name)]
            (.superOnCreate ~'this)
            (define-context ~'this)
            (~create ~'this)))))

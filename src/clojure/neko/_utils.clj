@@ -42,4 +42,4 @@
 (defn capitalize
   "Takes a string and upper-cases the first letter in it."
   [s]
-  (str (.toUpperCase (.substring s 0 1)) (.substring s 1)))
+  (str (.toUpperCase (subs s 0 1)) (subs s 1)))
