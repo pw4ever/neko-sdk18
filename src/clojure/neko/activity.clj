@@ -13,12 +13,11 @@
   "Utilities to aid in working with an activity."
   {:author "Daniel Solano Gómez"}
   (:import android.app.Activity
-           android.widget.Toast
-           android.view.View
-           clojure.lang.IFn)
+           android.view.View)
   (:require [neko.context :as context])
   (:use neko.-protocols.resolvable
         neko.-utils
+        [neko.debug :only [safe-for-ui]]
         [neko.context :only [*context*]]))
 
 (def 
@@ -112,23 +111,28 @@
 
   :extends, :prefix - same as for `gen-class`.
 
+  :bind-to - symbol to bind the Activity object to in the onCreate
+  method. Relevant only if :create is used.
+
   :create - takes a two-argument function. Generates a handler for
   activity's `onCreate` event which automatically calls the
-  superOnCreate method and creates a var with activity's simple name
-  to store the activity object. Then calls the provided function onto
-  the Application object.
+  superOnCreate method and creates a var with the name denoted by
+  `:bind-to` (or activity's lower-cased name by default) to store the
+  activity object. Then calls the provided function onto the
+  Application object.
 
   :start, :restart, :resume, :pause, :stop, :destroy - same as :create
   but require a one-argument function."
-  [name & {:keys [extends prefix create] :as options}]
+  [name & {:keys [extends prefix create bind-to] :as options}]
   (let [sname (simple-name name)
-        prefix (or prefix (str sname "-"))]
+        prefix (or prefix (str sname "-"))
+        bind-to (or bind-to (symbol (unicaseize sname)))]
     `(do
        (gen-class
         :name ~name
         :main false
         :prefix ~prefix
-        :extends ~(or extends android.app.Activity)
+        :extends ~(or extends Activity)
         :exposes-methods {~'onCreate ~'superOnCreate
                           ~'onStart ~'superOnStart
                           ~'onRestart ~'superOnRestart
@@ -141,12 +145,13 @@
              [~(vary-meta 'this assoc :tag name),
               ^android.os.Bundle ~'savedInstanceState]
              (.superOnCreate ~'this ~'savedInstanceState)
-             (def ~(symbol sname) ~'this)
+             (def ~(vary-meta bind-to assoc :tag name) ~'this)
              (~create ~'this ~'savedInstanceState)))
        ~@(map #(let [func (options %)
                      event-name (capitalize (.getName ^clojure.lang.Keyword %))]
                  (when func
-                   `(defn ~(symbol (str prefix "on" event-name)) [~'this]
+                   `(defn ~(symbol (str prefix "on" event-name))
+                      [~(vary-meta 'this assoc :tag name)]
                       (~(symbol (str ".superOn" event-name)) ~'this)
                       (~func ~'this))))
               [:start :restart :resume :pause :stop :destroy]))))
@@ -159,7 +164,7 @@
   `*context*` inside the thread. If they were not bound in the thread
   called from, the values of `*activity*` and `*context*` would be
   bound to the `activity` argument."
-  [^Activity activity ^IFn f]
+  [^Activity activity f]
   (let [dynamic-activity (if (bound? #'*activity*) *activity* activity)
         dynamic-context (if (bound? #'*context*) *context* activity)]
     (.runOnUiThread activity
@@ -167,10 +172,7 @@
                       (run [this]
                         (binding [*activity* dynamic-activity
                                   *context* dynamic-context]
-                          (try (f)
-                               (catch Throwable e
-                                 (.show (Toast/makeText activity
-                                                        (str e) 1))))))))))
+                          (safe-for-ui (f))))))))
 
 (defmacro do-ui
   "Runs the macro body on the UI thread.  If this macro is called on the UI

@@ -43,3 +43,8 @@
   "Takes a string and upper-cases the first letter in it."
   [s]
   (str (.toUpperCase (subs s 0 1)) (subs s 1)))
+
+(defn unicaseize
+  "Takes a string lower-cases the first letter in it."
+  [s]
+  (str (.toLowerCase (subs s 0 1)) (subs s 1)))

@@ -13,7 +13,7 @@
   "Contains useful tools to be used while developing the application."
   (:use [neko.init :only [is-debug]]
         [neko.notify :only [toast]])
-  (:import clojure.lang.IFn android.widget.Toast))
+  (:import android.widget.Toast))
 
 ;; This atom stores the last exception happened on the UI thread.
 ;;
@@ -33,7 +33,7 @@
 (defn safe-for-ui*
   "Wraps the given function inside a try..catch block and notify user
   using a Toast if an exception happens."
-  [^IFn f]
+  [f]
   (try (f)
        (catch Throwable e
          (handle-exception-from-ui-thread e))))
