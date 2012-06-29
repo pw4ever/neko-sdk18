@@ -1,10 +1,9 @@
 (ns neko.notify
   "Provides convenient wrappers for Toast and Notification APIs."
   (:require [neko.application :as app])
-  (:import clojure.lang.Keyword android.content.Context
-           android.widget.Toast android.app.Notification
-           android.content.Intent android.app.PendingIntent
-           android.app.NotificationManager))
+  (:import android.content.Context android.widget.Toast
+           android.app.Notification android.content.Intent
+           android.app.PendingIntent android.app.NotificationManager))
 
 ;; ### Toasts
 
@@ -17,7 +16,7 @@
   "Creates a Toast object using a text message and a keyword
   representing how long a toast should be visible (`:short` or
   `:long`). The application context wiil be used."
-  ^Toast [^String message, length]
+  ^android.widget.Toast [^String message, length]
   {:pre [(or (number? length) (contains? toast-length length))]}
   (let [^int length (if (number? length)
                       length (toast-length length))]
@@ -51,7 +50,8 @@
   "Creates a Notification instance. If icon is not provided uses the
   default notification icon."
   [& {:keys [icon ticker-text when content-title content-text action]
-    :or {icon @default-notification-icon, when (System/currentTimeMillis)}}]
+      :or {icon @default-notification-icon, when (System/currentTimeMillis)}}]
+  {:pre [icon]}
   (let [notification (Notification. icon ticker-text when)]
     (.setLatestEventInfo notification app/context content-title content-text
                          (construct-pending-intent action))

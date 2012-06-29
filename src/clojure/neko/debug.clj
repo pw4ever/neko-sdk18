@@ -12,8 +12,7 @@
 (ns neko.debug
   "Contains useful tools to be used while developing the application."
   (:use [neko.init :only [is-debug]]
-        [neko.notify :only [toast]])
-  (:import android.widget.Toast))
+        [neko.notify :only [toast]]))
 
 ;; This atom stores the last exception happened on the UI thread.
 ;;

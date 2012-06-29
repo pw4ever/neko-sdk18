@@ -11,8 +11,7 @@
 
 (ns neko.init
   "Contains functions for neko initialization and setting runtime flags."
-  (:require neko.compilation)
-  (:import android.content.pm.ApplicationInfo))
+  (:require neko.compilation))
 
 (defn- property-set?
   "Checks if the given property keyword is set to true during the

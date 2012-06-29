@@ -16,8 +16,8 @@
         [neko.-utils :only [capitalize]]
         [neko.listeners.view :only [on-click-call]])
   (:require [neko.ui.mapping :as kw])
-  (:import [android.widget Toast LinearLayout$LayoutParams]
-           [android.view View ViewGroup$LayoutParams]))
+  (:import [android.widget LinearLayout$LayoutParams]
+           [android.view ViewGroup$LayoutParams]))
 
 ;; ## Attributes
 

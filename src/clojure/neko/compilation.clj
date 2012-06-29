@@ -56,7 +56,7 @@
 (defn init
   "Initialises the compilation path, creating or cleaning cache directory as
   necessary."
-  ([^Context context ^String dir-name]
+  ([^Context context dir-name]
    (locking cache-dir
      (when-not @cache-dir
        (let [dir  (.getDir context dir-name Context/MODE_PRIVATE)
@@ -64,5 +64,5 @@
          (reset! cache-dir dir)
          (System/setProperty "clojure.compile.path" path)
          (alter-var-root #'clojure.core/*compile-path* (constantly path))))))
-  ([^Context context]
+  ([context]
    (init context default-cache-dir)))
