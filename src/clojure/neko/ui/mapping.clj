@@ -14,7 +14,7 @@
   actual UI classes, define the hierarchy relations between the
   elements and the values for the keywords representing values."
   (:require [clojure.string :as string])
-  (:import [android.widget LinearLayout Button EditText]
+  (:import [android.widget LinearLayout Button EditText ListView]
            [android.view ViewGroup$LayoutParams]))
 
 ;; This atom keeps all the relations inside the map.
@@ -27,6 +27,8 @@
                     :parents [:layout-params :id]}
     :edit {:classname android.widget.EditText
            :parents [:layout-params :id]}
+    :list-view {:classname android.widget.ListView
+                :parents [:layout-params :id]}
     :layout-params {:classname ViewGroup$LayoutParams
                     :values {:fill ViewGroup$LayoutParams/FILL_PARENT
                              :wrap ViewGroup$LayoutParams/WRAP_CONTENT}}}))
