@@ -26,7 +26,7 @@
 code of setters.
 
 `el-type` is the keyword for either the UI element type or any of the
-parent types.
+trait types.
 
 `object-symbol` is an symbol for the UI element to apply setters to.
 
@@ -139,16 +139,16 @@ given arguments. Arguments could be either actual values or keywords
 (defn process-attributes
   "Takes an UI element type, its object symbol and a map of
   attributes. Consequently calls transform-attributes methods on all
-  element's parents, in the end calls
-  `default-setters-from-attributes` on what is left from the
-  attributes map. Returns the generated code for all attributes."
+  element's traits, in the end calls `default-setters-from-attributes`
+  on what is left from the attributes map. Returns the generated code
+  for all attributes."
   [el-type obj attributes container-type]
   (let [all-attributes (merge (kw/default-attributes el-type) attributes)
         [rest-attributes generated-code]
         (reduce (fn [[attrs gen-code] type]
                   (transform-attributes type obj attrs gen-code container-type))
                 [all-attributes ()]
-                (conj (kw/all-parents el-type) el-type))]
+                (conj (kw/all-traits el-type) el-type))]
     (concat generated-code
             (default-setters-from-attributes el-type obj rest-attributes))))
 

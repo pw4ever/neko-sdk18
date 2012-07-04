@@ -21,14 +21,14 @@
 (def ^{:private true} keyword-mapping
   (atom
    {:button {:classname android.widget.Button
-             :parents [:layout-params :id :on-click]
+             :traits [:layout-params :id :on-click]
              :attributes {:text "Default button"}}
     :linear-layout {:classname android.widget.LinearLayout
-                    :parents [:layout-params :id]}
+                    :traits [:layout-params :id]}
     :edit {:classname android.widget.EditText
-           :parents [:layout-params :id]}
+           :traits [:layout-params :id]}
     :list-view {:classname android.widget.ListView
-                :parents [:layout-params :id]}
+                :traits [:layout-params :id]}
     :layout-params {:classname ViewGroup$LayoutParams
                     :values {:fill ViewGroup$LayoutParams/FILL_PARENT
                              :wrap ViewGroup$LayoutParams/WRAP_CONTENT}}}))
@@ -49,19 +49,19 @@
                                 " isn't present in the mapping."))))
     classname-or-kw))
 
-(defn add-parent!
-  "Defines the `parent-kw` to be the parent of `kw`."
-  [kw parent-kw]
-  (swap! keyword-mapping update-in [kw :parents] conj parent-kw))
+(defn add-trait!
+  "Defines the `kw` to implement trait specified with `trait-kw`."
+  [kw trait-kw]
+  (swap! keyword-mapping update-in [kw :traits] conj trait-kw))
 
-(defn all-parents
-  "Returns the list of all unique parents for `kw`. The list is built
+(defn all-traits
+  "Returns the list of all unique traits for `kw`. The list is built
   recursively."
   [kw]
-  (let [first-level-parents (get-in @keyword-mapping [kw :parents])]
-    (->> first-level-parents
-         (mapcat all-parents)
-         (concat first-level-parents)
+  (let [first-level-traits (get-in @keyword-mapping [kw :traits])]
+    (->> first-level-traits
+         (mapcat all-traits)
+         (concat first-level-traits)
          distinct)))
 
 (defn set-value!
@@ -102,14 +102,14 @@ keyword-mapping, form the value as
 (defn defelement
   "Defines the element of the given class with the provided name to
   use in the UI construction. Takes the element's classname, a list of
-  parents and a map of specific values as optional arguments."
-  [kw-name & {:keys [classname parents values attributes inherits]}]
+  traits and a map of specific values as optional arguments."
+  [kw-name & {:keys [classname traits values attributes inherits]}]
   (when inherits
     (swap! keyword-mapping #(assoc % kw-name (inherits %))))
   (when classname
     (set-classname! kw-name classname))
-  (when parents
-    (swap! keyword-mapping update-in [kw-name :parents] concat parents))
+  (when traits
+    (swap! keyword-mapping update-in [kw-name :traits] concat traits))
   (when values
     (swap! keyword-mapping update-in [kw-name :values] merge values))
   (when attributes
