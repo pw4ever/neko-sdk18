@@ -3,37 +3,45 @@
   Android entities via Bundles and Intents."
   (:import android.os.Bundle android.content.Intent))
 
-(defprotocol GenericKey
+(defprotocol GenericExtrasKey
   "If given a string returns itself, otherwise transforms a argument
   into a string."
   (generic-key [key]))
 
-(extend-protocol GenericKey
+(extend-protocol GenericExtrasKey
   String
   (generic-key [s] s)
 
   clojure.lang.Keyword
   (generic-key [k] (.getName k)))
 
+;; This type acts as a wrapper around Bundle instance to be able to
+;; access it like an ordinar map.
+;;
+(deftype MapLikeBundle [^Bundle bundle]
+  clojure.lang.Associative
+  (containsKey [this k] (.containsKey bundle (generic-key k)))
+  (entryAt [this k] (clojure.lang.MapEntry. k (.get bundle (generic-key k))))
+  (valAt [this k] (.get bundle (generic-key k)))
+  (valAt [this k default] (let [key (generic-key k)]
+                      (if (.containsKey bundle key)
+                        (.get bundle (generic-key key))
+                        default)))
+  (seq [this] (map (fn [k] [k (.get bundle k)])
+                   (.keySet bundle))))
+
 (defprotocol MapLike
-  "Returns a wrapper of the provided object that allows to extract
-  values from it like from an ordinar map."
+  "A protocol that helps to wrap objects of different types into
+  MapLikeBundle."
   (like-map [this]))
 
 (extend-protocol MapLike
   Bundle
   (like-map [b]
-    (proxy [clojure.lang.APersistentMap] []
-      (containsKey [k] (.containsKey b (generic-key k)))
-      (valAt
-        ([k] (.get b (generic-key k)))
-        ([k default] (let [key (generic-key k)]
-                       (if (.containsKey b key)
-                         (.get b (generic-key key))
-                         default))))
-      (seq [] (map (fn [k] [k (.get b k)])
-                   (.keySet b)))))
+    (MapLikeBundle. b))
 
   Intent
   (like-map [i]
-    (like-map (.getExtras i))))
+    (if-let [bundle (.getExtras i)]
+      (MapLikeBundle. bundle)
+      {})))
