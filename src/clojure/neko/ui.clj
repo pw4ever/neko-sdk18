@@ -55,13 +55,11 @@ should remove the attributes it processed from the map."
   [id element]
   (swap! ui-elements #(assoc % id element)))
 
-(defn by-id
-  "Resolves an UI object by its ID."
+(defn find-view-by-id
+  "Searches for UI element in the runtime elements map by its ID.
+  Returns nil if element is not found."
   [id]
-  (if-let [element (@ui-elements id)]
-    element
-    (throw (Exception. (str "The element with the ID " id
-                            " is not present in the elements map")))))
+  (@ui-elements id))
 
 (defmethod transform-attributes :id [el-type obj attributes generated-code _]
   [(dissoc attributes :id)

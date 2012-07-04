@@ -39,7 +39,8 @@
     (find-view :my_view)"
   {:author "Daniel Solano Gómez"}
   (:use neko.activity
-        neko.-protocols.resolvable))
+        neko.-protocols.resolvable
+        [neko.ui :only [find-view-by-id]]))
 
 (defn- nil-or-view?
   [x]
@@ -92,6 +93,11 @@
 
   clojure.lang.Keyword
   (find-view [id]
-    {:pre [(has-*activity*?)]
-     :post [(nil-or-view? %)]}
-    (find-view *activity* id)))
+    {:post [(nil-or-view? %)]}
+  ;; First tries to find the view in the runtime elements map. If it
+  ;; is not present, resolves the keyword as static resource view.
+    (if-let [view (find-view-by-id id)]
+      view
+      (do (assert (has-*activity*?))
+          (find-view *activity* id)))))
+
