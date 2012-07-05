@@ -26,3 +26,10 @@
              (recur (inc i) rest (conj result curr))
              (recur (inc i) rest result)))))))
 
+(defn set-checked!
+  "Given a sequence of numbers checks the respective ListView
+  elements."
+  [lv checked-ids]
+  (doseq [i checked-ids]
+    (.setItemChecked lv i true)))
+
