@@ -123,4 +123,5 @@
   HashMap (wrapped with `like-map`) and transforms it into a data
   value using Clojure reader."
   [sp-map key]
-  (read-string (get sp-map key)))
+  (when-let [val (get sp-map key)]
+   (read-string val)))
