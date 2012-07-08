@@ -21,14 +21,14 @@
 (def ^{:private true} keyword-mapping
   (atom
    {:button {:classname android.widget.Button
-             :traits [:layout-params :id :on-click]
+             :traits [:layout-params :id :on-click :def]
              :attributes {:text "Default button"}}
     :linear-layout {:classname android.widget.LinearLayout
-                    :traits [:layout-params :id]}
+                    :traits [:layout-params :id :def]}
     :edit {:classname android.widget.EditText
-           :traits [:layout-params :id]}
+           :traits [:layout-params :id :def]}
     :list-view {:classname android.widget.ListView
-                :traits [:layout-params :id]}
+                :traits [:layout-params :id :def]}
     :layout-params {:classname ViewGroup$LayoutParams
                     :values {:fill ViewGroup$LayoutParams/FILL_PARENT
                              :wrap ViewGroup$LayoutParams/WRAP_CONTENT}}}))

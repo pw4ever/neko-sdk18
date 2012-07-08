@@ -67,6 +67,12 @@ should remove the attributes it processed from the map."
      (conj generated-code `(register-ui-element ~id ~obj))
      generated-code)])
 
+(defmethod transform-attributes :def [_ obj attributes generated-code __]
+  [(dissoc attributes :def)
+   (if-let [sym (:def attributes)]
+     (conj generated-code `(def ~sym ~obj))
+     generated-code)])
+
 ;; ### Layout parameters attributes
 
 (defn default-layout-params
