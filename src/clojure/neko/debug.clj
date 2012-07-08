@@ -23,7 +23,7 @@
   exception for the future reference."
   [e]
   (reset! ui-exception e)
-  (.show (toast (str e) :long)))
+  (toast (str e) :long))
 
 (defn ui-e
   "Returns an uncaught exception happened on UI thread."

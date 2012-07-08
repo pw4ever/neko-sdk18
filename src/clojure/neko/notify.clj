@@ -16,11 +16,11 @@
   "Creates a Toast object using a text message and a keyword
   representing how long a toast should be visible (`:short` or
   `:long`). The application context wiil be used."
-  ^android.widget.Toast [^String message, length]
-  {:pre [(or (number? length) (contains? toast-length length))]}
-  (let [^int length (if (number? length)
-                      length (toast-length length))]
-    (Toast/makeText ^Context app/context message length)))
+  [^String message, length]
+  {:pre [(contains? toast-length length)]}
+  (let [^int length (toast-length length)
+        ^Toast toast (Toast/makeText ^Context app/context message length)]
+    (.show toast)))
 
 ;; ### Notifications
 
