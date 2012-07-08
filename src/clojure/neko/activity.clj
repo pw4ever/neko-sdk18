@@ -111,22 +111,23 @@
 
   :extends, :prefix - same as for `gen-class`.
 
-  :bind-to - symbol to bind the Activity object to in the onCreate
+  :def - symbol to bind the Activity object to in the onCreate
   method. Relevant only if :create is used.
 
   :create - takes a two-argument function. Generates a handler for
   activity's `onCreate` event which automatically calls the
   superOnCreate method and creates a var with the name denoted by
-  `:bind-to` (or activity's lower-cased name by default) to store the
+  `:def` (or activity's lower-cased name by default) to store the
   activity object. Then calls the provided function onto the
   Application object.
 
   :start, :restart, :resume, :pause, :stop, :destroy - same as :create
   but require a one-argument function."
-  [name & {:keys [extends prefix create bind-to] :as options}]
-  (let [sname (simple-name name)
+  [name & {:keys [extends prefix create def] :as options}]
+  (let [options (or options {}) ;; Handle no-options case
+        sname (simple-name name)
         prefix (or prefix (str sname "-"))
-        bind-to (or bind-to (symbol (unicaseize sname)))]
+        def (or def (symbol (unicaseize sname)))]
     `(do
        (gen-class
         :name ~name
@@ -145,7 +146,7 @@
              [~(vary-meta 'this assoc :tag name),
               ^android.os.Bundle ~'savedInstanceState]
              (.superOnCreate ~'this ~'savedInstanceState)
-             (def ~(vary-meta bind-to assoc :tag name) ~'this)
+             (def ~(vary-meta def assoc :tag name) ~'this)
              (~create ~'this ~'savedInstanceState)))
        ~@(map #(let [func (options %)
                      event-name (capitalize (.getName ^clojure.lang.Keyword %))]
