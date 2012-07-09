@@ -49,7 +49,7 @@
   AlertDialogBuilder
   (create [this]
     {:post [(instance? android.app.AlertDialog %)]}
-    (.create (get-builder-object this)))
+    (.create ^AlertDialog$Builder (get-builder-object this)))
 
   (get-builder-object [this]
     {:post [(instance? AlertDialog$Builder %)]}

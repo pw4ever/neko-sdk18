@@ -13,12 +13,15 @@
   "Contains the tools to create and manipulate Application instances."
   (:use [neko.-utils :only [simple-name]]
         [neko.init :only [init]])
-  (:import android.app.Application))
+  (:import android.app.Application
+           android.content.Context))
+
+(declare ^Context context)
 
 (defn define-context
   "Define a var to store the application context."
   [ctx]
-  (def context ctx))
+  (def ^Context context ctx))
 
 (defmacro defapplication
   "Creates an application class with the given full package-qualified

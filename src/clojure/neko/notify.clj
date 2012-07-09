@@ -18,9 +18,8 @@
   `:long`). The application context wiil be used."
   [^String message, length]
   {:pre [(contains? toast-length length)]}
-  (let [^int length (toast-length length)
-        ^Toast toast (Toast/makeText ^Context app/context message length)]
-    (.show toast)))
+  (.show
+   ^Toast (Toast/makeText app/context message ^int (toast-length length))))
 
 ;; ### Notifications
 
@@ -29,22 +28,21 @@
 (defn set-default-notification-icon! [icon]
   (reset! default-notification-icon icon))
 
-(defn- notification-manager
+(defn- ^NotificationManager notification-manager
   "Returns the notification manager instance."
-  ^NotificationManager []
-  (.getSystemService ^Context app/context Context/NOTIFICATION_SERVICE))
+  []
+  (.getSystemService app/context Context/NOTIFICATION_SERVICE))
 
 (defn- construct-pending-intent
   "Creates a PendingIntent instance from a vector where the first
   element is a keyword representing the action type, and the second
   element is a action string to create an Intent from."
   [[action-type, ^String action]]
-  (let [^Context ctx app/context
-        ^Intent intent (Intent. action)]
+  (let [^Intent intent (Intent. action)]
     (case action-type
-      :activity (PendingIntent/getActivity ctx 0 intent 0)
-      :broadcast (PendingIntent/getBroadcast ctx 0 intent 0)
-      :service (PendingIntent/getService ctx 0 intent 0))))
+      :activity (PendingIntent/getActivity app/context 0 intent 0)
+      :broadcast (PendingIntent/getBroadcast app/context 0 intent 0)
+      :service (PendingIntent/getService app/context 0 intent 0))))
 
 (defn notification
   "Creates a Notification instance. If icon is not provided uses the

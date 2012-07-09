@@ -5,6 +5,7 @@
   (:use [neko.application :only [context]])
   (:import android.os.Bundle android.content.Intent
            android.content.SharedPreferences
+           android.content.SharedPreferences$Editor
            android.content.Context))
 
 (defprotocol GenericExtrasKey
@@ -94,10 +95,10 @@
                mode (sp-access-modes mode))]
     (.getSharedPreferences context name mode)))
 
-(defn assoc!
+(defn ^SharedPreferences$Editor assoc!
   "Puts the value into the SharedPreferences editor instance. Accepts
   limited number of data types supported by SharedPreferences."
-  [sp-editor key value]
+  [^SharedPreferences$Editor sp-editor, key value]
   (let [key (generic-key key)]
     (condp #(= (type %2) %1) value
       java.lang.Boolean (.putBoolean sp-editor key value)
@@ -110,11 +111,11 @@
       (throw (Exception. (str "SharedPreferences doesn't support type: "
                               (type value)))))))
 
-(defn assoc-arbitrary!
+(defn ^SharedPreferences$Editor assoc-arbitrary!
   "Puts `value` of an arbitrary Clojure data type into given
   SharedPreferences editor instance. Data is printed into a string and
   stored as a string value."
-  [sp-editor key value]
+  [^SharedPreferences$Editor sp-editor key value]
   (let [key (generic-key key)]
     (.putString sp-editor key (pr-str value))))
 
