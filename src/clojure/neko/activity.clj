@@ -147,7 +147,7 @@
               ^android.os.Bundle ~'savedInstanceState]
              (.superOnCreate ~'this ~'savedInstanceState)
              (def ~(vary-meta def assoc :tag name) ~'this)
-             (~create ~'this ~'savedInstanceState)))
+             (~on-create ~'this ~'savedInstanceState)))
        ~@(map #(let [func (options %)
                      event-name (keyword->camelcase %)]
                  (when func
@@ -180,4 +180,4 @@
   "Runs the macro body on the UI thread.  If this macro is called on the UI
   thread, it will evaluate immediately."
   [activity & body]
-  `(run-on-ui-thread* ~activity (fn [] ~@body)))
+  `(on-ui* ~activity (fn [] ~@body)))
