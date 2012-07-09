@@ -33,7 +33,7 @@
   []
   (.getSystemService app/context Context/NOTIFICATION_SERVICE))
 
-(defn- construct-pending-intent
+(defn construct-pending-intent
   "Creates a PendingIntent instance from a vector where the first
   element is a keyword representing the action type, and the second
   element is a action string to create an Intent from."
