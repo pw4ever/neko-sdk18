@@ -35,8 +35,8 @@
   application's `onCreate` event which automatically calls the
   superOnCreate method and then calls the provided function onto the
   Application object."
-  [name & {:keys [extends prefix create]
-           :or {extends android.app.Application, create init,
+  [name & {:keys [extends prefix on-create]
+           :or {extends android.app.Application, on-create init,
                 prefix (str (simple-name name) "-")}}]
   `(do
      (gen-class
@@ -45,9 +45,9 @@
       :prefix ~prefix
       :extends ~extends
       :exposes-methods {~'onCreate ~'superOnCreate})
-     ~(when (not= create :later)
+     ~(when (not= on-create :later)
         `(defn ~(symbol (str prefix "onCreate"))
            [~(vary-meta 'this assoc :tag name)]
            (.superOnCreate ~'this)
            (define-context ~'this)
-           (~create ~'this)))))
+           (~on-create ~'this)))))

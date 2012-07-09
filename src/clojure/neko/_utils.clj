@@ -11,7 +11,8 @@
 
 (ns neko.-utils
   "Internal utilities used by Neko, not intended for external consumption."
-  {:author "Daniel Solano Gómez"})
+  {:author "Daniel Solano Gómez"}
+  (:use [clojure.string :only [split join]]))
 
 (defn static-field-value
   "Takes a keyword and converts it to a field name by getting the name from the
@@ -34,9 +35,10 @@
   (or (integer? x)
       (keyword? x)))
 
-(defn simple-name [full-class-name]
+(defn simple-name
   "Takes a possibly package-qualified class name symbol and returns a
   simple class name from it."
+  [full-class-name]
   (nth (re-find #"(.*\.)?(.+)" (str full-class-name)) 2))
 
 (defn capitalize
@@ -48,3 +50,20 @@
   "Takes a string lower-cases the first letter in it."
   [s]
   (str (.toLowerCase (subs s 0 1)) (subs s 1)))
+
+(defn keyword->camelcase
+  "Takes a keyword and transforms its name into camelCase."
+  [kw]
+  (let [[first & rest] (split (name kw) #"-")]
+    (join (cons first (map capitalize rest)))))
+
+(defn keyword->setter
+  "Takes a keyword and transforms its name into the setter symbol.
+
+  Transforms keyword name into camelCase, appends \".set\" at the
+  beginning and capitalizes the first symbol."
+  [kw]
+  (->> (keyword->camelcase kw)
+       capitalize
+       (str ".set")
+       symbol))

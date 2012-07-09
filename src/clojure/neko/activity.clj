@@ -123,7 +123,7 @@
 
   :start, :restart, :resume, :pause, :stop, :destroy - same as :create
   but require a one-argument function."
-  [name & {:keys [extends prefix create def] :as options}]
+  [name & {:keys [extends prefix on-create def] :as options}]
   (let [options (or options {}) ;; Handle no-options case
         sname (simple-name name)
         prefix (or prefix (str sname "-"))
@@ -141,7 +141,7 @@
                           ~'onPause ~'superOnPause
                           ~'onStop ~'superOnStop
                           ~'onDestroy ~'superOnDestroy})
-       ~(when create
+       ~(when on-create
           `(defn ~(symbol (str prefix "onCreate"))
              [~(vary-meta 'this assoc :tag name),
               ^android.os.Bundle ~'savedInstanceState]
@@ -149,15 +149,16 @@
              (def ~(vary-meta def assoc :tag name) ~'this)
              (~create ~'this ~'savedInstanceState)))
        ~@(map #(let [func (options %)
-                     event-name (capitalize (.getName ^clojure.lang.Keyword %))]
+                     event-name (keyword->camelcase %)]
                  (when func
-                   `(defn ~(symbol (str prefix "on" event-name))
+                   `(defn ~(symbol event-name)
                       [~(vary-meta 'this assoc :tag name)]
-                      (~(symbol (str ".superOn" event-name)) ~'this)
+                      (~(symbol (str ".super" (capitalize event-name))) ~'this)
                       (~func ~'this))))
-              [:start :restart :resume :pause :stop :destroy]))))
+              [:on-start :on-restart :on-resume
+               :on-pause :on-stop :on-destroy]))))
 
-(defn run-on-ui-thread*
+(defn on-ui*
   "Runs the given nullary function on the UI thread.  If this function is
   called on the UI thread, it will evaluate immediately.
 
@@ -175,7 +176,7 @@
                                   *context* dynamic-context]
                           (safe-for-ui (f))))))))
 
-(defmacro do-ui
+(defmacro on-ui
   "Runs the macro body on the UI thread.  If this macro is called on the UI
   thread, it will evaluate immediately."
   [activity & body]
