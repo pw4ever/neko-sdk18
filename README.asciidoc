@@ -25,28 +25,8 @@ Features
 WARNING: Note that the libraries are under heavy development.  APIs are subject
 to change.  In particular, `neko.threading` will be changed.
 
-The toolkit comes as two components:
-
-. Simplified build support for Clojure using Android’s Ant-based build system,
-  and
-
-. The following Clojure libraries:
-
-  * `neko.compilation` helps set up dynamic compilation.
-
-  * `neko.context` helps retrieve resources from the application’s context.
-
-  * `neko.listeners` contains namespaces that take the tedium to adding
-    callback code to various widgets.
-
-  * `neko.log` interns functions that make logging from your code clean and
-    simple.
-
-  * `neko.threading` will contain utilities to manage asynchronous tasks and
-    working with UI threads.
-
-  * `neko.ui` contains tools to define and manage Android UI in
-    Clojure without touching the XML layouts.
+The detailed list of namespaces and features is available
+https://github.com/alexander-yakushev/neko/wiki/Namespaces[here].
 
 Requirements
 ------------
@@ -112,7 +92,7 @@ dependency in your project. In other case put the following line in
 the list of your dependencies:
 
 ---
-[neko/neko "1.1.0-SNAPSHOT"]
+[neko/neko "1.1.6"]
 ---
 
 === 4. Write your first Android application in Clojure ===
