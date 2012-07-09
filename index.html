@@ -3029,14 +3029,7 @@ net.brehaut.ClojureTools = (function (SH) {
   };
 })(SyntaxHighlighter);
 </script><title>neko -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name">neko</h1><h2 class="project-version">1.1.6-SNAPSHOT</h2><br /><p>Neko is a toolkit designed to make Android development using Clojure easier and more fun.</p>
-</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">android/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.4.0</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#neko.-protocols.resolvable">neko.-protocols.resolvable</a></li><li><a href="#neko.-utils">neko.-utils</a></li><li><a href="#neko.activity">neko.activity</a></li><li><a href="#neko.application">neko.application</a></li><li><a href="#neko.compilation">neko.compilation</a></li><li><a href="#neko.context">neko.context</a></li><li><a href="#neko.data">neko.data</a></li><li><a href="#neko.debug">neko.debug</a></li><li><a href="#neko.dialog.alert">neko.dialog.alert</a></li><li><a href="#neko.find-view">neko.find-view</a></li><li><a href="#neko.init">neko.init</a></li><li><a href="#neko.listeners.adapter-view">neko.listeners.adapter-view</a></li><li><a href="#neko.listeners.dialog">neko.listeners.dialog</a></li><li><a href="#neko.listeners.text-view">neko.listeners.text-view</a></li><li><a href="#neko.listeners.view">neko.listeners.view</a></li><li><a href="#neko.log">neko.log</a></li><li><a href="#neko.notify">neko.notify</a></li><li><a href="#neko.threading">neko.threading</a></li><li><a href="#neko.ui">neko.ui</a></li><li><a href="#neko.ui.listview">neko.ui.listview</a></li><li><a href="#neko.ui.mapping">neko.ui.mapping</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.-protocols.resolvable" name="neko.-protocols.resolvable"><h1 class="project-name">neko.-protocols.resolvable</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Home of the Resolvable protocol and related utilities.</p>
+</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">android/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.4.0</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#neko.-protocols.resolvable">neko.-protocols.resolvable</a></li><li><a href="#neko.-utils">neko.-utils</a></li><li><a href="#neko.activity">neko.activity</a></li><li><a href="#neko.application">neko.application</a></li><li><a href="#neko.compilation">neko.compilation</a></li><li><a href="#neko.context">neko.context</a></li><li><a href="#neko.data">neko.data</a></li><li><a href="#neko.debug">neko.debug</a></li><li><a href="#neko.dialog.alert">neko.dialog.alert</a></li><li><a href="#neko.find-view">neko.find-view</a></li><li><a href="#neko.init">neko.init</a></li><li><a href="#neko.listeners.adapter-view">neko.listeners.adapter-view</a></li><li><a href="#neko.listeners.dialog">neko.listeners.dialog</a></li><li><a href="#neko.listeners.text-view">neko.listeners.text-view</a></li><li><a href="#neko.listeners.view">neko.listeners.view</a></li><li><a href="#neko.log">neko.log</a></li><li><a href="#neko.notify">neko.notify</a></li><li><a href="#neko.threading">neko.threading</a></li><li><a href="#neko.ui">neko.ui</a></li><li><a href="#neko.ui.listview">neko.ui.listview</a></li><li><a href="#neko.ui.mapping">neko.ui.mapping</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.-protocols.resolvable" name="neko.-protocols.resolvable"><h1 class="project-name">neko.-protocols.resolvable</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Home of the Resolvable protocol and related utilities.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.-protocols.resolvable
   {:author &quot;Daniel Solano Gómez&quot;}
   (:import android.content.Context))</pre></td></tr><tr><td class="docs"><p>Resolves a resource reprensented as a keyword.</p>
@@ -3095,14 +3088,7 @@ this software.</p>
   as a resource.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn resolvable?
   [x]
-  (satisfies? Resolvable x))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.-utils" name="neko.-utils"><h1 class="project-name">neko.-utils</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Internal utilities used by Neko, not intended for external consumption.</p>
+  (satisfies? Resolvable x))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.-utils" name="neko.-utils"><h1 class="project-name">neko.-utils</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Internal utilities used by Neko, not intended for external consumption.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.-utils
   {:author &quot;Daniel Solano Gómez&quot;}
   (:use [clojure.string :only [split join]]))</pre></td></tr><tr><td class="docs"><p>Takes a keyword and converts it to a field name by getting the name from the
@@ -3145,14 +3131,7 @@ this software.</p>
   (-&gt;&gt; (keyword-&gt;camelcase kw)
        capitalize
        (str &quot;.set&quot;)
-       symbol))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.activity" name="neko.activity"><h1 class="project-name">neko.activity</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Utilities to aid in working with an activity.</p>
+       symbol))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.activity" name="neko.activity"><h1 class="project-name">neko.activity</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Utilities to aid in working with an activity.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.activity
   {:author &quot;Daniel Solano Gómez&quot;}
   (:import android.app.Activity
@@ -3308,14 +3287,7 @@ this software.</p>
   thread, it will evaluate immediately.</p>
 </td><td class="codes"><pre class="brush: clojure">(defmacro on-ui
   [activity &amp; body]
-  `(on-ui* ~activity (fn [] ~@body)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.application" name="neko.application"><h1 class="project-name">neko.application</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Contains the tools to create and manipulate Application instances.</p>
+  `(on-ui* ~activity (fn [] ~@body)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.application" name="neko.application"><h1 class="project-name">neko.application</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Contains the tools to create and manipulate Application instances.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.application
   (:use [neko.-utils :only [simple-name]]
         [neko.init :only [init]])
@@ -3351,14 +3323,7 @@ this software.</p>
            [~(vary-meta 'this assoc :tag name)]
            (.superOnCreate ~'this)
            (define-context ~'this)
-           (~on-create ~'this)))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.compilation" name="neko.compilation"><h1 class="project-name">neko.compilation</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Utility functions for managing the compilation environment when using
+           (~on-create ~'this)))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.compilation" name="neko.compilation"><h1 class="project-name">neko.compilation</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Utility functions for managing the compilation environment when using
   version of Clojure that supports dynamic compilation on the Dalvik virtual
   machine.</p>
 
@@ -3406,14 +3371,7 @@ this software.</p>
          (System/setProperty &quot;clojure.compile.path&quot; path)
          (alter-var-root #'clojure.core/*compile-path* (constantly path))))))
   ([context]
-   (init context default-cache-dir)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.context" name="neko.context"><h1 class="project-name">neko.context</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Utilities to aid in working with a context.</p>
+   (init context default-cache-dir)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.context" name="neko.context"><h1 class="project-name">neko.context</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Utilities to aid in working with a context.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.context
   {:author &quot;Daniel Solano Gómez&quot;}
   (:import android.content.Context)
@@ -3669,14 +3627,7 @@ allowing to use keyword keys instead of string ones.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn get-arbitrary
   [sp-map key]
   (when-let [val (get sp-map key)]
-   (read-string val)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.debug" name="neko.debug"><h1 class="project-name">neko.debug</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Contains useful tools to be used while developing the application.</p>
+   (read-string val)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.debug" name="neko.debug"><h1 class="project-name">neko.debug</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Contains useful tools to be used while developing the application.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.debug
   (:use [neko.init :only [is-debug]]
         [neko.notify :only [toast]]))</pre></td></tr><tr><td class="docs"><p>This atom stores the last exception happened on the UI thread.</p>
@@ -3700,14 +3651,7 @@ this software.</p>
   [&amp; body]
   (if is-debug
     `(safe-for-ui* (fn [] ~@body))
-    `(do ~@body)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.dialog.alert" name="neko.dialog.alert"><h1 class="project-name">neko.dialog.alert</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Helps build and manage alert dialogs.  The core functionality of this
+    `(do ~@body)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.dialog.alert" name="neko.dialog.alert"><h1 class="project-name">neko.dialog.alert</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Helps build and manage alert dialogs.  The core functionality of this
   namespace is built around the AlertDialogBuilder protocol.  This allows using
   the protocol with the FunctionalAlertDialogBuilder generated by new-builder
   as well as the AlertDialog.Builder class provided by the Android platform.</p>
@@ -3775,14 +3719,7 @@ this software.</p>
   ([context]
    {:pre  [(context? context)]
     :post [(instance? FunctionalAlertDialogBuilder %)]}
-   (FunctionalAlertDialogBuilder. context true)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.find-view" name="neko.find-view"><h1 class="project-name">neko.find-view</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Home of the ViewFinder protocol, which should simplify and unify use of the
+   (FunctionalAlertDialogBuilder. context true)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.find-view" name="neko.find-view"><h1 class="project-name">neko.find-view</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Home of the ViewFinder protocol, which should simplify and unify use of the
   findViewById method introduced in various Android classes.  To use the
   protocol, you need an object that supports findViewById, and these are:</p>
 
@@ -3870,14 +3807,7 @@ argument, simplifying the above call to:</p>
     (if-let [view (find-view-by-id id)]
       view
       (do (assert (has-*activity*?))
-          (find-view *activity* id)))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.init" name="neko.init"><h1 class="project-name">neko.init</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Contains functions for neko initialization and setting runtime flags.</p>
+          (find-view *activity* id)))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.init" name="neko.init"><h1 class="project-name">neko.init</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Contains functions for neko initialization and setting runtime flags.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.init
   (:require neko.compilation))</pre></td></tr><tr><td class="docs"><p>Checks if the given property keyword is set to true during the
   compilation of neko.</p>
@@ -3940,14 +3870,7 @@ nREPL server is enabled explicitly.</p>
        (let [result# (do ~@body)]
          ~@(for [[prop newval] bindings]
              `(System/setProperty (name ~prop) (get ~initial ~prop)))
-         result#))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.listeners.adapter-view" name="neko.listeners.adapter-view"><h1 class="project-name">neko.listeners.adapter-view</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Uility functions and macros for creating listeners corresponding to the
+         result#))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.listeners.adapter-view" name="neko.listeners.adapter-view"><h1 class="project-name">neko.listeners.adapter-view</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Uility functions and macros for creating listeners corresponding to the
   android.widget.AdapterView class.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.listeners.adapter-view
   {:author &quot;Daniel Solano Gómez&quot;})</pre></td></tr><tr><td class="docs"><p>Takes a function and yields an AdapterView.OnItemClickListener object that
@@ -4053,14 +3976,7 @@ this software.</p>
        (fn ~'item-handler [parent# view# position# id#]
          (handler-fn# :item parent# view# position# id#))
        (fn ~'nothing-handler [parent#]
-         (handler-fn# :nothing parent# nil nil nil)))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.listeners.dialog" name="neko.listeners.dialog"><h1 class="project-name">neko.listeners.dialog</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Uility functions and macros for setting listeners corresponding to the
+         (handler-fn# :nothing parent# nil nil nil)))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.listeners.dialog" name="neko.listeners.dialog"><h1 class="project-name">neko.listeners.dialog</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Uility functions and macros for setting listeners corresponding to the
   android.content DialogInterface interface.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.listeners.dialog
   {:author &quot;Daniel Solano Gómez&quot;}
@@ -4158,14 +4074,7 @@ this software.</p>
 </td><td class="codes"><pre class="brush: clojure">(defmacro on-multi-choice-click
   [&amp; body]
   `(on-multi-choice-click-call (fn [~'dialog ~'which ~'checked?] ~@body)))</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(comment -- OnShowListener is added in API level 8)</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.listeners.text-view" name="neko.listeners.text-view"><h1 class="project-name">neko.listeners.text-view</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Uility functions and macros for creating listeners corresponding to the
+</td><td class="codes"><pre class="brush: clojure">(comment -- OnShowListener is added in API level 8)</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.listeners.text-view" name="neko.listeners.text-view"><h1 class="project-name">neko.listeners.text-view</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Uility functions and macros for creating listeners corresponding to the
   android.widget.TextView class.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.listeners.text-view
   {:author &quot;Daniel Solano Gómez&quot;})</pre></td></tr><tr><td class="docs"><p>Takes a function and yields a TextView.OnEditorActionListener object that
@@ -4202,14 +4111,7 @@ this software.</p>
   action, otherwise logical false.</p>
 </td><td class="codes"><pre class="brush: clojure">(defmacro on-editor-action
   [&amp; body]
-  `(on-editor-action-call (fn [~'view ~'action-id ~'key-event] ~@body)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.listeners.view" name="neko.listeners.view"><h1 class="project-name">neko.listeners.view</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Uility functions and macros for setting listeners corresponding to the
+  `(on-editor-action-call (fn [~'view ~'action-id ~'key-event] ~@body)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.listeners.view" name="neko.listeners.view"><h1 class="project-name">neko.listeners.view</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Uility functions and macros for setting listeners corresponding to the
   android.view.View class.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.listeners.view
   {:author &quot;Daniel Solano Gómez&quot;})</pre></td></tr><tr><td class="docs"><p>Takes a function and yields a View.OnClickListener object that will invoke
@@ -4395,14 +4297,7 @@ this software.</p>
   otherwise logical false.</p>
 </td><td class="codes"><pre class="brush: clojure">(defmacro on-touch
   [&amp; body]
-  `(on-touch-call (fn [~'view ~'event] ~@body)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.log" name="neko.log"><h1 class="project-name">neko.log</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Utility for logging in Android.  To use this utility simply use the deflog
+  `(on-touch-call (fn [~'view ~'event] ~@body)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.log" name="neko.log"><h1 class="project-name">neko.log</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Utility for logging in Android.  To use this utility simply use the deflog
   macro as follows:</p>
 
 <pre><code>(deflog "MyTag")
@@ -4515,14 +4410,7 @@ represent the notification IDs.</p>
   (let [id (if (keyword? id)
              (@notification-ids id)
              id)]
-    (.cancel (notification-manager) id)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.threading" name="neko.threading"><h1 class="project-name">neko.threading</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Utilities used to manage multiple threads on Android.</p>
+    (.cancel (notification-manager) id)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.threading" name="neko.threading"><h1 class="project-name">neko.threading</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Utilities used to manage multiple threads on Android.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.threading
   {:author &quot;Daniel Solano Gómez&quot;}
   (:import android.app.Activity
@@ -4660,14 +4548,7 @@ this software.</p>
    (let [^AsyncTask real-task (.real_task task)]
      (.cancel real-task (boolean may-interrupt?))))
   ([task]
-   (cancel task true)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.ui" name="neko.ui"><h1 class="project-name">neko.ui</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Tools for defining and manipulating Android UI elements.</p>
+   (cancel task true)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.ui" name="neko.ui"><h1 class="project-name">neko.ui</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Tools for defining and manipulating Android UI elements.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.ui
   (:use [neko.activity :only [*activity*]]
         [neko.context :only [*context*]]
@@ -4814,14 +4695,7 @@ unmodified <code>attributes</code> and <code>generated-code</code>.</p>
       (second element)
       (make-ui-element (eval element) container-type))))</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defmacro defui [tree]
-  (make-ui-element tree nil))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.ui.listview" name="neko.ui.listview"><h1 class="project-name">neko.ui.listview</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Contains utilities to work with ListView.</p>
+  (make-ui-element tree nil))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.ui.listview" name="neko.ui.listview"><h1 class="project-name">neko.ui.listview</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Contains utilities to work with ListView.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.ui.listview
   (:import android.util.SparseBooleanArray
            android.widget.ListView))</pre></td></tr><tr><td class="docs"><p>Returns a vector of indices for items being checked in a ListView.
@@ -4851,14 +4725,7 @@ this software.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn set-checked!
   [^ListView lv, checked-ids]
   (doseq [i checked-ids]
-    (.setItemChecked lv i true)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.ui.mapping" name="neko.ui.mapping"><h1 class="project-name">neko.ui.mapping</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This program and the accompanying materials are made available under the
-terms of the Eclipse Public License v1.0 which accompanies this distribution,
-and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>.</p>
-
-<p>By using this software in any fashion, you are agreeing to be bound by the
-terms of this license.  You must not remove this notice, or any other, from
-this software.</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>This namespace provides utilities to connect the keywords to the
+    (.setItemChecked lv i true)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.ui.mapping" name="neko.ui.mapping"><h1 class="project-name">neko.ui.mapping</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This namespace provides utilities to connect the keywords to the
   actual UI classes, define the hierarchy relations between the
   elements and the values for the keywords representing values.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.ui.mapping
