@@ -14,24 +14,19 @@
   {:author "Daniel Solano Gómez"}
   (:import android.app.Activity
            android.view.View)
-  (:require [neko.context :as context])
   (:use neko.-protocols.resolvable
-        neko.-utils
-        [neko.debug :only [safe-for-ui]]
-        [neko.context :only [*context*]]))
+        neko.-utils))
 
-(def 
+(def
   ^{:doc "The current activity to operate on."
     :dynamic true}
   *activity*)
 
 (defmacro with-activity
-  "Evaluates body such that both *activity* and *context* are bound to the given activiy."
+  "Evaluates body such that *activity* is bound to the given activity."
   [activity & body]
-  `(let [activity# ~activity]
-     (binding [context/*context* activity#
-               *activity* activity#]
-       ~@body)))
+  `(binding [*activity* ~activity]
+     ~@body))
 
 (defn activity?
   "Determines whether the argument is an instance of Activity."

@@ -9,6 +9,11 @@
 ; terms of this license.  You must not remove this notice, or any other, from
 ; this software.
 
+;; THIS NAMESPACE IS DEPRECATED AND WILL BE REMOVED IN THE FINAL
+;; RELEASE.
+;;
+;; Please use `neko.application/context` as a replacement.
+
 (ns neko.context
   "Utilities to aid in working with a context."
   {:author "Daniel Solano Gómez"}
