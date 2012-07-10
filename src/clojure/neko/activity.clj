@@ -114,15 +114,15 @@
   :def - symbol to bind the Activity object to in the onCreate
   method. Relevant only if :create is used.
 
-  :create - takes a two-argument function. Generates a handler for
+  :on-create - takes a two-argument function. Generates a handler for
   activity's `onCreate` event which automatically calls the
   superOnCreate method and creates a var with the name denoted by
   `:def` (or activity's lower-cased name by default) to store the
   activity object. Then calls the provided function onto the
   Application object.
 
-  :start, :restart, :resume, :pause, :stop, :destroy - same as :create
-  but require a one-argument function."
+  :on-start, :on-restart, :on-resume, :on-pause, :on-stop, :on-destroy
+  - same as :on-create but require a one-argument function."
   [name & {:keys [extends prefix on-create def] :as options}]
   (let [options (or options {}) ;; Handle no-options case
         sname (simple-name name)
@@ -151,7 +151,7 @@
        ~@(map #(let [func (options %)
                      event-name (keyword->camelcase %)]
                  (when func
-                   `(defn ~(symbol event-name)
+                   `(defn ~(symbol (str prefix event-name))
                       [~(vary-meta 'this assoc :tag name)]
                       (~(symbol (str ".super" (capitalize event-name))) ~'this)
                       (~func ~'this))))

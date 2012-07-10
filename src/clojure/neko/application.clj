@@ -31,12 +31,12 @@
 
   :extends, :prefix - same as for `gen-class`.
 
-  :create - takes a one-argument function. Generates a handler for
+  :on-create - takes a one-argument function. Generates a handler for
   application's `onCreate` event which automatically calls the
   superOnCreate method and then calls the provided function onto the
   Application object."
   [name & {:keys [extends prefix on-create]
-           :or {extends android.app.Application, on-create init,
+           :or {extends android.app.Application
                 prefix (str (simple-name name) "-")}}]
   `(do
      (gen-class
@@ -50,4 +50,6 @@
            [~(vary-meta 'this assoc :tag name)]
            (.superOnCreate ~'this)
            (define-context ~'this)
-           (~on-create ~'this)))))
+           (init ~'this)
+           ~(when on-create
+              `(~on-create ~'this))))))
