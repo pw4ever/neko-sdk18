@@ -157,27 +157,3 @@
                       (~func ~'this))))
               [:on-start :on-restart :on-resume
                :on-pause :on-stop :on-destroy]))))
-
-(defn on-ui*
-  "Runs the given nullary function on the UI thread.  If this function is
-  called on the UI thread, it will evaluate immediately.
-
-  Also dynamically binds the current values of `*activity*` and
-  `*context*` inside the thread. If they were not bound in the thread
-  called from, the values of `*activity*` and `*context*` would be
-  bound to the `activity` argument."
-  [^Activity activity f]
-  (let [dynamic-activity (if (bound? #'*activity*) *activity* activity)
-        dynamic-context (if (bound? #'*context*) *context* activity)]
-    (.runOnUiThread activity
-                    (reify Runnable
-                      (run [this]
-                        (binding [*activity* dynamic-activity
-                                  *context* dynamic-context]
-                          (safe-for-ui (f))))))))
-
-(defmacro on-ui
-  "Runs the macro body on the UI thread.  If this macro is called on the UI
-  thread, it will evaluate immediately."
-  [activity & body]
-  `(on-ui* ~activity (fn [] ~@body)))

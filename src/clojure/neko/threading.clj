@@ -12,23 +12,65 @@
 (ns neko.threading
   "Utilities used to manage multiple threads on Android."
   {:author "Daniel Solano Gómez"}
+  (:use [neko.activity :only [*activity*]]
+        [neko.debug :only [safe-for-ui]])
   (:import android.app.Activity
            android.view.View
            clojure.lang.IFn
            java.util.concurrent.TimeUnit
+           android.os.Looper
+           android.os.Handler
            neko.threading.AsyncTask))
 
-(defn run-on-ui-thread*
-  "Runs the given nullary function on the UI thread.  If this function is
-  called on the UI thread, it will evaluate immediately."
-  [^Activity activity ^IFn f]
-  (.runOnUiThread activity (reify Runnable (run [this] (f)))))
+;; ### Initialization
 
-(defmacro run-on-ui-thread
+;; Contains the UI looper Handler object which is used to post tasks
+;; to UI thread.
+;;
+(def ^:private ^Handler handler)
+
+;; Stores UI thread object for quick reference.
+;;
+(def ^:private ^Thread ui-thread)
+
+(defn init-threading
+  "Initializes `handler` and `ui-thread` vars to be used in threading
+  facilities."
+  []
+  (let [^Looper ui-looper (Looper/getMainLooper)]
+    (alter-var-root #'handler (constantly (Handler. ui-looper)))
+    (alter-var-root #'ui-thread (constantly (.getThread ui-looper)))))
+
+;; ### UI thread utilities
+
+(defn on-ui-thread?
+  "Returns true if the current thread is a UI thread."
+  []
+  (identical? (Thread/currentThread) ui-thread))
+
+(defn on-ui*
+  "Runs the given nullary function on the UI thread.  If this function is
+  called on the UI thread, it will evaluate immediately.
+
+  Also dynamically binds the current value of `*activity*` inside the
+  thread."
+  [f]
+  (if (on-ui-thread?)
+    (f)
+    (let [dynamic-activity (when (bound? #'*activity*) *activity*)]
+      (.post handler
+             (fn []
+               (safe-for-ui
+                (if dynamic-activity
+                  (binding [*activity* dynamic-activity]
+                    (f))
+                  (f))))))))
+
+(defmacro on-ui
   "Runs the macro body on the UI thread.  If this macro is called on the UI
   thread, it will evaluate immediately."
-  [activity & body]
-  `(run-on-ui-thread* ~activity (fn [] ~@body)))
+  [& body]
+  `(on-ui* (fn [] ~@body)))
 
 (defn post*
   "Causes the function to be added to the message queue.  The function will
@@ -56,11 +98,6 @@
   the UI thread.  Returns true if successfully placed in the message queue."
   [view millis & body]
   `(post-delayed* ~view ~millis (fn [] ~@body)))
-
-(defn on-ui-thread?
-  "Returns a logical true value if the current thread is a UI thread."
-  []
-  (android.os.Looper/myLooper))
 
 (defrecord Task
   [^IFn bg-fn

@@ -12,7 +12,8 @@
 (ns neko.application
   "Contains the tools to create and manipulate Application instances."
   (:use [neko.-utils :only [simple-name]]
-        [neko.init :only [init]])
+        [neko.init :only [init]]
+        [neko.threading :only [init-threading]])
   (:import android.app.Application
            android.content.Context))
 
@@ -51,5 +52,6 @@
            (.superOnCreate ~'this)
            (define-context ~'this)
            (init ~'this)
+           (init-threading)
            ~(when on-create
               `(~on-create ~'this))))))
