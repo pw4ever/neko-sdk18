@@ -41,34 +41,11 @@ should remove the attributes it processed from the map."
   (fn [el-type object-symbol attributes-map generated-code container-type]
     el-type))
 
-;; ### ID attribute
+;; ### Def attribute
 
-;; An atom that stores the mapping of IDs (preferably
-;; namespace-qualified keywods) to actual UI objects.
-;;
-(def ^{:private true} ui-elements
-  (atom {}))
-
-(defn register-ui-element
-  "Adds the relation between the `id` and `element` to the
-  `ui-elements` map."
-  [id element]
-  (swap! ui-elements #(assoc % id element)))
-
-(defn by-id
-  "Resolves an UI object by its ID."
-  [id]
-  (if-let [element (@ui-elements id)]
-    element
-    (throw (Exception. (str "The element with the ID " id
-                            " is not present in the elements map")))))
-
-(defmethod transform-attributes :id [el-type obj attributes generated-code _]
-  [(dissoc attributes :id)
-   (if-let [id (:id attributes)]
-     (conj generated-code `(register-ui-element ~id ~obj))
-     generated-code)])
-
+;; Automatically binds the object with this attribute to the var which
+;; name is specified in attribute value.
+;; Example: `:def ok-button`
 (defmethod transform-attributes :def [_ obj attributes generated-code __]
   [(dissoc attributes :def)
    (if-let [sym (:def attributes)]
