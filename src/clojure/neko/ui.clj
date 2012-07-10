@@ -11,8 +11,7 @@
 
 (ns neko.ui
   "Tools for defining and manipulating Android UI elements."
-  (:use [neko.activity :only [*activity*]]
-        [neko.context :only [*context*]]
+  (:use [neko.application :only [context]]
         [neko.-utils :only [capitalize]]
         [neko.listeners.view :only [on-click-call]])
   (:require [neko.ui.mapping :as kw])
@@ -142,7 +141,7 @@ given arguments. Arguments could be either actual values or keywords
   additional arguments (if available) and returns a form that
   constructs the object."
   [klass {:keys [constructor-args]}]
-  `(new ~klass *context* ~@constructor-args))
+  `(new ~klass context ~@constructor-args))
 
 ;; ## Top-level code-generation facilities
 
@@ -150,9 +149,8 @@ given arguments. Arguments could be either actual values or keywords
   "Takes a tree of elements and generates the code to create a new
   element object, set all attributes onto it and add all inside
   elements to it. `make-ui-element` is called recursively on each
-  internal element. Presumes the `*context*` var to be bound. The
-  second argument is a keyword that represents the type of the
-  container UI element will be put in."
+  internal element. The second argument is a keyword that represents
+  the type of the container UI element will be put in."
   [element container-type]
   (if (vector? element)
     (let [[el-type attributes & inside-elements] element
