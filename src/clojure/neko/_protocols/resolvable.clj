@@ -9,6 +9,10 @@
 ; terms of this license.  You must not remove this notice, or any other, from
 ; this software.
 
+;; THIS NAMESPACE IS DEPRECATED AND WILL BE REMOVED IN THE FINAL RELEASE.
+;;
+;; Please use `neko.resource` as a replacement.
+
 (ns neko.-protocols.resolvable
   "Home of the Resolvable protocol and related utilities."
   {:author "Daniel Solano Gómez"}

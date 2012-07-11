@@ -9,10 +9,9 @@
 ; terms of this license.  You must not remove this notice, or any other, from
 ; this software.
 
-;; THIS NAMESPACE IS DEPRECATED AND WILL BE REMOVED IN THE FINAL
-;; RELEASE.
+;; THIS NAMESPACE IS DEPRECATED AND WILL BE REMOVED IN THE FINAL RELEASE.
 ;;
-;; Please use `neko.application/context` as a replacement.
+;; Please use `neko.application/context` and `neko.resource` as a replacement.
 
 (ns neko.context
   "Utilities to aid in working with a context."
