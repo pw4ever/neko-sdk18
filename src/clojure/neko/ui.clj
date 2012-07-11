@@ -11,7 +11,7 @@
 
 (ns neko.ui
   "Tools for defining and manipulating Android UI elements."
-  (:use [neko.application :only [context]]
+  (:use [neko.context :only [context]]
         [neko.-utils :only [capitalize]]
         [neko.listeners.view :only [on-click-call]])
   (:require [neko.ui.mapping :as kw])

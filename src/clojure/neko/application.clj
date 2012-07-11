@@ -13,16 +13,10 @@
   "Contains the tools to create and manipulate Application instances."
   (:use [neko.-utils :only [simple-name]]
         [neko.init :only [init]]
+        [neko.context :only [context]]
         [neko.threading :only [init-threading]])
   (:import android.app.Application
            android.content.Context))
-
-(declare ^Context context)
-
-(defn define-context
-  "Define a var to store the application context."
-  [ctx]
-  (def ^Context context ctx))
 
 (defmacro defapplication
   "Creates an application class with the given full package-qualified
@@ -50,7 +44,7 @@
         `(defn ~(symbol (str prefix "onCreate"))
            [~(vary-meta 'this assoc :tag name)]
            (.superOnCreate ~'this)
-           (define-context ~'this)
+           (alter-var-root #'context (constantly ~'this))
            (init ~'this)
            (init-threading)
            ~(when on-create

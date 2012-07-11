@@ -1,6 +1,6 @@
 (ns neko.notify
   "Provides convenient wrappers for Toast and Notification APIs."
-  (:require [neko.application :as app])
+  (:use [neko.context :only [context]])
   (:import android.content.Context android.widget.Toast
            android.app.Notification android.content.Intent
            android.app.PendingIntent android.app.NotificationManager))
@@ -19,7 +19,7 @@
   [^String message, length]
   {:pre [(contains? toast-length length)]}
   (.show
-   ^Toast (Toast/makeText app/context message ^int (toast-length length))))
+   ^Toast (Toast/makeText context message ^int (toast-length length))))
 
 ;; ### Notifications
 
@@ -31,7 +31,7 @@
 (defn- ^NotificationManager notification-manager
   "Returns the notification manager instance."
   []
-  (.getSystemService app/context Context/NOTIFICATION_SERVICE))
+  (.getSystemService context Context/NOTIFICATION_SERVICE))
 
 (defn construct-pending-intent
   "Creates a PendingIntent instance from a vector where the first
@@ -40,9 +40,9 @@
   [[action-type, ^String action]]
   (let [^Intent intent (Intent. action)]
     (case action-type
-      :activity (PendingIntent/getActivity app/context 0 intent 0)
-      :broadcast (PendingIntent/getBroadcast app/context 0 intent 0)
-      :service (PendingIntent/getService app/context 0 intent 0))))
+      :activity (PendingIntent/getActivity context 0 intent 0)
+      :broadcast (PendingIntent/getBroadcast context 0 intent 0)
+      :service (PendingIntent/getService context 0 intent 0))))
 
 (defn notification
   "Creates a Notification instance. If icon is not provided uses the
@@ -51,7 +51,7 @@
       :or {icon @default-notification-icon, when (System/currentTimeMillis)}}]
   {:pre [icon]}
   (let [notification (Notification. icon ticker-text when)]
-    (.setLatestEventInfo notification app/context content-title content-text
+    (.setLatestEventInfo notification context content-title content-text
                          (construct-pending-intent action))
     notification))
 

@@ -2,7 +2,7 @@
   "Contains utilities to manipulate data that is passed between
   Android entities via Bundles and Intents."
   (:refer-clojure :exclude [assoc!])
-  (:use [neko.application :only [context]])
+  (:use [neko.context :only [context]])
   (:import android.os.Bundle android.content.Intent
            android.content.SharedPreferences
            android.content.SharedPreferences$Editor

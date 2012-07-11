@@ -10,8 +10,8 @@
 ; this software.
 
 (ns neko.resource
-  (:require [neko.application :as app]
-            [clojure.string :as string]))
+  (:require [clojure.string :as string])
+  (:use [neko.context :only [context]]))
 
 (defn- resource-symbol
   "Returns a symbol that represents a resource field specified by type
@@ -65,13 +65,12 @@
 
   If additional arguments are supplied, the string will be interpreted as a
   format and the arguments will be applied to the format."
-  {:arglists '([context? id-or-name & args])}
   ([name]
    {:pre [(keyword? name)]}
-   `(.getString app/context ~(resource-symbol :string name)))
+   `(.getString context ~(resource-symbol :string name)))
   ([name & args]
   {:pre [(keyword? name)]}
-  `(.getString app/context ~(resource-symbol :string name) (to-array ~args))))
+  `(.getString context ~(resource-symbol :string name) (to-array ~args))))
 
 (defmacro get-layout
   "Finds the resource ID for the layout with the given name.  This is simply a
