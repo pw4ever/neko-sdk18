@@ -13,11 +13,23 @@
   "Contains functions for neko initialization and setting runtime flags."
   (:require neko.compilation))
 
+(defn compile-time-property
+  "Returns the value of system property for the given keyword.
+
+  This is used to modify the code macros will compile into during
+  AOT-compilation. When called in runtime the propery won't be present
+  in the Properties map and the macros in the REPL will be recompiled
+  differently. If you want to ensure compile-time/runtime macro
+  consistency, make sure to alter the var values on which these macros
+  depend upon manually in the runtime."
+  [property]
+  (System/getProperty (name property)))
+
 (defn- property-set?
   "Checks if the given property keyword is set to true during the
   compilation of neko."
   [property]
-  (= (System/getProperty (name property)) "true"))
+  (= (compile-time-property property) "true"))
 
 ;; A list of all properties supported and tracked by neko.
 ;;

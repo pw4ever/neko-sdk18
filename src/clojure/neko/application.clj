@@ -14,6 +14,7 @@
   (:use [neko.-utils :only [simple-name]]
         [neko.init :only [init]]
         [neko.context :only [context]]
+        [neko.resource :only [package-name]]
         [neko.threading :only [init-threading]])
   (:import android.app.Application
            android.content.Context))
@@ -45,6 +46,7 @@
            [~(vary-meta 'this assoc :tag name)]
            (.superOnCreate ~'this)
            (alter-var-root #'context (constantly ~'this))
+           (alter-var-root #'package-name (constantly (.getPackageName ~'this)))
            (init ~'this)
            (init-threading)
            ~(when on-create
