@@ -140,8 +140,8 @@ given arguments. Arguments could be either actual values or keywords
   "Takes an object class name and the attributes map to extract
   additional arguments (if available) and returns a form that
   constructs the object."
-  [klass {:keys [constructor-args]}]
-  `(new ~klass context ~@constructor-args))
+  [klass context {:keys [constructor-args]}]
+  `(new ~klass ~context ~@constructor-args))
 
 ;; ## Top-level code-generation facilities
 
@@ -151,20 +151,33 @@ given arguments. Arguments could be either actual values or keywords
   elements to it. `make-ui-element` is called recursively on each
   internal element. The second argument is a keyword that represents
   the type of the container UI element will be put in."
-  [element container-type]
+  [element container-type context]
   (if (vector? element)
     (let [[el-type attributes & inside-elements] element
           ^Class klass (kw/classname el-type)
           obj (gensym (.getSimpleName klass))]
-      `(let [~obj ~(make-constructor-call klass attributes)]
+      `(let [~obj ~(make-constructor-call klass context attributes)]
          ~@(process-attributes el-type obj attributes container-type)
          ~@(map (fn [el]
-                  `(.addView ~obj ~(make-ui-element el el-type)))
+                  `(.addView ~obj ~(make-ui-element el el-type context)))
                 inside-elements)
          ~obj))
     (if (and (sequential? element) (= (first element) 'quote))
       (second element)
-      (make-ui-element (eval element) container-type))))
+      (make-ui-element (eval element) container-type context))))
 
-(defmacro defui [tree]
-  (make-ui-element tree nil))
+(defmacro defui
+  "Takes a tree of elements and creates Android UI elements according
+  to this tree. A tree has a form of a vector that looks like following:
+
+  `[element-name map-of-attributes & subelements]`
+
+  where `map-of-attributes` is a map of attribute names to their
+  values, and subelement is itself a tree of this form.
+
+  Two-argument version takes an arbitrary Context object to use in UI
+  elements constructor."
+  ([tree]
+     (make-ui-element tree nil `context))
+  ([custom-context tree]
+     (make-ui-element tree nil custom-context)))
