@@ -12,7 +12,7 @@
 (ns neko.ui
   "Tools for defining and manipulating Android UI elements."
   (:use [neko.context :only [context]]
-        [neko.-utils :only [capitalize]]
+        [neko.-utils :only [capitalize keyword->setter]]
         [neko.listeners.view :only [on-click-call]])
   (:require [neko.ui.mapping :as kw])
   (:import [android.widget LinearLayout$LayoutParams]
@@ -117,7 +117,7 @@ given arguments. Arguments could be either actual values or keywords
   [el-type obj attributes]
   (map (fn [[attr value]]
          (let [real-value (kw/value el-type value)]
-           `(~(symbol (str ".set" (capitalize (name attr)))) ~obj ~real-value)))
+           `(~(keyword->setter attr) ~obj ~real-value)))
        attributes))
 
 (defn process-attributes
