@@ -16,11 +16,13 @@
   (:require [clojure.string :as string])
   (:use [neko.-utils :only [keyword->static-field]])
   (:import [android.widget LinearLayout Button EditText ListView]
+           android.app.ProgressDialog
            [android.view ViewGroup$LayoutParams]))
 
 ;; This atom keeps all the relations inside the map.
 (def ^{:private true} keyword-mapping
   (atom
+   ;; UI widgets
    {:button {:classname android.widget.Button
              :traits [:layout-params :on-click :def]
              :attributes {:text "Default button"}}
@@ -28,11 +30,19 @@
                     :traits [:layout-params :def]}
     :edit {:classname android.widget.EditText
            :traits [:layout-params :def]}
+    :text-view {:classname android.widget.TextView
+                :traits [:layout-params :def]}
     :list-view {:classname android.widget.ListView
                 :traits [:layout-params :def]}
+
+    ;; Other
     :layout-params {:classname ViewGroup$LayoutParams
                     :values {:fill ViewGroup$LayoutParams/FILL_PARENT
-                             :wrap ViewGroup$LayoutParams/WRAP_CONTENT}}}))
+                             :wrap ViewGroup$LayoutParams/WRAP_CONTENT}}
+    :progress-dialog {:classname android.app.ProgressDialog
+                      :values {:horizontal ProgressDialog/STYLE_HORIZONTAL
+                               :spinner ProgressDialog/STYLE_SPINNER}}
+    }))
 
 (defn set-classname!
   "Connects the given keyword to the classname."
