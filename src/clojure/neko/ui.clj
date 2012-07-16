@@ -92,11 +92,8 @@ given arguments. Arguments could be either actual values or keywords
 (defmethod transform-attributes :on-click [_1 obj attributes generated-code _2]
   (if-let [handler (:on-click attributes)]
     [(dissoc attributes :on-click)
-     (let [expr (if (sequential? handler)
-                  `(fn [view#] (~(first handler) view# ~@(rest handler)))
-                  `(fn [view#] (~handler view#)))]
-       (conj generated-code
-             `(.setOnClickListener ~obj (on-click-call ~expr))))]
+     (conj generated-code
+           `(.setOnClickListener ~obj (on-click-call ~handler)))]
     [attributes generated-code]))
 
 ;; ### Default attributes
