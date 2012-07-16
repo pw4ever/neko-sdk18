@@ -150,6 +150,17 @@
     :post [(integer? %)]}
    (resolve-layout name context)))
 
+(defmacro get-service
+  "Gets a system service from the context.  The type argument is a keyword that
+  names the service type.  Examples include :alarm for the alarm service and
+  :layout-inflater for the layout inflater service."
+  [type]
+  {:pre [(keyword? type)]}
+  `(.getSystemService
+    context
+    ~(keyword->static-field Context (keyword (str (name type) "-service")))))
+
+;; This function is deprecated and will be removed in next major version.
 (defn get-system-service
   "Gets a system service from the context.  The type argument is a keyword that
   names the service type.  Examples include :alarm for the alarm service and

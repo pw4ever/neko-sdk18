@@ -12,7 +12,7 @@
 (ns neko.-utils
   "Internal utilities used by Neko, not intended for external consumption."
   {:author "Daniel Solano Gómez"}
-  (:use [clojure.string :only [split join]]))
+  (:require [clojure.string :as string]))
 
 (defn static-field-value
   "Takes a keyword and converts it to a field name by getting the name from the
@@ -51,11 +51,21 @@
   [s]
   (str (.toLowerCase (subs s 0 1)) (subs s 1)))
 
+(defn keyword->static-field
+  "Takes a class name and a keyword and returns a symbol that resolves
+  to the static field of this class.
+
+  All letters in keyword are capitalized, and all dashes are replaced
+  with underscores."
+  [^Class class-name, kw]
+  (symbol (str (.getName class-name) \/
+               (.toUpperCase (string/replace (name kw) \- \_)))))
+
 (defn keyword->camelcase
   "Takes a keyword and transforms its name into camelCase."
   [kw]
-  (let [[first & rest] (split (name kw) #"-")]
-    (join (cons first (map capitalize rest)))))
+  (let [[first & rest] (string/split (name kw) #"-")]
+    (string/join (cons first (map capitalize rest)))))
 
 (defn keyword->setter
   "Takes a keyword and transforms its name into the setter symbol.

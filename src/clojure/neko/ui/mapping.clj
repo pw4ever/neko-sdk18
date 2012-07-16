@@ -14,6 +14,7 @@
   actual UI classes, define the hierarchy relations between the
   elements and the values for the keywords representing values."
   (:require [clojure.string :as string])
+  (:use [neko.-utils :only [keyword->static-field]])
   (:import [android.widget LinearLayout Button EditText ListView]
            [android.view ViewGroup$LayoutParams]))
 
@@ -70,13 +71,6 @@
   [element-kw value-kw value]
   (swap! keyword-mapping assoc-in [element-kw :values value-kw] value))
 
-(defn kw-to-static-field
-  "Takes a classname and a keyword, capitalizes the latter's name and
-  replaces all dashes with underscores."
-  [^Class class-name, kw]
-  (symbol (str (.getName class-name) \/
-               (.toUpperCase (string/replace (name kw) \- \_)))))
-
 (defn value
   "If the value is a keyword then returns the value for it from the
 keyword-mapping. If the value-keyword isn't present in the
@@ -86,7 +80,7 @@ keyword-mapping, form the value as
   (if-not (keyword? value)
     value
     (get-in @keyword-mapping [element-kw :values value]
-            (kw-to-static-field (classname element-kw) value))))
+            (keyword->static-field (classname element-kw) value))))
 
 (defn add-default-atribute-value!
   "Adds a default attribute value for the given element."
