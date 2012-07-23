@@ -11,7 +11,7 @@
 
 (ns neko.debug
   "Contains useful tools to be used while developing the application."
-  (:use [neko.init :only [is-debug]]
+  (:use [neko.init.options :only [*release-build*]]
         [neko.notify :only [toast]]))
 
 ;; This atom stores the last exception happened on the UI thread.
@@ -42,6 +42,6 @@
   if the code provided in `body` crashes on UI thread in the debug
   build. If the build is a release one returns `body` as is."
   [& body]
-  (if is-debug
-    `(safe-for-ui* (fn [] ~@body))
-    `(do ~@body)))
+  (if *release-build*
+    `(do ~@body)
+    `(safe-for-ui* (fn [] ~@body))))

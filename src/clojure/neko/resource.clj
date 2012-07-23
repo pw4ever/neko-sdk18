@@ -10,11 +10,11 @@
 ; this software.
 
 (ns neko.resource
-  (:require [neko.init :as init]
-            [clojure.string :as string])
-  (:use [neko.context :only [context]]))
+  (:require [clojure.string :as string])
+  (:use [neko.init.options :only [*package-name*]]
+        [neko.context :only [context]]))
 
-(def package-name (init/compile-time-property :android-package-name))
+(def package-name *package-name*)
 
 (defn- resource-symbol
   "Returns a symbol that represents a resource field specified by type
