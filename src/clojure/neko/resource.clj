@@ -18,14 +18,16 @@
 
 (defn- resource-symbol
   "Returns a symbol that represents a resource field specified by type
-  and name keywords."
+  and name keywords. If `name` is not a keyword, just returns it back."
   [type name]
-  (let [package (or (namespace name) package-name)
-        type    (clojure.core/name type)
-        name    (-> (clojure.core/name name)
-                    (string/replace \- \_)
-                    (string/replace \. \_))]
-    (symbol (str package ".R$" type "/" name))))
+  (if (not (keyword? name))
+    name
+    (let [package (or (namespace name) package-name)
+          type    (clojure.core/name type)
+          name    (-> (clojure.core/name name)
+                      (string/replace \- \_)
+                      (string/replace \. \_))]
+      (symbol (str package ".R$" type "/" name)))))
 
 (defmacro resolve-resource
   "Resolves the resource ID of a given type with the given name.  For example,
@@ -51,16 +53,14 @@
   If the name argument is an integer, it is assumed to be a valid resource ID
   and will be returned as is without any processing."
   [type name]
-  {:pre  [(keyword? type)
-          (keyword? name)]}
+  {:pre  [(keyword? type)]}
   (resource-symbol type name))
 
 (defmacro get-id
   "Finds the ID for the XML item with the given name.  This is simply a
   convenient way of calling (resolve-resource :id name)."
-  ([name]
-   {:pre [(keyword? name)]}
-   (resource-symbol :id name)))
+  [name]
+  (resource-symbol :id name))
 
 (defmacro get-string
   "Gets the localized string with the given ID or name from the context.
@@ -69,15 +69,12 @@
   If additional arguments are supplied, the string will be interpreted as a
   format and the arguments will be applied to the format."
   ([name]
-   {:pre [(keyword? name)]}
-   `(.getString context ~(resource-symbol :string name)))
+     `(.getString context ~(resource-symbol :string name)))
   ([name & args]
-  {:pre [(keyword? name)]}
-  `(.getString context ~(resource-symbol :string name) (to-array ~args))))
+     `(.getString context ~(resource-symbol :string name) (to-array ~args))))
 
 (defmacro get-layout
   "Finds the resource ID for the layout with the given name.  This is simply a
   convenient way of calling (resolve-resource context :layout name)."
   [name]
-  {:pre  [(keyword? name)]}
   (resource-symbol :layout name))
