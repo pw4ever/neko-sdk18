@@ -43,24 +43,20 @@
   "Sets the content for the activity.  The view may be one of:
 
   + A view object, which will be used directly
-  + An integer presumed to be a valid layout ID
-  + A keyword used to resolve to a layout ID using
-    (neko.context/resolve-resource)"
+  + An integer presumed to be a valid layout ID."
   ([view]
    {:pre [(or (instance? View view)
-              (resolvable? view))]}
+              (integer? view))]}
    (set-content-view! *activity* view))
   ([^Activity activity view]
    {:pre [(activity? activity)
           (or (instance? View view)
-              (resolvable? view))]}
+              (integer? view))]}
    (cond
      (instance? View view)
        (.setContentView activity ^View view)
      (integer? view)
-       (.setContentView activity ^Integer view)
-     :else
-       (.setContentView activity ^Integer (resolve-layout view activity)))))
+       (.setContentView activity ^Integer view))))
 
 (defn request-window-features!
   "Requests the given features for the activity.  The features should be
