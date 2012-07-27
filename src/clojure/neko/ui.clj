@@ -24,8 +24,7 @@
   "Transforms the given map of attributes into the valid Java-interop
 code of setters.
 
-`el-type` is the keyword for either the UI element type or any of the
-trait types.
+`trait` is the keyword for a transformer function over the attribute map.
 
 `object-symbol` is an symbol for the UI element to apply setters to.
 
@@ -37,72 +36,43 @@ code this method generates should be appended to it.
 Returns a vector that looks like
 `[attributes-without-processed-ones new-generated-code]`. The method
 should remove the attributes it processed from the map."
-  (fn [el-type object-symbol attributes-map generated-code container-type]
-    el-type))
+  (fn [trait object-symbol attributes-map generated-code container-type]
+    trait))
 
-;; ### Def attribute
+(defn- deftrait*
+  "Function used by `deftrait` macro to generate the code."
+  [name docstring match-pred body-fn]
+  `(do
+     (alter-meta! #'transform-attributes assoc-in [:trait-doc ~name] ~docstring)
+     (defmethod transform-attributes ~name
+      [trait# object# attributes# generated-code# container-type#]
+      (if (~match-pred attributes#)
+        (~body-fn trait# object# attributes# generated-code# container-type#)
+        [attributes# generated-code#]))))
 
-;; Automatically binds the object with this attribute to the var which
-;; name is specified in attribute value.
-;; Example: `:def ok-button`
-(defmethod transform-attributes :def [_ obj attributes generated-code __]
-  [(dissoc attributes :def)
-   (if-let [sym (:def attributes)]
-     (conj generated-code `(def ~sym ~obj))
-     generated-code)])
+(defmacro deftrait
+  "Defines a trait with the given name. `match-pred` is a function
+  that should return a logical truth if this trait should be executed
+  against the argument list. If it returns true, then `body-fn` is
+  called on the arguments described in `transform-attributes`
+  multimethod. `body-fn` should return a vector, which consists of
+  attribute map with the processed attributes removed, and an updated
+  `generated-code` list.
 
-;; ### Layout parameters attributes
+  Can take a docstring as second argument.
 
-(defn default-layout-params
-  "Construct LayoutParams instance from the given arguments. Arguments
-could be either actual values or keywords `:fill` and `:wrap`."
-  ([width height]
-     (let [real-width (kw/value :layout-params (or width :wrap))
-           real-height (kw/value :layout-params (or height :wrap))]
-       `(new ~ViewGroup$LayoutParams ~real-width ~real-height))))
-
-(defn linear-layout-params
-  "Construct LinearLayout-specific LayoutParams instance from the
-given arguments. Arguments could be either actual values or keywords
-`:fill` and `:wrap`."
-  ([width height weight]
-     (let [real-width (kw/value :layout-params (or width :wrap))
-           real-height (kw/value :layout-params (or height :wrap))
-           real-weight (or weight 0)]
-       `(new ~LinearLayout$LayoutParams ~real-width
-             ~real-height ~real-weight))))
-
-(defmethod transform-attributes :layout-params [el-type obj attributes
-                                                generated-code container-type]
-  (case container-type
-   :linear-layout
-   [(dissoc attributes :layout-width :layout-height :layout-weight)
-    (conj generated-code
-          `(.setLayoutParams ~obj
-             ~(linear-layout-params (:layout-width attributes)
-                                    (:layout-height attributes)
-                                    (:layout-weight attributes))))]
-
-   [(dissoc attributes :layout-width :layout-height :layout-weight)
-    (conj generated-code
-          `(.setLayoutParams ~obj
-             ~(default-layout-params (:layout-width attributes)
-                (:layout-height attributes))))]))
-
-(defmethod transform-attributes :on-click [_1 obj attributes generated-code _2]
-  (if-let [handler (:on-click attributes)]
-    [(dissoc attributes :on-click)
-     (conj generated-code
-           `(.setOnClickListener ~obj (on-click-call ~handler)))]
-    [attributes generated-code]))
+  If `match-pred` is not provided then presumes a trait to handle
+  attribute with the same name as trait's name."
+  ([name body-fn]
+     (deftrait* name nil name body-fn))
+  ([name match-pred-or-docstring body-fn]
+     (if (string? match-pred-or-docstring)
+       (deftrait* name match-pred-or-docstring name body-fn)
+       (deftrait* name nil match-pred-or-docstring body-fn)))
+  ([name docstring match-pred body-fn]
+     (deftrait* name docstring match-pred body-fn)))
 
 ;; ### Default attributes
-
-;; If there is no method for the given element type then return
-;; unmodified `attributes` and `generated-code`.
-;;
-(defmethod transform-attributes :default [_1 _2 attributes generated-code _3]
-  [attributes generated-code])
 
 (defn default-setters-from-attributes
   "Takes an element type keyword, an object symbol and the attributes
@@ -122,7 +92,11 @@ given arguments. Arguments could be either actual values or keywords
   attributes. Consequently calls transform-attributes methods on all
   element's traits, in the end calls `default-setters-from-attributes`
   on what is left from the attributes map. Returns the generated code
-  for all attributes."
+  for all attributes.
+
+  `container-type` is a keyword for a container type of this element.
+  It is needed for `:layout-params` trait which should know the
+  container type in order to use correct LayoutParams instance."
   [el-type obj attributes container-type]
   (let [all-attributes (merge (kw/default-attributes el-type) attributes)
         [rest-attributes generated-code]
