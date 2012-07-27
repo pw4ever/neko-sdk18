@@ -23,17 +23,18 @@
 (def ^{:private true} keyword-mapping
   (atom
    ;; UI widgets
-   {:button {:classname android.widget.Button
-             :traits [:layout-params :on-click :def]
+   {:view {:traits [:def :layout-params :on-click :text]}
+    :button {:classname android.widget.Button
+             :inherits :view
              :attributes {:text "Default button"}}
     :linear-layout {:classname android.widget.LinearLayout
-                    :traits [:layout-params :def]}
+                    :inherits :view}
     :edit {:classname android.widget.EditText
-           :traits [:layout-params :def]}
+           :inherits :view}
     :text-view {:classname android.widget.TextView
-                :traits [:layout-params :def]}
+                :inherits :view}
     :list-view {:classname android.widget.ListView
-                :traits [:layout-params :def]}
+                :inherits :view}
 
     ;; Other
     :layout-params {:classname ViewGroup$LayoutParams
@@ -69,11 +70,10 @@
   "Returns the list of all unique traits for `kw`. The list is built
   recursively."
   [kw]
-  (let [first-level-traits (get-in @keyword-mapping [kw :traits])]
-    (->> first-level-traits
-         (mapcat all-traits)
-         (concat first-level-traits)
-         distinct)))
+  (let [own-traits (get-in @keyword-mapping [kw :traits])
+        parent (get-in @keyword-mapping [kw :inherits])]
+    (concat own-traits (when parent
+                         (all-traits parent)))))
 
 (defn set-value!
   "Associate the value keyword with the provided value for the given
@@ -83,14 +83,20 @@
 
 (defn value
   "If the value is a keyword then returns the value for it from the
-keyword-mapping. If the value-keyword isn't present in the
-keyword-mapping, form the value as
-`classname-for-element-kw/CAPITALIZED-VALUE-KW`."
+  keyword-mapping. The value is sought in the element itself and all
+  its parents. If the value-keyword isn't present in any element's
+  keyword-mapping, form the value as
+  `classname-for-element-kw/CAPITALIZED-VALUE-KW`."
   [element-kw value]
-  (if-not (keyword? value)
-    value
-    (get-in @keyword-mapping [element-kw :values value]
-            (keyword->static-field (classname element-kw) value))))
+  (let [mapping @keyword-mapping
+        recursive-find (fn [kw]
+                         (when kw
+                           (or (get-in mapping [kw :values value])
+                               (recur (get-in mapping [kw :inherits])))))]
+    (if-not (keyword? value)
+      value
+      (or (recursive-find element-kw)
+          (keyword->static-field (classname element-kw) value)))))
 
 (defn add-default-atribute-value!
   "Adds a default attribute value for the given element."
@@ -99,22 +105,21 @@ keyword-mapping, form the value as
          update-in [element-kw :attributes attribute-kw] value))
 
 (defn default-attributes [element-kw]
-  "Returns a map of default attributes for the given element keyword."
+  "Returns a map of default attributes for the given element keyword
+  and all its parents."
   [element-kw]
-  (get-in @keyword-mapping [element-kw :attributes]))
+  (merge (when element-kw
+           (default-attributes (get-in @keyword-mapping
+                                       [element-kw :inherits])))
+         (get-in @keyword-mapping [element-kw :attributes])))
 
 (defn defelement
   "Defines the element of the given class with the provided name to
-  use in the UI construction. Takes the element's classname, a list of
-  traits and a map of specific values as optional arguments."
-  [kw-name & {:keys [classname traits values attributes inherits]}]
-  (when inherits
-    (swap! keyword-mapping #(assoc % kw-name (inherits %))))
-  (when classname
-    (set-classname! kw-name classname))
-  (when traits
-    (swap! keyword-mapping update-in [kw-name :traits] concat traits))
-  (when values
-    (swap! keyword-mapping update-in [kw-name :values] merge values))
-  (when attributes
-    (swap! keyword-mapping update-in [kw-name :attributes] merge attributes)))
+  use in the UI construction. Takes the element's classname, a parent
+  it inherits, a list of traits and a map of specific values as
+  optional arguments.
+
+  Optional arguments
+  - :classname, :inherits, :traits, :values, :attributes. "
+  [kw-name & args]
+  (swap! keyword-mapping assoc kw-name (apply hash-map args)))
