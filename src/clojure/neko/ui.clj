@@ -152,3 +152,10 @@ should remove the attributes it processed from the map."
      (make-ui-element tree nil `context))
   ([custom-context tree]
      (make-ui-element tree nil custom-context)))
+
+(defmacro config!
+  [el-type element & attributes]
+  (let [attributes (apply hash-map attributes)
+        obj (gensym (name el-type))]
+    `(let [~obj ~element]
+       ~@(process-attributes el-type obj attributes nil))))
