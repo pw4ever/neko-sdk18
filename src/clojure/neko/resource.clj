@@ -10,6 +10,7 @@
 ; this software.
 
 (ns neko.resource
+  "Provides utilities to resolve application resources."
   (:require [clojure.string :as string])
   (:use [neko.init.options :only [*package-name*]]
         [neko.context :only [context]]))
@@ -29,11 +30,11 @@
                       (string/replace \. \_))]
       (symbol (str package ".R$" type "/" name)))))
 
-(defmacro resolve-resource
+(defmacro get-resource
   "Resolves the resource ID of a given type with the given name.  For example,
   to refer to what in Java would be R.string.my_string, you can use:
 
-    (resolve-resource :string :my_string)
+    (get-resource :string :my_string)
 
   The type should be a keyword corresponding to a resource type such as
   :layout, :attr, or :id.
@@ -44,7 +45,7 @@
   can be used to access the resources from the platform.  For example, the
   equivalent to android.R.layout.simple_list_item_1 is:
 
-    (resolve-resource :layout :android/simple_list_item_1)
+    (get-resource :layout :android/simple_list_item_1)
 
   The name portion of the name argument will be converted to a string and any
   hyphens or periods will be transformed to underscores.  Note that hyphens are
@@ -58,13 +59,13 @@
 
 (defmacro get-id
   "Finds the ID for the XML item with the given name.  This is simply a
-  convenient way of calling (resolve-resource :id name)."
+  convenient way of calling (get-resource :id name)."
   [name]
   (resource-symbol :id name))
 
 (defmacro get-string
   "Gets the localized string with the given ID or name from the context.
-  The name will be resolved using resolve-resource.
+  The name will be resolved using get-resource.
 
   If additional arguments are supplied, the string will be interpreted as a
   format and the arguments will be applied to the format."
@@ -75,6 +76,6 @@
 
 (defmacro get-layout
   "Finds the resource ID for the layout with the given name.  This is simply a
-  convenient way of calling (resolve-resource context :layout name)."
+  convenient way of calling (get-resource context :layout name)."
   [name]
   (resource-symbol :layout name))
