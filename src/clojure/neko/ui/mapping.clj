@@ -23,7 +23,8 @@
 (def ^{:private true} keyword-mapping
   (atom
    ;; UI widgets
-   {:view {:traits [:def :layout-params :on-click :text]}
+   {:view {:traits [:def :layout-params :text :on-click :on-long-click :on-touch
+                    :on-create-context-menu :on-key]}
     :button {:classname android.widget.Button
              :inherits :view
              :attributes {:text "Default button"}}

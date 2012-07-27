@@ -12,9 +12,9 @@
 (ns neko.ui.traits
   "Contains trait declarations for various UI elements."
   (:require [neko.ui.mapping :as kw]
-            [neko.resource :as res])
-  (:use [neko.ui :only [deftrait]]
-        [neko.listeners.view :only [on-click-call]])
+            [neko.resource :as res]
+            [neko.listeners view])
+  (:use [neko.ui :only [deftrait]])
   (:import [android.widget LinearLayout$LayoutParams]
            [android.view ViewGroup$LayoutParams]))
 
@@ -25,21 +25,18 @@
 
   Example: `[:button {:def ok}]` defines a var `ok` which stores the
   button object."
-  (fn [_ obj attributes code __]
-    [(dissoc attributes :def)
-     (conj code `(def ~(:def attributes) ~obj))]))
+  (fn [obj attributes code _]
+    (conj code `(def ~(:def attributes) ~obj))))
 
 ;; ### Basic traits
 
 (deftrait :text
   "Sets the element's text to a string, integer ID or a keyword
   representing the string resource provided to `:text` attribute."
-  (fn [_ obj attributes code __]
-    (let [value (:text attributes)]
-     [(dissoc attributes :text)
-      (conj code `(.setText ~obj ~(if (string? value)
-                                    value
-                                    `(res/get-string ~value))))])))
+  (fn [obj {:keys [text]} code _]
+    (conj code `(.setText ~obj ~(if (string? text)
+                                  text
+                                  `(res/get-string ~text))))))
 
 ;; ### Layout parameters attributes
 
@@ -67,10 +64,9 @@ given arguments. Arguments could be either actual values or keywords
   attributes and sets a proper LayoutParams according to container
   type."
   #(some #{:layout-width :layout-height :layout-weight} (keys %))
-  (fn [_ obj {:keys [layout-width layout-height layout-weight] :as attributes}
-      code container]
-    [(dissoc attributes :layout-width :layout-height :layout-weight)
-     (case container
+  #(dissoc % :layout-width :layout-height :layout-weight)
+  (fn [obj {:keys [layout-width layout-height layout-weight]} code container]
+    (case container
       :linear-layout
       (conj code
             `(.setLayoutParams ~obj
@@ -78,15 +74,56 @@ given arguments. Arguments could be either actual values or keywords
 
       (conj code
             `(.setLayoutParams ~obj
-              ~(default-layout-params layout-width layout-height))))]))
+              ~(default-layout-params layout-width layout-height))))))
 
 ;; ### Listener traits
 
 (deftrait :on-click
-  "Takes :on-click attribute, which should be function, and creates a
-  ClickListener from it."
-  (fn [_ obj attributes code __]
-    [(dissoc attributes :on-click)
-     (conj code
-           `(.setOnClickListener ~obj
-                                 (on-click-call ~(:on-click attributes))))]))
+  "Takes :on-click attribute, which should be function of one
+  argument, and sets it as an OnClickListener for the object."
+  (fn [obj {:keys [on-click]} code _]
+    (conj code
+          `(.setOnClickListener ~obj
+            (neko.listeners.view/on-click-call ~on-click)))))
+
+(deftrait :on-create-context-menu
+  "Takes :on-create-context-menu attribute, which should be function
+  of three arguments, and sets it as an OnCreateContextMenuListener
+  for the object."
+  (fn [obj {:keys [on-create-context-menu]} code _]
+    (conj code
+          `(.setOnCreateContextMenuListener ~obj
+            (neko.listeners.view/on-create-context-menu-call
+             ~on-create-context-menu)))))
+
+(deftrait :on-focus-change
+  "Takes :on-focus-change attribute, which should be function of two
+  arguments, and sets it as an OnFocusChangeListener for the object."
+  (fn [obj {:keys [on-focus-change]} code _]
+    (conj code
+          `(.setOnFocusChangeListener ~obj
+            (neko.listeners.view/on-focus-change-call ~on-focus-change)))))
+
+(deftrait :on-key
+  "Takes :on-key attribute, which should be function of three
+  arguments, and sets it as an OnKeyListener for the object."
+  (fn [obj {:keys [on-key]} code _]
+    (conj code
+          `(.setOnKeyListener ~obj
+            (neko.listeners.view/on-key-call ~on-key)))))
+
+(deftrait :on-long-click
+  "Takes :on-long-click attribute, which should be function of one
+  argument, and sets it as an OnLongClickListener for the object."
+  (fn [obj {:keys [on-long-click]} code _]
+    (conj code
+          `(.setOnLongClickListener ~obj
+            (neko.listeners.view/on-long-click-call ~on-long-click)))))
+
+(deftrait :on-touch
+  "Takes :on-touch attribute, which should be function of two
+  arguments, and sets it as an OnTouchListener for the object."
+  (fn [obj {:keys [on-touch]} code _]
+    (conj code
+          `(.setOnTouchListener ~obj
+            (neko.listeners.view/on-touch-call ~on-touch)))))

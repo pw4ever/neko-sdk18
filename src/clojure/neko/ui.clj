@@ -39,38 +39,41 @@ should remove the attributes it processed from the map."
   (fn [trait object-symbol attributes-map generated-code container-type]
     trait))
 
-(defn- deftrait*
-  "Function used by `deftrait` macro to generate the code."
-  [name docstring match-pred body-fn]
-  `(do
-     (alter-meta! #'transform-attributes assoc-in [:trait-doc ~name] ~docstring)
-     (defmethod transform-attributes ~name
-      [trait# object# attributes# generated-code# container-type#]
-      (if (~match-pred attributes#)
-        (~body-fn trait# object# attributes# generated-code# container-type#)
-        [attributes# generated-code#]))))
-
 (defmacro deftrait
-  "Defines a trait with the given name. `match-pred` is a function
-  that should return a logical truth if this trait should be executed
-  against the argument list. If it returns true, then `body-fn` is
-  called on the arguments described in `transform-attributes`
-  multimethod. `body-fn` should return a vector, which consists of
-  attribute map with the processed attributes removed, and an updated
-  `generated-code` list.
+  "Defines a trait with the given name.
 
-  Can take a docstring as second argument.
+  `match-pred` is a function that should return a logical truth if
+  this trait should be executed against the argument list. By default
+  it checked if attribute with the same name as trait's is present in
+  the attribute map.
 
-  If `match-pred` is not provided then presumes a trait to handle
-  attribute with the same name as trait's name."
-  ([name body-fn]
-     (deftrait* name nil name body-fn))
-  ([name match-pred-or-docstring body-fn]
-     (if (string? match-pred-or-docstring)
-       (deftrait* name match-pred-or-docstring name body-fn)
-       (deftrait* name nil match-pred-or-docstring body-fn)))
-  ([name docstring match-pred body-fn]
-     (deftrait* name docstring match-pred body-fn)))
+  `dissoc-fn` is a function that removes processed attributes from the
+  map. By default it dissocs attribute with trait's name from the map.
+
+  `codegen-fn` takes four arguments: object, attribute map, generated
+  code and a container type, and should append its own code to the
+  generated code."
+  ^{:arglists '([name docstring? match-pred? dissoc-fn? codegen-fn])}
+  [name & args]
+  (let [[docstring args] (if (string? (first args))
+                           [(first args) (next args)]
+                           [nil args])
+        [match-pred args] (if (> (count args) 1)
+                            [(first args) (next args)]
+                            [name args])
+        [dissoc-fn args] (if (> (count args) 1)
+                            [(first args) (next args)]
+                            [`(fn [a#] (dissoc a# ~name)) args])
+        codegen-fn (first args)]
+    `(do
+       (alter-meta! #'transform-attributes
+                    assoc-in [:trait-doc ~name] ~docstring)
+       (defmethod transform-attributes ~name
+         [trait# object# attributes# generated-code# container-type#]
+         (if (~match-pred attributes#)
+           [(~dissoc-fn attributes#)
+            (~codegen-fn object# attributes# generated-code# container-type#)]
+           [attributes# generated-code#])))))
 
 ;; ### Default attributes
 
