@@ -12,8 +12,7 @@
 (ns neko.context
   "Utilities to aid in working with a context."
   {:author "Daniel Solano Gómez"}
-  (:use [neko.resource :only [get-layout]]
-        [neko.-utils :only [keyword->static-field integer-or-keyword?]])
+  (:use [neko.-utils :only [keyword->static-field integer-or-keyword?]])
   (:import android.content.Context))
 
 (def ^{:doc "Stores Application instance that acts as context."}
