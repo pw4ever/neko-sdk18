@@ -19,27 +19,14 @@
   + views
   + windows
 
-  Given one of these objects, you can (find-view obj id).  The id argument can
-  be an integer ID, as in the original method, or it can be a keyword that will
-  be resolved like:
-
-    (neko.context/resolve-resource context :id id)
-
-  For example, instead of calling:
-
-    (.findViewById activity R$id/my_view)
-
-  You can now use:
-
-    (find-view activity :my_view)
+  Given one of these objects, you can (find-view obj id).
 
   In addition, if within a with-activity form, you can leave out the activity
   argument, simplifying the above call to:
 
-    (find-view :my_view)"
+    (find-view R$id/my_view)"
   {:author "Daniel Solano Gómez"}
-  (:use neko.activity
-        neko.-protocols.resolvable))
+  (:use neko.activity))
 
 (defn- nil-or-view?
   [x]
@@ -56,27 +43,27 @@
 (extend-protocol ViewFinder
   android.view.Window
   (find-view [window id]
-    {:pre  [(resolvable? id)]
+    {:pre  [(integer? id)]
      :post [(nil-or-view? %)]}
-    (.findViewById window (resolve-id id (.getContext window))))
+    (.findViewById window id))
 
   android.app.Activity
   (find-view [activity id]
-    {:pre  [(resolvable? id)]
+    {:pre  [(integer? id)]
      :post [(nil-or-view? %)]}
-    (.findViewById activity (resolve-id id activity)))
+    (.findViewById activity id))
 
   android.view.View
   (find-view [view id]
-    {:pre  [(resolvable? id)]
+    {:pre  [(integer? id)]
      :post [(nil-or-view? %)]}
-    (.findViewById view (resolve-id id (.getContext view))))
+    (.findViewById view id))
 
   android.app.Dialog
   (find-view [dialog id]
-    {:pre  [(resolvable? id)]
+    {:pre  [(integer? id)]
      :post [(nil-or-view? %)]}
-    (.findViewById dialog (resolve-id id (.getContext dialog))))
+    (.findViewById dialog id))
 
   Integer
   (find-view [id]
@@ -88,10 +75,4 @@
   (find-view [id]
     {:pre [(has-*activity*?)]
      :post [(nil-or-view? %)]}
-    (find-view *activity* (.intValue id)))
-
-  clojure.lang.Keyword
-  (find-view [id]
-    {:pre [(has-*activity*?)]
-     :post [(nil-or-view? %)]}
-    (find-view *activity* id)))
+    (find-view *activity* (.intValue id))))

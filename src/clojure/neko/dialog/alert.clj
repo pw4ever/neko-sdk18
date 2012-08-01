@@ -79,13 +79,7 @@
   )
 
 (defn new-builder
-  "Creates a new functional alert dialog builder.  If within a with-context
-  form, the context argument may be omitted."
-  ([]
-   {:pre  [(has-*context*?)]
-    :post [(instance? FunctionalAlertDialogBuilder %)]}
-   (new-builder *context*))
-  ([context]
-   {:pre  [(context? context)]
-    :post [(instance? FunctionalAlertDialogBuilder %)]}
-   (FunctionalAlertDialogBuilder. context true)))
+  "Creates a new functional alert dialog builder."
+  []
+  {:post [(instance? FunctionalAlertDialogBuilder %)]}
+  (FunctionalAlertDialogBuilder. context true))

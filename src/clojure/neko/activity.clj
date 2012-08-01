@@ -14,8 +14,7 @@
   {:author "Daniel Solano Gómez"}
   (:import android.app.Activity
            android.view.View)
-  (:use neko.-protocols.resolvable
-        neko.-utils))
+  (:use neko.-utils))
 
 (def
   ^{:doc "The current activity to operate on."

@@ -16,6 +16,7 @@
         [neko.context :only [context]]
         [neko.resource :only [package-name]]
         [neko.threading :only [init-threading]])
+  (:require neko.ui.traits)
   (:import android.app.Application
            android.content.Context))
 
