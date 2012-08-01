@@ -106,7 +106,7 @@ should remove the attributes it processed from the map."
         (reduce (fn [[attrs gen-code] type]
                   (transform-attributes type obj attrs gen-code container-type))
                 [all-attributes ()]
-                (conj (kw/all-traits el-type) el-type))]
+                (kw/all-traits el-type))]
     (concat generated-code
             (default-setters-from-attributes el-type obj rest-attributes))))
 
