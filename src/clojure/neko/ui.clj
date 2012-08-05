@@ -33,53 +33,60 @@ code of setters.
 `generated-code` is an attribute-setter code generated so far. The
 code this method generates should be appended to it.
 
-Returns a vector that looks like
-`[attributes-without-processed-ones new-generated-code]`. The method
-should remove the attributes it processed from the map."
-  (fn [trait object-symbol attributes-map generated-code container-type]
+`options-map` is a map of additional options that come from higher
+level elements to their inside elements. A transformer can use this
+map to provide some arguments to its own inside elements.
+
+ Returns a vector that looks like `[new-generated-code
+attributes-update-fn options-update-fn]`. `attributes-update-fn`
+should take attributes map and remove processed attributes from it.
+`options-update-fn` should remove old or introduce new options for
+next-level elements."
+  (fn [trait object-symbol attributes-map generated-code options-map]
     trait))
 
 (defmacro deftrait
   "Defines a trait with the given name.
 
-  `match-pred` is a function that should return a logical truth if
-  this trait should be executed against the argument list. By default
-  it checked if attribute with the same name as trait's is present in
-  the attribute map.
+  `match-pred` is a function on attributes map that should return a
+  logical truth if this trait should be executed against the argument
+  list. By default it checks if attribute with the same name as
+  trait's is present in the attribute map.
 
-  `dissoc-fn` is a function that removes processed attributes from the
-  map. By default it dissocs attribute with trait's name from the map.
-
-  `codegen-fn` takes four arguments: object, attribute map, generated
-  code and a container type, and should append its own code to the
-  generated code."
-  ^{:arglists '([name docstring? match-pred? dissoc-fn? codegen-fn])}
+  `codegen-fn` is a function that should take the same arguments as
+  `transform-attributes` and return either the generated code directly
+  or a map with the following keys: `:code`, `:attribute-fn`,
+  `:options-fn`. In the former case `attribute-fn` defaults to
+  dissoc'ing trait's name from attribute map, and `options-fn`
+  defaults to identity function."
+  ^{:arglists '([name docstring? match-pred? codegen-fn])}
   [name & args]
   (let [[docstring args] (if (string? (first args))
                            [(first args) (next args)]
                            [nil args])
-        [match-pred args] (if (> (count args) 1)
-                            [(first args) (next args)]
-                            [name args])
-        [dissoc-fn args] (if (> (count args) 1)
-                            [(first args) (next args)]
-                            [`(fn [a#] (dissoc a# ~name)) args])
-        codegen-fn (first args)]
+        match-pred (if (> (count args) 1)
+                     (first args) name)
+        codegen-body (last args)
+        dissoc-fn `(fn [a#] (dissoc a# ~name))]
     `(do
        (alter-meta! #'transform-attributes
                     assoc-in [:trait-doc ~name] ~docstring)
        (defmethod transform-attributes ~name
-         [trait# object# attributes# generated-code# container-type#]
+         [trait# object# attributes# generated-code# options#]
          (if (~match-pred attributes#)
-           [(~dissoc-fn attributes#)
-            (~codegen-fn object# attributes# generated-code# container-type#)]
-           [attributes# generated-code#])))))
+           (let [result# (~codegen-body object# attributes#
+                                        generated-code# options#)]
+             (if (map? result#)
+               [(:code result#) (:attributes-fn result# ~dissoc-fn)
+                (:options-fn result# identity)]
+               [result# ~dissoc-fn identity]))
+           [generated-code# identity identity])))))
 
 ;; ### Default attributes
 
 (defn default-setters-from-attributes
-  "Takes an element type keyword, an object symbol and the attributes
-  map after all `transform-attributes` methods have been called on it.
+  "Takes element type keyword, object symbol and attributes map after
+  all `transform-attributes` methods have been called on it.
   Transforms each attribute into a call to (.set_CapitalizedKey_ obj
   value). If value is a keyword then it is looked up in the
   keyword-mapping or if it is not there, it is perceived as a static
@@ -91,24 +98,27 @@ should remove the attributes it processed from the map."
        attributes))
 
 (defn process-attributes
-  "Takes an UI element type, its object symbol and a map of
-  attributes. Consequently calls transform-attributes methods on all
+  "Takes UI element type, its object symbol, a map of attributes and
+  options. Consequently calls transform-attributes methods on all
   element's traits, in the end calls `default-setters-from-attributes`
-  on what is left from the attributes map. Returns the generated code
-  for all attributes.
+  on what is left from the attributes map. Returns the vector like
+  `[generated-code updated-options]`.
 
-  `container-type` is a keyword for a container type of this element.
-  It is needed for `:layout-params` trait which should know the
-  container type in order to use correct LayoutParams instance."
-  [el-type obj attributes container-type]
-  (let [all-attributes (merge (kw/default-attributes el-type) attributes)
-        [rest-attributes generated-code]
-        (reduce (fn [[attrs gen-code] type]
-                  (transform-attributes type obj attrs gen-code container-type))
-                [all-attributes ()]
-                (kw/all-traits el-type))]
-    (concat generated-code
-            (default-setters-from-attributes el-type obj rest-attributes))))
+  Options is a map of additional arguments that come from container
+  elements to their inside elements. Note that all traits of the
+  current element will receive the initial options map, and
+  modifications will only appear visible to the subsequent elements."
+  [el-type obj attributes options]
+  (let [all-attributes (merge (kw/default-attributes el-type) attributes)]
+    (loop [[trait & rest] (kw/all-traits el-type), gen-code ()
+           attrs all-attributes, new-options options]
+      (if trait
+       (let [[gen-code attributes-fn options-fn]
+             (transform-attributes trait obj attrs gen-code options)]
+         (recur rest gen-code (attributes-fn attrs) (options-fn new-options)))
+       [(concat gen-code
+                (default-setters-from-attributes el-type obj attrs))
+        new-options]))))
 
 (defn make-constructor-call
   "Takes an object class name and the attributes map to extract
@@ -123,22 +133,32 @@ should remove the attributes it processed from the map."
   "Takes a tree of elements and generates the code to create a new
   element object, set all attributes onto it and add all inside
   elements to it. `make-ui-element` is called recursively on each
-  internal element. The second argument is a keyword that represents
-  the type of the container UI element will be put in."
-  [element container-type context]
+  internal element.
+
+  `options` is a map constructed by container elements to pass down to
+  their inside elements. For top level element options map is empty.
+
+  `context` is Context instance to be used in elements' constructors."
+  [element options context]
   (if (vector? element)
     (let [[el-type attributes & inside-elements] element
           ^Class klass (kw/classname el-type)
-          obj (gensym (.getSimpleName klass))]
+          obj (gensym (.getSimpleName klass))
+          [attributes-code new-options] (process-attributes el-type obj
+                                                            attributes options)
+          ;; Add to new-options information about the type of the
+          ;; container. Traits can't do that themselves because they
+          ;; don't know the type of the element they are working on.
+          new-options (assoc new-options :container-type el-type)]
       `(let [~obj ~(make-constructor-call klass context attributes)]
-         ~@(process-attributes el-type obj attributes container-type)
+         ~@attributes-code
          ~@(map (fn [el]
-                  `(.addView ~obj ~(make-ui-element el el-type context)))
+                  `(.addView ~obj ~(make-ui-element el new-options context)))
                 inside-elements)
          ~obj))
     (if (and (sequential? element) (= (first element) 'quote))
       (second element)
-      (make-ui-element (eval element) container-type context))))
+      (make-ui-element (eval element) options context))))
 
 (defmacro defui
   "Takes a tree of elements and creates Android UI elements according
@@ -152,9 +172,9 @@ should remove the attributes it processed from the map."
   Two-argument version takes an arbitrary Context object to use in UI
   elements constructor."
   ([tree]
-     (make-ui-element tree nil `context))
+     (make-ui-element tree {} `context))
   ([custom-context tree]
-     (make-ui-element tree nil custom-context)))
+     (make-ui-element tree {} custom-context)))
 
 (defmacro config!
   [el-type element & attributes]

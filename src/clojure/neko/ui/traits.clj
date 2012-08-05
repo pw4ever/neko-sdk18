@@ -64,17 +64,21 @@ given arguments. Arguments could be either actual values or keywords
   attributes and sets a proper LayoutParams according to container
   type."
   #(some #{:layout-width :layout-height :layout-weight} (keys %))
-  #(dissoc % :layout-width :layout-height :layout-weight)
-  (fn [obj {:keys [layout-width layout-height layout-weight]} code container]
-    (case container
-      :linear-layout
-      (conj code
-            `(.setLayoutParams ~obj
-              ~(linear-layout-params layout-width layout-height layout-weight)))
+  (fn [obj {:keys [layout-width layout-height layout-weight]}
+      code {:keys [container-type]}]
+    {:attributes-fn #(dissoc % :layout-width :layout-height :layout-weight)
+     :code
+     (case container-type
+       :linear-layout
+       (conj code
+             `(.setLayoutParams ~obj
+                                ~(linear-layout-params
+                                  layout-width layout-height layout-weight)))
 
-      (conj code
-            `(.setLayoutParams ~obj
-              ~(default-layout-params layout-width layout-height))))))
+       (conj code
+             `(.setLayoutParams ~obj
+                                ~(default-layout-params
+                                   layout-width layout-height))))}))
 
 ;; ### Listener traits
 
