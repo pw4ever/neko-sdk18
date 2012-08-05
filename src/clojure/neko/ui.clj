@@ -13,76 +13,13 @@
   "Tools for defining and manipulating Android UI elements."
   (:use [neko.context :only [context]]
         [neko.-utils :only [capitalize keyword->setter]]
-        [neko.listeners.view :only [on-click-call]])
+        [neko.listeners.view :only [on-click-call]]
+        [neko.ui.traits :only [transform-attributes]])
   (:require [neko.ui.mapping :as kw])
   (:import [android.widget LinearLayout$LayoutParams]
            [android.view ViewGroup$LayoutParams]))
 
 ;; ## Attributes
-
-(defmulti transform-attributes
-  "Transforms the given map of attributes into the valid Java-interop
-code of setters.
-
-`trait` is the keyword for a transformer function over the attribute map.
-
-`object-symbol` is an symbol for the UI element to apply setters to.
-
-`attributes-map` is a map of attribtues to their values.
-
-`generated-code` is an attribute-setter code generated so far. The
-code this method generates should be appended to it.
-
-`options-map` is a map of additional options that come from higher
-level elements to their inside elements. A transformer can use this
-map to provide some arguments to its own inside elements.
-
- Returns a vector that looks like `[new-generated-code
-attributes-update-fn options-update-fn]`. `attributes-update-fn`
-should take attributes map and remove processed attributes from it.
-`options-update-fn` should remove old or introduce new options for
-next-level elements."
-  (fn [trait object-symbol attributes-map generated-code options-map]
-    trait))
-
-(defmacro deftrait
-  "Defines a trait with the given name.
-
-  `match-pred` is a function on attributes map that should return a
-  logical truth if this trait should be executed against the argument
-  list. By default it checks if attribute with the same name as
-  trait's is present in the attribute map.
-
-  `codegen-fn` is a function that should take the same arguments as
-  `transform-attributes` and return either the generated code directly
-  or a map with the following keys: `:code`, `:attribute-fn`,
-  `:options-fn`. In the former case `attribute-fn` defaults to
-  dissoc'ing trait's name from attribute map, and `options-fn`
-  defaults to identity function."
-  ^{:arglists '([name docstring? match-pred? codegen-fn])}
-  [name & args]
-  (let [[docstring args] (if (string? (first args))
-                           [(first args) (next args)]
-                           [nil args])
-        match-pred (if (> (count args) 1)
-                     (first args) name)
-        codegen-body (last args)
-        dissoc-fn `(fn [a#] (dissoc a# ~name))]
-    `(do
-       (alter-meta! #'transform-attributes
-                    assoc-in [:trait-doc ~name] ~docstring)
-       (defmethod transform-attributes ~name
-         [trait# object# attributes# generated-code# options#]
-         (if (~match-pred attributes#)
-           (let [result# (~codegen-body object# attributes#
-                                        generated-code# options#)]
-             (if (map? result#)
-               [(:code result#) (:attributes-fn result# ~dissoc-fn)
-                (:options-fn result# identity)]
-               [result# ~dissoc-fn identity]))
-           [generated-code# identity identity])))))
-
-;; ### Default attributes
 
 (defn default-setters-from-attributes
   "Takes element type keyword, object symbol and attributes map after
