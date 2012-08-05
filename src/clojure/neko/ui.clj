@@ -97,7 +97,7 @@
       (second element)
       (make-ui-element (eval element) options context))))
 
-(defmacro defui
+(defmacro make-ui
   "Takes a tree of elements and creates Android UI elements according
   to this tree. A tree has a form of a vector that looks like following:
 
@@ -112,6 +112,14 @@
      (make-ui-element tree {} `context))
   ([custom-context tree]
      (make-ui-element tree {} custom-context)))
+
+(defmacro defui
+  "This macro is DEPRECATED and replaced by `make-ui` due to confusive
+  name. Please use `make-ui` instead.
+
+  `defui` will be removed in the next minor release." [& args]
+  (println "WARNING: defui is deprecated, please use make-ui instead.")
+  `(make-ui ~@args))
 
 (defmacro config!
   [el-type element & attributes]

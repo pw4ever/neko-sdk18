@@ -207,8 +207,8 @@ given arguments. Arguments could be either actual values or keywords
 
   Example:
 
-  (def foo (defui [:linear-layout {:id-holder true}
-                   [:button {:id ::abutton}]]))
+  (def foo (make-ui [:linear-layout {:id-holder true}
+                     [:button {:id ::abutton}]]))
   (::abutton (.getTag foo)) => internal Button object."
   (fn [obj _ code __]
     {:options-fn #(assoc % :id-holder obj)
