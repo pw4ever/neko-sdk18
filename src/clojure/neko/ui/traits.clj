@@ -34,9 +34,9 @@
   "Sets the element's text to a string, integer ID or a keyword
   representing the string resource provided to `:text` attribute."
   (fn [obj {:keys [text]} code _]
-    (conj code `(.setText ~obj ~(if (string? text)
-                                  text
-                                  `(res/get-string ~text))))))
+    (conj code `(.setText ~obj ~(if (keyword? text)
+                                  `(res/get-string ~text)
+                                  text)))))
 
 ;; ### Layout parameters attributes
 
