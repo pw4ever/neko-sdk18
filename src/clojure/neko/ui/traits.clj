@@ -16,7 +16,8 @@
             [neko.listeners view])
   (:use [neko.ui :only [deftrait]])
   (:import [android.widget LinearLayout$LayoutParams]
-           [android.view ViewGroup$LayoutParams]))
+           [android.view ViewGroup$LayoutParams]
+           java.util.HashMap))
 
 ;; ### Def attribute
 
@@ -131,3 +132,31 @@ given arguments. Arguments could be either actual values or keywords
     (conj code
           `(.setOnTouchListener ~obj
             (neko.listeners.view/on-touch-call ~on-touch)))))
+
+;; ### ID storing traits
+
+(deftrait :id-holder
+  "Takes `:id-holder` attribute which should equal true and marks the
+  object to be a holder of lower-level element IDs. IDs are stored in
+  a map which is accessible by calling `.getTag` on the holder object.
+
+  Example:
+
+  (def foo (defui [:linear-layout {:id-holder true}
+                   [:button {:id ::abutton}]]))
+  (::abutton (.getTag foo)) => internal Button object."
+  (fn [obj _ code __]
+    {:options-fn #(assoc % :id-holder obj)
+     :code
+     (conj code
+           `(.setTag ~obj (HashMap.)))}))
+
+(deftrait :id
+  "Takes `:id` attribute, which should be a keyword, and stores the
+  current object in ID-holder's tag (see docs for `:id-holder`
+  trait)."
+  (fn [obj {:keys [id]} code {:keys [id-holder]}]
+    (when (nil? id-holder)
+      (throw (Exception. ":id trait: id-holder is undefined in this UI tree.")))
+    (conj code
+          `(.put (.getTag ~id-holder) ~id ~obj))))

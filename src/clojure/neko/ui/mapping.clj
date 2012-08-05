@@ -24,18 +24,20 @@
   (atom
    ;; UI widgets
    {:view {:traits [:def :layout-params :text :on-click :on-long-click :on-touch
-                    :on-create-context-menu :on-key]}
+                    :on-create-context-menu :on-key :id]}
+    :view-group {:inherits :view
+                 :traits [:id-holder]}
     :button {:classname android.widget.Button
              :inherits :view
              :attributes {:text "Default button"}}
     :linear-layout {:classname android.widget.LinearLayout
-                    :inherits :view}
+                    :inherits :view-group}
     :edit {:classname android.widget.EditText
            :inherits :view}
     :text-view {:classname android.widget.TextView
                 :inherits :view}
     :list-view {:classname android.widget.ListView
-                :inherits :view}
+                :inherits :view-group}
 
     ;; Other
     :layout-params {:classname ViewGroup$LayoutParams
