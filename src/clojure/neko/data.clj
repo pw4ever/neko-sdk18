@@ -79,7 +79,10 @@
 
   SharedPreferences
   (like-map [sp]
-    (MapLikeHashMap. (.getAll sp))))
+    (MapLikeHashMap. (.getAll sp)))
+
+  nil
+  (like-map [_] {}))
 
 ;; SharedPreferences utilities
 
