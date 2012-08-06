@@ -12,8 +12,7 @@
 (ns neko.doc
   "This namespace contains functions that help the developer with
   documentation for different parts of neko. "
-  (:require [neko.ui :as ui]
-            [neko.ui.traits :as traits]
+  (:require [neko.ui.traits :as traits]
             [neko.ui.mapping :as mapping])
   (:use [clojure.string :only [join]]))
 
@@ -38,7 +37,7 @@
                        (pr-str values))))))
 
 (defn- get-trait-doc [trait]
-  (when-let [doc (get-in (meta #'ui/transform-attributes)
+  (when-let [doc (get-in (meta #'traits/transform-attributes)
                             [:trait-doc trait])]
     (str trait " - " doc)))
 
