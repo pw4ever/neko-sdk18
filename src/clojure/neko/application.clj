@@ -10,7 +10,7 @@
 ; this software.
 
 (ns neko.application
-  "Contains the tools to create and manipulate Application instances."
+  "Contains tools to create and manipulate Application instances."
   (:use [neko.-utils :only [simple-name]]
         [neko.init :only [init]]
         [neko.context :only [context]]
