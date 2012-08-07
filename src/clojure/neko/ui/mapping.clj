@@ -32,8 +32,8 @@
              :attributes {:text "Default button"}}
     :linear-layout {:classname android.widget.LinearLayout
                     :inherits :view-group}
-    :edit {:classname android.widget.EditText
-           :inherits :view}
+    :edit-text {:classname android.widget.EditText
+                :inherits :view}
     :text-view {:classname android.widget.TextView
                 :inherits :view}
     :list-view {:classname android.widget.ListView
