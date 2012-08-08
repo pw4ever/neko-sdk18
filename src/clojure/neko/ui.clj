@@ -79,10 +79,14 @@
   [element options context]
   (if (vector? element)
     (let [[el-type attributes & inside-elements] element
+          _ (assert (and (keyword? el-type) (map? attributes)))
           ^Class klass (kw/classname el-type)
           obj (gensym (.getSimpleName klass))
-          [attributes-code new-options] (process-attributes el-type obj
-                                                            attributes options)
+          ;; Remove :constructor-args from attribues since it is used
+          ;; by constructor and is not a real attribute.
+          [attributes-code new-options]
+          (process-attributes el-type obj (dissoc attributes :constructor-args)
+                              options)
           ;; Add to new-options information about the type of the
           ;; container. Traits can't do that themselves because they
           ;; don't know the type of the element they are working on.
