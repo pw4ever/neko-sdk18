@@ -16,6 +16,11 @@
             [neko.ui.mapping :as mapping])
   (:use [clojure.string :only [join]]))
 
+(defn- get-trait-doc [trait]
+  (when-let [doc (get-in (meta #'traits/transform-attributes)
+                            [:trait-doc trait])]
+    (str trait " - " doc)))
+
 (defn get-element-doc
   [el-type el-mapping verbose?]
   (let [{:keys [classname attributes values]} el-mapping
@@ -35,11 +40,6 @@
            (if (empty? values) ""
                (format "Special values: %s\n"
                        (pr-str values))))))
-
-(defn- get-trait-doc [trait]
-  (when-let [doc (get-in (meta #'traits/transform-attributes)
-                            [:trait-doc trait])]
-    (str trait " - " doc)))
 
 (get-element-doc :button (get @@#'mapping/keyword-mapping :button) true)
 
