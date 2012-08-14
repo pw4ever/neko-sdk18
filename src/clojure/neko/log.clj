@@ -57,9 +57,13 @@
 (defmacro deflog
   "Creates a number of logging functions for the given tag."
   [tag]
-  `(do
-     (intern *ns* (with-meta (symbol "log-d") {:private true}) (partial log-debug ~tag))
-     (intern *ns* (with-meta (symbol "log-e") {:private true}) (partial log-error ~tag))
-     (intern *ns* (with-meta (symbol "log-i") {:private true}) (partial log-info ~tag))
-     (intern *ns* (with-meta (symbol "log-v") {:private true}) (partial log-verbose ~tag))
-     (intern *ns* (with-meta (symbol "log-w") {:private true}) (partial log-warn ~tag))))
+  (let [intern-logger
+        (fn [log-name log-fn]
+          `(intern *ns* (with-meta ~(symbol log-name) {:private true})
+                   (partial ~log-fn ~tag)))]
+    `(do
+       ~(intern-logger "log-d" `log-debug)
+       ~(intern-logger "log-e" `log-error)
+       ~(intern-logger "log-i" `log-info)
+       ~(intern-logger "log-v" `log-verbose)
+       ~(intern-logger "log-w" `log-warn))))
