@@ -19,8 +19,7 @@
            clojure.lang.IFn
            java.util.concurrent.TimeUnit
            android.os.Looper
-           android.os.Handler
-           neko.threading.AsyncTask))
+           android.os.Handler))
 
 ;; ### Initialization
 
