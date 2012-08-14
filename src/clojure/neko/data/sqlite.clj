@@ -1,3 +1,14 @@
+; Copyright © 2012 Alexander Yakushev
+; All rights reserved.
+;
+; This program and the accompanying materials are made available under the
+; terms of the Eclipse Public License v1.0 which accompanies this distribution,
+; and is available at <http://www.eclipse.org/legal/epl-v10.html>.
+;
+; By using this software in any fashion, you are agreeing to be bound by the
+; terms of this license.  You must not remove this notice, or any other, from
+; this software.
+
 (ns neko.data.sqlite
   "Alpha - subject to change.
 
@@ -44,13 +55,12 @@
   "Generates a table creation query from the provided schema and table
   name."
   [schema table-name]
-  (format "create table %s (%s);"
-          (name table-name)
-          (string/join
-           (interpose ", "
-                      (map (fn [[col params]]
-                             (str (name col) " " (:sql-type params)))
-                           (get-in schema [:tables table-name :columns]))))))
+  (->> (get-in schema [:tables table-name :columns])
+       (map (fn [[col params]]
+              (str (name col) " " (:sql-type params))))
+       (interpose ", ")
+       string/join
+       (format "create table %s (%s);" (name table-name))))
 
 (defn ^SQLiteOpenHelper create-helper
   "Creates a SQLiteOpenHelper instance for a given schema.
