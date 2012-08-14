@@ -15,11 +15,14 @@
 (defn toast
   "Creates a Toast object using a text message and a keyword
   representing how long a toast should be visible (`:short` or
-  `:long`). The application context wiil be used."
-  [^String message, length]
-  {:pre [(contains? toast-length length)]}
-  (.show
-   ^Toast (Toast/makeText context message ^int (toast-length length))))
+  `:long`). The application context wiil be used. One-argument version
+  takes only message and assumes length to be :long."
+  ([message]
+     (toast message :long))
+  ([^String message, length]
+     {:pre [(contains? toast-length length)]}
+     (.show
+      ^Toast (Toast/makeText context message ^int (toast-length length)))))
 
 ;; ### Notifications
 
