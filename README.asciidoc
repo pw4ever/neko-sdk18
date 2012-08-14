@@ -92,7 +92,7 @@ dependency in your project. In other case put the following line in
 the list of your dependencies:
 
 ---
-[neko/neko "1.1.6"]
+[neko/neko "2.0.0-beta1"]
 ---
 
 === 4. Write your first Android application in Clojure ===
