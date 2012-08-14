@@ -16,12 +16,16 @@
             [neko.ui.mapping :as mapping])
   (:use [clojure.string :only [join]]))
 
-(defn- get-trait-doc [trait]
+(defn- get-trait-doc
+  "Returns a docstring for the given trait keyword."
+  [trait]
   (when-let [doc (get-in (meta #'traits/transform-attributes)
                             [:trait-doc trait])]
     (str trait " - " doc)))
 
-(defn get-element-doc
+(defn- get-element-doc
+  "Returns a docsting generated from the element mapping. Verbose flag
+  switches the detailed description of element's traits."
   [el-type el-mapping verbose?]
   (let [{:keys [classname attributes values]} el-mapping
         traits (mapping/all-traits el-type)]
@@ -41,18 +45,23 @@
                (format "Special values: %s\n"
                        (pr-str values))))))
 
-(get-element-doc :button (get @@#'mapping/keyword-mapping :button) true)
-
 (defn describe
+  "Describes the given keyword. If it reprenents UI element's name
+  then describe the element. If optional second argument equals
+  `:verbose`, describe all its traits as well. If a trait keyword is
+  given, describes the trait. No-arguments version briefly describes
+  all available UI elements."
   ([]
      (let [all-elements @@#'mapping/keyword-mapping]
        (doseq [[el-type parameters] all-elements]
          (print (get-element-doc el-type parameters false)))))
   ([kw]
+     (describe kw nil))
+  ([kw modifier]
      (let [parameters (get @@#'mapping/keyword-mapping kw)
            trait-doc (get-trait-doc kw)]
        (cond
         parameters (print "Elements found:\n"
-                          (get-element-doc kw parameters true))
+                          (get-element-doc kw parameters (= modifier :verbose)))
         trait-doc (print "\nTraits found:\n" trait-doc)
         :else (print (str "No elements or traits were found for " kw))))))
