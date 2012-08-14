@@ -11,7 +11,7 @@ Android project easy and providing functional wrappers and alternatives to
 Android’s Java API.
 
 Acknowledgement
---------
+---------------
 
 I thank Remco van 't Veer for his
 https://github.com/remvee/clj-android[clj-android] library which was
