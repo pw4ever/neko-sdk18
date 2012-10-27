@@ -31,7 +31,7 @@
   application's `onCreate` event which automatically calls the
   superOnCreate method and then calls the provided function onto the
   Application object."
-  [name & {:keys [extends prefix on-create]
+  [name & {:keys [extends prefix on-create nrepl-port]
            :or {extends android.app.Application
                 prefix (str (simple-name name) "-")}}]
   `(do
@@ -47,7 +47,7 @@
            (.superOnCreate ~'this)
            (alter-var-root #'context (constantly ~'this))
            (alter-var-root #'package-name (constantly (.getPackageName ~'this)))
-           (init ~'this)
+           (init ~'this :port ~(or nrepl-port 9999))
            (init-threading)
            ~(when on-create
               `(~on-create ~'this))))))
