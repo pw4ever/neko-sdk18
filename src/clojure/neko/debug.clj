@@ -29,19 +29,22 @@
   "Returns an uncaught exception happened on UI thread."
   [] @ui-exception)
 
+(defmacro catch-all-exceptions [func]
+  (if *release-build*
+    `(~func)
+    `(try (~func)
+          (catch Throwable e#
+            (handle-exception-from-ui-thread e#)))))
+
 (defn safe-for-ui*
   "Wraps the given function inside a try..catch block and notify user
   using a Toast if an exception happens."
   [f]
-  (try (f)
-       (catch Throwable e
-         (handle-exception-from-ui-thread e))))
+  (catch-all-exceptions f))
 
 (defmacro safe-for-ui
   "A conditional macro that will protect the application from crashing
   if the code provided in `body` crashes on UI thread in the debug
   build. If the build is a release one returns `body` as is."
   [& body]
-  (if *release-build*
-    `(do ~@body)
-    `(safe-for-ui* (fn [] ~@body))))
+  `(safe-for-ui* (fn [] ~@body)))
