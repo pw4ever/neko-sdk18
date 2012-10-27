@@ -130,6 +130,8 @@
                           ~'onResume ~'superOnResume
                           ~'onPause ~'superOnPause
                           ~'onStop ~'superOnStop
+                          ~'onCreateContextMenu ~'superOnCreateContextMenu
+                          ~'onContextItemSelected ~'superOnContextItemSelected
                           ~'onDestroy ~'superOnDestroy})
        ~(when on-create
           `(defn ~(symbol (str prefix "onCreate"))
