@@ -59,8 +59,9 @@
   [tag]
   (let [intern-logger
         (fn [log-name log-fn]
-          `(intern *ns* (with-meta ~(symbol log-name) {:private true})
-                   (partial ~log-fn ~tag)))]
+          `(intern *ns* (symbol ~log-name)
+                   (-> (partial ~log-fn ~tag)
+                       (with-meta  {:private true}))))]
     `(do
        ~(intern-logger "log-d" `log-debug)
        ~(intern-logger "log-e" `log-error)
