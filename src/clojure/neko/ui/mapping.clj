@@ -14,7 +14,7 @@
   actual UI classes, define the hierarchy relations between the
   elements and the values for the keywords representing values."
   (:require [clojure.string :as string])
-  (:use [neko.-utils :only [keyword->static-field]])
+  (:use [neko.-utils :only [keyword->static-field reflect-field]])
   (:import [android.widget LinearLayout Button EditText ListView]
            android.app.ProgressDialog
            [android.view ViewGroup$LayoutParams]))
@@ -26,7 +26,7 @@
    {:view {:traits [:def :layout-params :text :on-click :on-long-click :on-touch
                     :on-create-context-menu :on-key :id]}
     :view-group {:inherits :view
-                 :traits [:id-holder]}
+                 :traits [:container :id-holder]}
     :button {:classname android.widget.Button
              :inherits :view
              :attributes {:text "Default button"}}
@@ -48,10 +48,20 @@
                                :spinner ProgressDialog/STYLE_SPINNER}}
     }))
 
+(def ^{:private true} reverse-mapping
+  (atom
+   {android.widget.Button :button
+    android.widget.LinearLayout :linear-layout
+    android.widget.EditText :edit-text
+    android.widget.TextView :text-view
+    android.widget.ListView :list-view
+    android.app.ProgressDialog :progress-dialog}))
+
 (defn set-classname!
   "Connects the given keyword to the classname."
   [kw classname]
-  (swap! keyword-mapping assoc-in [kw :classname] classname))
+  (swap! keyword-mapping assoc-in [kw :classname] classname)
+  (swap! reverse-mapping assoc-in classname kw))
 
 (defn classname
   "Gets the classname from the keyword-mapping map if the argument is
@@ -63,6 +73,11 @@
         (throw (Exception. (str "The class for " classname-or-kw
                                 " isn't present in the mapping."))))
     classname-or-kw))
+
+(defn keyword-by-classname
+  "Returns a keyword name for the given UI widget classname."
+  [classname]
+  (@reverse-mapping classname))
 
 (defn add-trait!
   "Defines the `kw` to implement trait specified with `trait-kw`."
@@ -99,7 +114,8 @@
     (if-not (keyword? value)
       value
       (or (recursive-find element-kw)
-          (keyword->static-field (classname element-kw) value)))))
+          (reflect-field (classname element-kw)
+                         (keyword->static-field value))))))
 
 (defn add-default-atribute-value!
   "Adds a default attribute value for the given element."
@@ -107,7 +123,7 @@
   (swap! keyword-mapping
          update-in [element-kw :attributes attribute-kw] value))
 
-(defn default-attributes [element-kw]
+(defn default-attributes
   "Returns a map of default attributes for the given element keyword
   and all its parents."
   [element-kw]
@@ -124,5 +140,10 @@
 
   Optional arguments
   - :classname, :inherits, :traits, :values, :attributes. "
-  [kw-name & args]
-  (swap! keyword-mapping assoc kw-name (apply hash-map args)))
+  [kw-name & {:as args}]
+  (swap! keyword-mapping assoc kw-name
+         (if-not (:inherits args)
+           (assoc args :inherits :view)
+           args))
+  (if-let [classname (:classname args)]
+    (swap! reverse-mapping assoc classname kw-name)))

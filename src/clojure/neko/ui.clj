@@ -1,4 +1,4 @@
-; Copyright © 2012 Alexander Yakushev.
+; Copyright © 2012-2013 Alexander Yakushev.
 ; All rights reserved.
 ;
 ; This program and the accompanying materials are made available under the
@@ -11,97 +11,76 @@
 
 (ns neko.ui
   "Tools for defining and manipulating Android UI elements."
-  (:use [neko.context :only [context]]
-        [neko.-utils :only [capitalize keyword->setter]]
+  (:use [neko.-utils :only [keyword->setter reflect-setter reflect-constructor]]
         [neko.listeners.view :only [on-click-call]]
-        [neko.ui.traits :only [transform-attributes]])
-  (:require [neko.ui.mapping :as kw])
-  (:import [android.widget LinearLayout$LayoutParams]
-           [android.view ViewGroup$LayoutParams]))
+        [neko.ui.traits :only [apply-trait]])
+  (:require [neko.ui.mapping :as kw]
+            [neko.context :as context]))
 
 ;; ## Attributes
 
-(defn default-setters-from-attributes
-  "Takes element type keyword, object symbol and attributes map after
-  all `transform-attributes` methods have been called on it.
-  Transforms each attribute into a call to (.set_CapitalizedKey_ obj
-  value). If value is a keyword then it is looked up in the
-  keyword-mapping or if it is not there, it is perceived as a static
-  field of the class. Returns a list of setter calls."
-  [el-type obj attributes]
-  (map (fn [[attr value]]
-         (let [real-value (kw/value el-type value)]
-           `(~(keyword->setter attr) ~obj ~real-value)))
-       attributes))
+(defn apply-default-setters-from-attributes
+  "Takes widget keywords name, UI widget obejct and attributes map
+  after all custom attributes were applied. Transforms each attribute
+  into a call to (.set_CapitalizedKey_ widget value). If value is a
+  keyword then it is looked up in the keyword-mapping or if it is not
+  there, it is perceived as a static field of the class."
+  [widget-kw widget attributes]
+  (doseq [[attribute value] attributes]
+    (let [real-value (kw/value widget-kw value)]
+     (.invoke (reflect-setter (type widget)
+                              (keyword->setter attribute)
+                              (type real-value))
+              widget (into-array (vector real-value))))))
 
-(defn process-attributes
-  "Takes UI element type, its object symbol, a map of attributes and
-  options. Consequently calls transform-attributes methods on all
-  element's traits, in the end calls `default-setters-from-attributes`
-  on what is left from the attributes map. Returns the vector like
-  `[generated-code updated-options]`.
+(defn apply-attributes
+  "Takes UI widget keyword, a widget object, a map of attributes and
+  options. Consequently calls `apply-trait` on all element's traits,
+  in the end calls `apply-default-setters-from-attributes` on what is
+  left from the attributes map. Returns the updated options map.
 
   Options is a map of additional arguments that come from container
   elements to their inside elements. Note that all traits of the
   current element will receive the initial options map, and
   modifications will only appear visible to the subsequent elements."
-  [el-type obj attributes options]
-  (let [all-attributes (merge (kw/default-attributes el-type) attributes)]
-    (loop [[trait & rest] (kw/all-traits el-type), gen-code ()
-           attrs all-attributes, new-options options]
+  [widget-kw widget attributes options]
+  (let [all-attributes attributes #_(merge (kw/default-attributes widget-kw) attributes)]
+    (loop [[trait & rest] (kw/all-traits widget-kw),
+           attrs all-attributes, new-opts options]
       (if trait
-       (let [[gen-code attributes-fn options-fn]
-             (transform-attributes trait obj attrs gen-code options)]
-         (recur rest gen-code (attributes-fn attrs) (options-fn new-options)))
-       [(concat gen-code
-                (default-setters-from-attributes el-type obj attrs))
-        new-options]))))
+        (let [[attributes-fn options-fn]
+              (apply-trait trait widget attrs options)]
+          (recur rest (attributes-fn attrs) (options-fn new-opts)))
+        (do
+          (apply-default-setters-from-attributes widget-kw widget attrs)
+          new-opts)))))
 
-(defn make-constructor-call
-  "Takes an object class name and the attributes map to extract
-  additional arguments (if available) and returns a form that
-  constructs the object."
-  [klass context {:keys [constructor-args]}]
-  `(new ~klass ~context ~@constructor-args))
+;; ## Widget creation
 
-;; ## Top-level code-generation facilities
+(defn construct-element
+  ([kw context constructor-args]
+     (let [element-class (kw/classname kw)]
+       (.newInstance (reflect-constructor element-class
+                                          (cons android.content.Context
+                                                (map type constructor-args)))
+                     (to-array (cons context constructor-args))))))
 
 (defn make-ui-element
-  "Takes a tree of elements and generates the code to create a new
-  element object, set all attributes onto it and add all inside
-  elements to it. `make-ui-element` is called recursively on each
-  internal element.
+  [context tree options]
+  (let [[widget-kw attributes & inside-elements] tree
+        _ (assert (and (keyword? widget-kw) (map? attributes)))
+        ;; Remove :constructor-args from attribues since it is used
+        ;; by constructor and is not a real attribute.
+        wdg (construct-element widget-kw context
+                               (:constructor-args attributes))
+        new-opts (apply-attributes widget-kw wdg attributes options)]
+    (doall
+     (map #(.addView ^android.view.View wdg
+                     (make-ui-element context % new-opts))
+          inside-elements))
+    wdg))
 
-  `options` is a map constructed by container elements to pass down to
-  their inside elements. For top level element options map is empty.
-
-  `context` is Context instance to be used in elements' constructors."
-  [element options context]
-  (if (vector? element)
-    (let [[el-type attributes & inside-elements] element
-          _ (assert (and (keyword? el-type) (map? attributes)))
-          ^Class klass (kw/classname el-type)
-          obj (gensym (.getSimpleName klass))
-          ;; Remove :constructor-args from attribues since it is used
-          ;; by constructor and is not a real attribute.
-          [attributes-code new-options]
-          (process-attributes el-type obj (dissoc attributes :constructor-args)
-                              options)
-          ;; Add to new-options information about the type of the
-          ;; container. Traits can't do that themselves because they
-          ;; don't know the type of the element they are working on.
-          new-options (assoc new-options :container-type el-type)]
-      `(let [~obj ~(make-constructor-call klass context attributes)]
-         ~@attributes-code
-         ~@(map (fn [el]
-                  `(.addView ~obj ~(make-ui-element el new-options context)))
-                inside-elements)
-         ~obj))
-    (if (and (sequential? element) (= (first element) 'quote))
-      (second element)
-      (make-ui-element (eval element) options context))))
-
-(defmacro make-ui
+(defn make-ui
   "Takes a tree of elements and creates Android UI elements according
   to this tree. A tree has a form of a vector that looks like following:
 
@@ -113,21 +92,6 @@
   Two-argument version takes an arbitrary Context object to use in UI
   elements constructor."
   ([tree]
-     (make-ui-element tree {} `context))
-  ([custom-context tree]
-     (make-ui-element tree {} custom-context)))
-
-(defmacro defui
-  "This macro is DEPRECATED and replaced by `make-ui` due to confusive
-  name. Please use `make-ui` instead.
-
-  `defui` will be removed in the next minor release." [& args]
-  (println "WARNING: defui is deprecated, please use make-ui instead.")
-  `(make-ui ~@args))
-
-(defmacro config!
-  [el-type element & attributes]
-  (let [attributes (apply hash-map attributes)
-        obj (gensym (name el-type))]
-    `(let [~obj ~element]
-       ~@(process-attributes el-type obj attributes nil))))
+     (make-ui-element context/context tree {}))
+  ([context tree]
+     (make-ui-element context tree {})))

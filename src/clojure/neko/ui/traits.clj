@@ -13,14 +13,14 @@
   "Contains trait declarations for various UI elements."
   (:require [neko.ui.mapping :as kw]
             [neko.resource :as res]
-            [neko.listeners view])
+            [neko.listeners.view :as view-listeners])
   (:import [android.widget LinearLayout$LayoutParams]
-           [android.view ViewGroup$LayoutParams]
+           [android.view View ViewGroup$LayoutParams]
            java.util.HashMap))
 
 ;; ## Infrastructure for traits and attributes
 
-(defmulti transform-attributes
+(defmulti apply-trait
   "Transforms the given map of attributes into the valid Java-interop
 code of setters.
 
@@ -42,7 +42,7 @@ attributes-update-fn options-update-fn]`. `attributes-update-fn`
 should take attributes map and remove processed attributes from it.
 `options-update-fn` should remove old or introduce new options for
 next-level elements."
-  (fn [trait object-symbol attributes-map generated-code options-map]
+  (fn [trait widget attributes-map options-map]
     trait))
 
 (defmacro deftrait
@@ -71,157 +71,146 @@ next-level elements."
     `(do
        (alter-meta! #'transform-attributes
                     assoc-in [:trait-doc ~name] ~docstring)
-       (defmethod transform-attributes ~name
-         [trait# object# attributes# generated-code# options#]
+       (defmethod apply-trait ~name
+         [trait# widget# attributes# options#]
          (if (~match-pred attributes#)
-           (let [result# (~codegen-body object# attributes#
-                                        generated-code# options#)]
+           (let [result# (~codegen-body widget# attributes# options#)]
              (if (map? result#)
-               [(:code result#) (:attributes-fn result# ~dissoc-fn)
+               [(:attributes-fn result# ~dissoc-fn)
                 (:options-fn result# identity)]
-               [result# ~dissoc-fn identity]))
-           [generated-code# identity identity])))))
+               [~dissoc-fn identity]))
+           [identity identity])))))
 
 ;; ## Implementation of different traits
 
 ;; ### Def attribute
 
 (deftrait :def
-  "Takes a symbol provided to `:def` and binds the object to it.
+  "Takes a symbol provided to `:def` and binds the widget to it.
 
   Example: `[:button {:def ok}]` defines a var `ok` which stores the
   button object."
-  (fn [obj attributes code _]
-    (conj code `(def ~(:def attributes) ~obj))))
+  (fn [wdg attributes _]
+    (let [sym (:def attributes)]
+      (intern (symbol (namespace sym)) (symbol (name sym)) wdg))))
 
 ;; ### Basic traits
 
 (deftrait :text
-  "Sets the element's text to a string, integer ID or a keyword
+  "Sets widget's text to a string, integer ID or a keyword
   representing the string resource provided to `:text` attribute."
-  (fn [obj {:keys [text]} code _]
-    (conj code `(.setText ~obj ~(if (keyword? text)
-                                  `(res/get-string ~text)
-                                  text)))))
+  (fn [wdg {:keys [text]} _]
+    (.setText wdg (if (keyword? text)
+                    (res/get-string text)
+                    text))))
 
 ;; ### Layout parameters attributes
 
-(defn default-layout-params
+(defn- default-layout-params
   "Construct LayoutParams instance from the given arguments. Arguments
-could be either actual values or keywords `:fill` and `:wrap`."
-  ([width height]
-     (let [real-width (kw/value :layout-params (or width :wrap))
-           real-height (kw/value :layout-params (or height :wrap))]
-       `(new ~ViewGroup$LayoutParams ~real-width ~real-height))))
+  could be either actual values or keywords `:fill` and `:wrap`."
+  [width height]
+  (ViewGroup$LayoutParams. (kw/value :layout-params (or width :wrap))
+                           (kw/value :layout-params (or height :wrap))))
 
-(defn linear-layout-params
+(defn- linear-layout-params
   "Construct LinearLayout-specific LayoutParams instance from the
-given arguments. Arguments could be either actual values or keywords
-`:fill` and `:wrap`."
-  ([width height weight]
-     (let [real-width (kw/value :layout-params (or width :wrap))
-           real-height (kw/value :layout-params (or height :wrap))
-           real-weight (or weight 0)]
-       `(new ~LinearLayout$LayoutParams ~real-width
-             ~real-height ~real-weight))))
+  given arguments. Arguments could be either actual values or keywords
+  `:fill` and `:wrap`."
+  [width height weight]
+  (LinearLayout$LayoutParams. (kw/value :layout-params (or width :wrap))
+                              (kw/value :layout-params (or height :wrap))
+                              (or weight 0)))
 
 (deftrait :layout-params
   "Takes `:layout-width`, `:layout-height` and `:layout-weight`
   attributes and sets a proper LayoutParams according to container
   type."
-  #(some #{:layout-width :layout-height :layout-weight} (keys %))
-  (fn [obj {:keys [layout-width layout-height layout-weight]}
-      code {:keys [container-type]}]
-    {:attributes-fn #(dissoc % :layout-width :layout-height :layout-weight)
-     :code
-     (case container-type
-       :linear-layout
-       (conj code
-             `(.setLayoutParams ~obj
-                                ~(linear-layout-params
-                                  layout-width layout-height layout-weight)))
+  #(some % [:layout-width :layout-height :layout-weight])
+  (fn [wdg {:keys [layout-width layout-height layout-weight]}
+      {:keys [container-type]}]
+    (case (kw/keyword-by-classname container-type)
+      :linear-layout
+      (.setLayoutParams
+       wdg (linear-layout-params layout-width layout-height layout-weight))
 
-       (conj code
-             `(.setLayoutParams ~obj
-                                ~(default-layout-params
-                                   layout-width layout-height))))}))
+      (.setLayoutParams
+       wdg (default-layout-params layout-width layout-height)))
+    {:attributes-fn #(dissoc % :layout-width :layout-height
+                             :layout-weight)}))
+
+(deftrait :container
+  "Puts the type of the widget its type into the options map so
+  subelement can use the container type to choose the correct
+  LayoutParams instance."
+  (constantly true)
+  (fn [wdg _ __]
+    {:options-fn #(assoc % :container-type (type wdg))}))
 
 ;; ### Listener traits
 
 (deftrait :on-click
   "Takes :on-click attribute, which should be function of one
-  argument, and sets it as an OnClickListener for the object."
-  (fn [obj {:keys [on-click]} code _]
-    (conj code
-          `(.setOnClickListener ~obj
-            (neko.listeners.view/on-click-call ~on-click)))))
+  argument, and sets it as an OnClickListener for the widget."
+  (fn [wdg {:keys [on-click]} _]
+    (.setOnClickListener wdg (view-listeners/on-click-call on-click))))
 
 (deftrait :on-create-context-menu
   "Takes :on-create-context-menu attribute, which should be function
   of three arguments, and sets it as an OnCreateContextMenuListener
   for the object."
-  (fn [obj {:keys [on-create-context-menu]} code _]
-    (conj code
-          `(.setOnCreateContextMenuListener ~obj
-            (neko.listeners.view/on-create-context-menu-call
-             ~on-create-context-menu)))))
+  (fn [wdg {:keys [on-create-context-menu]} _]
+    (.setOnCreateContextMenuListener
+     wdg (view-listeners/on-create-context-menu-call on-create-context-menu))))
 
 (deftrait :on-focus-change
   "Takes :on-focus-change attribute, which should be function of two
   arguments, and sets it as an OnFocusChangeListener for the object."
-  (fn [obj {:keys [on-focus-change]} code _]
-    (conj code
-          `(.setOnFocusChangeListener ~obj
-            (neko.listeners.view/on-focus-change-call ~on-focus-change)))))
+  (fn [wdg {:keys [on-focus-change]} _]
+    (.setOnFocusChangeListener
+     wdg (view-listeners/on-focus-change-call on-focus-change))))
 
 (deftrait :on-key
   "Takes :on-key attribute, which should be function of three
-  arguments, and sets it as an OnKeyListener for the object."
-  (fn [obj {:keys [on-key]} code _]
-    (conj code
-          `(.setOnKeyListener ~obj
-            (neko.listeners.view/on-key-call ~on-key)))))
+  arguments, and sets it as an OnKeyListener for the widget."
+  (fn [wdg {:keys [on-key]} _]
+    (.setOnKeyListener wdg (view-listeners/on-key-call on-key))))
 
 (deftrait :on-long-click
   "Takes :on-long-click attribute, which should be function of one
-  argument, and sets it as an OnLongClickListener for the object."
-  (fn [obj {:keys [on-long-click]} code _]
-    (conj code
-          `(.setOnLongClickListener ~obj
-            (neko.listeners.view/on-long-click-call ~on-long-click)))))
+  argument, and sets it as an OnLongClickListener for the widget."
+  (fn [wdg {:keys [on-long-click]} code _]
+    (.setOnLongClickListener
+     wdg (view-listeners/on-long-click-call on-long-click))))
 
 (deftrait :on-touch
   "Takes :on-touch attribute, which should be function of two
-  arguments, and sets it as an OnTouchListener for the object."
-  (fn [obj {:keys [on-touch]} code _]
-    (conj code
-          `(.setOnTouchListener ~obj
-            (neko.listeners.view/on-touch-call ~on-touch)))))
+  arguments, and sets it as an OnTouchListener for the widget."
+  (fn [wdg {:keys [on-touch]} code _]
+    (.setOnTouchListener
+     wdg (view-listeners/on-touch-call on-touch))))
 
 ;; ### ID storing traits
 
 (deftrait :id-holder
   "Takes `:id-holder` attribute which should equal true and marks the
-  object to be a holder of lower-level element IDs. IDs are stored in
-  a map which is accessible by calling `.getTag` on the holder object.
+  widget to be a holder of lower-level element IDs. IDs are stored in
+  a map which is accessible by calling `.getTag` on the holder widget.
 
   Example:
 
   (def foo (make-ui [:linear-layout {:id-holder true}
                      [:button {:id ::abutton}]]))
-  (::abutton (.getTag foo)) => internal Button object."
-  (fn [obj _ code __]
-    {:options-fn #(assoc % :id-holder obj)
-     :code
-     (conj code
-           `(.setTag ~obj (HashMap.)))}))
+  (::abutton (.getTag foo)) => internal Button wdgect."
+  (fn [wdg _ __]
+    (.setTag wdg (HashMap.))
+    {:options-fn #(assoc % :id-holder wdg)}))
 
 (deftrait :id
   "Takes `:id` attribute, which should be a keyword, and stores the
-  current object in ID-holder's tag (see docs for `:id-holder`
+  current widget in ID-holder's tag (see docs for `:id-holder`
   trait)."
-  (fn [obj {:keys [id]} code {:keys [id-holder]}]
-    (when (nil? id-holder)
-      (throw (Exception. ":id trait: id-holder is undefined in this UI tree.")))
-    (conj code
-          `(.put (.getTag ~id-holder) ~id ~obj))))
+  (fn [wdg {:keys [id]} {:keys [^View id-holder]}]
+    (if (nil? id-holder)
+      (throw (Exception. ":id trait: id-holder is undefined in this UI tree."))
+      (.put ^HashMap (.getTag id-holder) id wdg))))
