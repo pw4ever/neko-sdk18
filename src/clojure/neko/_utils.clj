@@ -91,6 +91,7 @@
 
 (defn class-or-type [cl]
   (condp = cl
+    Boolean Boolean/TYPE
     Integer Integer/TYPE
     Long Integer/TYPE
     Double Double/TYPE

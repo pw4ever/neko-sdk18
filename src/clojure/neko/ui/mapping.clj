@@ -120,7 +120,10 @@
   [element-kw value & [attribute]]
   (let [mapping @keyword-mapping]
     (if-not (keyword? value)
-      value
+      (cond
+       (integer? value) (int value)
+       (float? value) (float value)
+       :else value)
       (or (recursive-find (list element-kw :values value))
           (reflect-field
            (classname
