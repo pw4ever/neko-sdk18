@@ -13,9 +13,12 @@
   "Contains trait declarations for various UI elements."
   (:require [neko.ui.mapping :as kw]
             [neko.resource :as res]
+            [neko.context :as context]
             [neko.listeners.view :as view-listeners])
+  (:use [neko.-utils :only [memoized]])
   (:import [android.widget LinearLayout$LayoutParams]
            [android.view View ViewGroup$LayoutParams]
+           android.util.TypedValue
            java.util.HashMap))
 
 ;; ## Infrastructure for traits and attributes
@@ -138,6 +141,47 @@ next-level elements."
        wdg (default-layout-params layout-width layout-height)))
     {:attributes-fn #(dissoc % :layout-width :layout-height
                              :layout-weight)}))
+
+(defn- kw->unit-id [unit-kw]
+  (case unit-kw
+    :px TypedValue/COMPLEX_UNIT_PX
+    :dp TypedValue/COMPLEX_UNIT_DIP
+    :dip TypedValue/COMPLEX_UNIT_DIP
+    :sp TypedValue/COMPLEX_UNIT_SP
+    :pt TypedValue/COMPLEX_UNIT_PT
+    :in TypedValue/COMPLEX_UNIT_IN
+    :mm TypedValue/COMPLEX_UNIT_MM
+    TypedValue/COMPLEX_UNIT_PX))
+
+(memoized
+ (defn- get-display-metrics
+   "Returns Android's DisplayMetrics object from application context."
+   []
+   (.. context/context (getResources) (getDisplayMetrics))))
+
+(defn- padding-value->pixels [value]
+  (if (vector? value)
+    (Math/round ^float
+     (TypedValue/applyDimension (kw->unit-id (second value)) (first value)
+                                (get-display-metrics)))
+    value))
+
+(deftrait :padding
+  "Takes `:padding`, `:padding-bottom`, `:padding-left`,
+  `:padding-right` and `:padding-top` and set element's padding
+  according to their values. Values might be either integers or
+  vectors like `[number unit-kw]`, where unit keyword is one of the
+  following: :px, :dip, :sp, :pt, :in, :mm."
+  #(some % [:padding :padding-bottom :padding-left :padding-right :padding-top])
+  (fn [wdg {:keys [padding padding-bottom padding-left
+                  padding-right padding-top]} _]
+    (.setPadding ^View wdg
+                 (padding-value->pixels (or padding-left padding 0))
+                 (padding-value->pixels (or padding-top padding 0))
+                 (padding-value->pixels (or padding-right padding 0))
+                 (padding-value->pixels (or padding-bottom padding 0)))
+    {:attributes-fn #(dissoc % :padding :padding-bottom :padding-left
+                             :padding-right :padding-top)}))
 
 (deftrait :container
   "Puts the type of the widget its type into the options map so

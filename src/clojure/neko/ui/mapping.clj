@@ -24,7 +24,7 @@
   (atom
    ;; UI widgets
    {:view {:traits [:def :layout-params :text :on-click :on-long-click :on-touch
-                    :on-create-context-menu :on-key :id]}
+                    :on-create-context-menu :on-key :id :padding]}
     :view-group {:inherits :view
                  :traits [:container :id-holder]}
     :button {:classname android.widget.Button
