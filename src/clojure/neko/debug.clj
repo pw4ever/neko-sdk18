@@ -12,6 +12,7 @@
 (ns neko.debug
   "Contains useful tools to be used while developing the application."
   (:use [neko.init.options :only [*release-build*]]
+        [neko.log :only [log-exception]]
         [neko.notify :only [toast]]))
 
 ;; This atom stores the last exception happened on the UI thread.
@@ -23,6 +24,7 @@
   exception for the future reference."
   [e]
   (reset! ui-exception e)
+  (log-exception e)
   (toast (str e) :long))
 
 (defn ui-e
