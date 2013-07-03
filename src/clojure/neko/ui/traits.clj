@@ -100,9 +100,9 @@ next-level elements."
   "Sets widget's text to a string, integer ID or a keyword
   representing the string resource provided to `:text` attribute."
   (fn [wdg {:keys [text]} _]
-    (.setText wdg (if (keyword? text)
-                    (res/get-string text)
-                    text))))
+    (.setText ^android.widget.TextView wdg (if (keyword? text)
+                                             ^int (res/get-string text)
+                                             ^String text))))
 
 ;; ### Layout parameters attributes
 
@@ -131,10 +131,10 @@ next-level elements."
       {:keys [container-type]}]
     (case (kw/keyword-by-classname container-type)
       :linear-layout
-      (.setLayoutParams
+      (.setLayoutParams ^View
        wdg (linear-layout-params layout-width layout-height layout-weight))
 
-      (.setLayoutParams
+      (.setLayoutParams ^View
        wdg (default-layout-params layout-width layout-height)))
     {:attributes-fn #(dissoc % :layout-width :layout-height
                              :layout-weight)}))
