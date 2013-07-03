@@ -27,7 +27,7 @@
   there, it is perceived as a static field of the class."
   [widget-kw widget attributes]
   (doseq [[attribute value] attributes]
-    (let [real-value (kw/value widget-kw value)]
+    (let [real-value (kw/value widget-kw value attribute)]
      (.invoke (reflect-setter (type widget)
                               (keyword->setter attribute)
                               (type real-value))
