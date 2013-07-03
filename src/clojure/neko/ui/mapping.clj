@@ -17,14 +17,18 @@
   (:use [neko.-utils :only [keyword->static-field reflect-field]])
   (:import [android.widget LinearLayout Button EditText ListView]
            android.app.ProgressDialog
-           [android.view ViewGroup$LayoutParams]))
+           [android.view View ViewGroup$LayoutParams]))
 
 ;; This atom keeps all the relations inside the map.
 (def ^{:private true} keyword-mapping
   (atom
    ;; UI widgets
    {:view {:traits [:def :layout-params :text :on-click :on-long-click :on-touch
-                    :on-create-context-menu :on-key :id :padding]}
+                    :on-create-context-menu :on-key :id :padding]
+           :value-namespaces
+           {:text-alignment View
+            :text-direction View
+            :visibility View}}
     :view-group {:inherits :view
                  :traits [:container :id-holder]}
     :button {:classname android.widget.Button
