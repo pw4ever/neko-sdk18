@@ -113,7 +113,10 @@
 
   :on-start, :on-restart, :on-resume, :on-pause, :on-stop, :on-destroy
   - same as :on-create but require a one-argument function."
-  [name & {:keys [extends prefix on-create def] :as options}]
+  [name & {:keys [extends prefix on-create on-create-options-menu
+                  on-options-item-selected on-activity-result
+                  on-new-intent def]
+           :as options}]
   (let [options (or options {}) ;; Handle no-options case
         sname (simple-name name)
         prefix (or prefix (str sname "-"))
@@ -132,6 +135,10 @@
                           ~'onStop ~'superOnStop
                           ~'onCreateContextMenu ~'superOnCreateContextMenu
                           ~'onContextItemSelected ~'superOnContextItemSelected
+                          ~'onCreateOptionsMenu ~'superOnCreateOptionsMenu
+                          ~'onOptionsItemSelected ~'superOnOptionsItemSelected
+                          ~'onActivityResult ~'superOnActivityResult
+                          ~'onNewIntent ~'superOnNewIntent
                           ~'onDestroy ~'superOnDestroy})
        ~(when on-create
           `(defn ~(symbol (str prefix "onCreate"))
@@ -140,6 +147,33 @@
              (.superOnCreate ~'this ~'savedInstanceState)
              (def ~(vary-meta def assoc :tag name) ~'this)
              (~on-create ~'this ~'savedInstanceState)))
+       ~(when on-create-options-menu
+          `(defn ~(symbol (str prefix "onCreateOptionsMenu"))
+             [~(vary-meta 'this assoc :tag name),
+              ^android.view.Menu ~'menu]
+             (.superOnCreateOptionsMenu ~'this ~'menu)
+             (~on-create-options-menu ~'this ~'menu)
+             true))
+       ~(when on-options-item-selected
+          `(defn ~(symbol (str prefix "onOptionsItemSelected"))
+             [~(vary-meta 'this assoc :tag name),
+              ^android.view.MenuItem ~'item]
+             (~on-options-item-selected ~'this ~'item)
+             true))
+       ~(when on-activity-result
+          `(defn ~(symbol (str prefix "onActivityResult"))
+             [~(vary-meta 'this assoc :tag name),
+              ^int ~'requestCode,
+              ^int ~'resultCode,
+              ^android.content.Intent ~'intent]
+             (.superOnActivityResult ~'this ~'requestCode ~'resultCode ~'intent)
+             (~on-activity-result ~'this ~'requestCode ~'resultCode ~'intent)))
+       ~(when on-new-intent
+          `(defn ~(symbol (str prefix "onNewIntent"))
+             [~(vary-meta 'this assoc :tag name),
+              ^android.content.Intent ~'intent]
+             (.superOnNewIntent ~'this ~'intent)
+             (~on-new-intent ~'this ~'intent)))
        ~@(map #(let [func (options %)
                      event-name (keyword->camelcase %)]
                  (when func
