@@ -31,6 +31,7 @@
   Calls to log-wtf on platforms that do not support Log.wtf() will be
   downgraded to Log.e() calls."
   {:author "Daniel Solano Gómez"}
+  (:require neko.context)
   (:import android.util.Log))
 
 (defmacro deflogfn

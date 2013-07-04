@@ -72,7 +72,7 @@ next-level elements."
         codegen-body (last args)
         dissoc-fn `(fn [a#] (dissoc a# ~name))]
     `(do
-       (alter-meta! #'transform-attributes
+       (alter-meta! #'apply-trait
                     assoc-in [:trait-doc ~name] ~docstring)
        (defmethod apply-trait ~name
          [trait# widget# attributes# options#]
@@ -197,41 +197,41 @@ next-level elements."
   "Takes :on-click attribute, which should be function of one
   argument, and sets it as an OnClickListener for the widget."
   (fn [wdg {:keys [on-click]} _]
-    (.setOnClickListener wdg (view-listeners/on-click-call on-click))))
+    (.setOnClickListener ^View wdg (view-listeners/on-click-call on-click))))
 
 (deftrait :on-create-context-menu
   "Takes :on-create-context-menu attribute, which should be function
   of three arguments, and sets it as an OnCreateContextMenuListener
   for the object."
   (fn [wdg {:keys [on-create-context-menu]} _]
-    (.setOnCreateContextMenuListener
+    (.setOnCreateContextMenuListener ^View
      wdg (view-listeners/on-create-context-menu-call on-create-context-menu))))
 
 (deftrait :on-focus-change
   "Takes :on-focus-change attribute, which should be function of two
   arguments, and sets it as an OnFocusChangeListener for the object."
   (fn [wdg {:keys [on-focus-change]} _]
-    (.setOnFocusChangeListener
+    (.setOnFocusChangeListener ^View
      wdg (view-listeners/on-focus-change-call on-focus-change))))
 
 (deftrait :on-key
   "Takes :on-key attribute, which should be function of three
   arguments, and sets it as an OnKeyListener for the widget."
   (fn [wdg {:keys [on-key]} _]
-    (.setOnKeyListener wdg (view-listeners/on-key-call on-key))))
+    (.setOnKeyListener ^View wdg (view-listeners/on-key-call on-key))))
 
 (deftrait :on-long-click
   "Takes :on-long-click attribute, which should be function of one
   argument, and sets it as an OnLongClickListener for the widget."
   (fn [wdg {:keys [on-long-click]} code _]
-    (.setOnLongClickListener
+    (.setOnLongClickListener ^View
      wdg (view-listeners/on-long-click-call on-long-click))))
 
 (deftrait :on-touch
   "Takes :on-touch attribute, which should be function of two
   arguments, and sets it as an OnTouchListener for the widget."
   (fn [wdg {:keys [on-touch]} code _]
-    (.setOnTouchListener
+    (.setOnTouchListener ^View
      wdg (view-listeners/on-touch-call on-touch))))
 
 ;; ### ID storing traits
@@ -247,7 +247,7 @@ next-level elements."
                      [:button {:id ::abutton}]]))
   (::abutton (.getTag foo)) => internal Button wdgect."
   (fn [wdg _ __]
-    (.setTag wdg (HashMap.))
+    (.setTag ^View wdg (HashMap.))
     {:options-fn #(assoc % :id-holder wdg)}))
 
 (deftrait :id
