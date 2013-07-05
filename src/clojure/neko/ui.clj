@@ -58,6 +58,8 @@
 ;; ## Widget creation
 
 (defn construct-element
+  "Constructs a UI widget by a given keyword. Infers a correct
+  constructor for the types of arguments being passed to it."
   ([kw context constructor-args]
      (let [element-class (kw/classname kw)]
        (.newInstance (reflect-constructor element-class
@@ -66,6 +68,9 @@
                      (to-array (cons context constructor-args))))))
 
 (defn make-ui-element
+  "Creates a UI widget based on its keyword name, applies attributes
+  to it, then recursively create its subelements and add them to the
+  widget."
   [context tree options]
   (let [[widget-kw attributes & inside-elements] tree
         _ (assert (and (keyword? widget-kw) (map? attributes)))
