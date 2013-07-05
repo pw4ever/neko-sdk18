@@ -74,10 +74,9 @@
         wdg (construct-element widget-kw context
                                (:constructor-args attributes))
         new-opts (apply-attributes widget-kw wdg attributes options)]
-    (doall
-     (map #(.addView ^android.view.ViewGroup wdg
-                     (make-ui-element context % new-opts))
-          inside-elements))
+    (doseq [element inside-elements]
+      (.addView ^android.view.ViewGroup wdg
+                (make-ui-element context element new-opts)))
     wdg))
 
 (defn make-ui
