@@ -7,15 +7,15 @@
 
 ;; ### Toasts
 
-;; Stores constants that represent toast's visible timespan.
-;;
-(def ^:private toast-length {:short Toast/LENGTH_SHORT
-                             :long Toast/LENGTH_LONG})
+(def ^{:doc "Stores constants that represent toast's visible timespan."
+       :private true}
+  toast-length {:short Toast/LENGTH_SHORT
+                :long Toast/LENGTH_LONG})
 
 (defn toast
   "Creates a Toast object using a text message and a keyword
   representing how long a toast should be visible (`:short` or
-  `:long`). The application context wiil be used. One-argument version
+  `:long`). The application context will be used. One-argument version
   takes only message and assumes length to be :long."
   ([message]
      (toast message :long))

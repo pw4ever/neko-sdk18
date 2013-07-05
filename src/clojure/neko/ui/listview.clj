@@ -16,7 +16,7 @@
 
 (defn get-checked
   "Returns a vector of indices for items being checked in a ListView.
-  The two-argument version additionally takes a sequnce of data
+  The two-argument version additionally takes a sequence of data
   elements of the ListView (usually the data provided to the adapter)
   and returns the vector of only those elements that are checked. "
   ([^ListView lv]
@@ -44,4 +44,3 @@
   [^ListView lv, checked-ids]
   (doseq [i checked-ids]
     (.setItemChecked lv i true)))
-

@@ -10,7 +10,7 @@
 ; this software.
 
 (ns neko.listeners.view
-  "Uility functions and macros for setting listeners corresponding to the
+  "Utility functions and macros for setting listeners corresponding to the
   android.view.View class."
   {:author "Daniel Solano Gómez"})
 
@@ -80,7 +80,7 @@
   invoke the function.  This function must take the following two arguments:
 
   view:     the view whose state has changed
-  focused?: the new focuse state for view"
+  focused?: the new focused state for view"
   [handler-fn]
   (reify android.view.View$OnFocusChangeListener
     (onFocusChange [this view focused?]
@@ -92,7 +92,7 @@
   arguments:
 
   view:     the view whose state has changed
-  focused?: the new focuse state for view"
+  focused?: the new focused state for view"
   [& body]
   `(on-focus-change-call (fn [~'view ~'focused?] ~@body)))
 
@@ -208,10 +208,10 @@
 (defmacro on-touch
   "Takes a body of expressions and yields a View.OnTouchListener object that
   will invoke the body.  The body takes the following implicit arguments:
-  
+
   view:  the view the touch event has been dispatched to
   event: the MotionEvent object containing full information about the event
-  
+
   The body should evaluate to a logical value if it consumes the event,
   otherwise logical false."
   [& body]

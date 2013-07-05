@@ -31,7 +31,7 @@ code of setters.
 
 `object-symbol` is an symbol for the UI element to apply setters to.
 
-`attributes-map` is a map of attribtues to their values.
+`attributes-map` is a map of attributes to their values.
 
 `generated-code` is an attribute-setter code generated so far. The
 code this method generates should be appended to it.
@@ -243,7 +243,7 @@ next-level elements."
 
   (def foo (make-ui [:linear-layout {:id-holder true}
                      [:button {:id ::abutton}]]))
-  (::abutton (.getTag foo)) => internal Button wdgect."
+  (::abutton (.getTag foo)) => internal Button widget."
   [^View wdg, _ __]
   (.setTag wdg (HashMap.))
   {:options-fn #(assoc % :id-holder wdg)})

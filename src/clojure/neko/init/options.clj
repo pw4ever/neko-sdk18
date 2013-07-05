@@ -35,5 +35,5 @@
 
 (def
   ^{:dynamic true
-    :doc "Application's root ackage name."}
+    :doc "Application's root package name."}
   *package-name*)

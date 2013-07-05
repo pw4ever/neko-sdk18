@@ -30,10 +30,10 @@
   `:group` allows to unite items into a single category in order to
   later operate on the whole category at once.
 
-  `:menu` element creates a submenu that can in in its own turn
-  contain other `:item` and `:group` elements. Only one level of
-  submenus is supported. Note that :menu creates an item for itself
-  and can use all the attributes that apply to items. "
+  `:menu` element creates a submenu that can in its own turn contain
+  other `:item` and `:group` elements. Only one level of submenus is
+  supported. Note that :menu creates an item for itself and can use
+  all the attributes that apply to items. "
   ([menu tree]
      (make-menu menu Menu/NONE tree))
   ([menu group tree]
@@ -130,5 +130,3 @@
                    :else (ui/make-ui action-view))]
     (.setActionView wdg ^View view))
   {:attributes-fn #(dissoc % :action-view :context)})
-
-

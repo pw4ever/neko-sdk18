@@ -10,7 +10,7 @@
 ; this software.
 
 (ns neko.listeners.dialog
-  "Uility functions and macros for setting listeners corresponding to the
+  "Utility functions and macros for setting listeners corresponding to the
   android.content DialogInterface interface."
   {:author "Daniel Solano Gómez"}
   (:import android.content.DialogInterface))
@@ -18,7 +18,7 @@
 (defn on-cancel-call
   "Takes a function and yields a DialogInterface.OnCancelListener object that
   will invoke the function.  This function must take one argument, the dialog
-  that was cancelled."
+  that was canceled."
   [handler-fn]
   (reify android.content.DialogInterface$OnCancelListener
     (onCancel [this dialog]
@@ -27,7 +27,7 @@
 (defmacro on-cancel
   "Takes a body of expressions and yields a DialogInterface.OnCancelListener object that
   will invoke the body.  The body takes an implicit argument 'dialog' that is the
-  dialog that was cancelled."
+  dialog that was canceled."
   [& body]
   `(on-cancel-call (fn [~'dialog] ~@body)))
 

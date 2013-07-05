@@ -20,7 +20,7 @@
 ;; ## Attributes
 
 (defn apply-default-setters-from-attributes
-  "Takes widget keywords name, UI widget obejct and attributes map
+  "Takes widget keywords name, UI widget object and attributes map
   after all custom attributes were applied. Transforms each attribute
   into a call to (.set_CapitalizedKey_ widget value). If value is a
   keyword then it is looked up in the keyword-mapping or if it is not

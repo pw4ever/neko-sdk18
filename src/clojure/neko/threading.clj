@@ -23,14 +23,14 @@
 
 ;; ### Initialization
 
-;; Contains the UI looper Handler object which is used to post tasks
-;; to UI thread.
-;;
-(def ^:private ^Handler handler)
+(def ^{:doc "Contains the UI looper Handler object which is used to
+  post tasks to UI thread."
+       :private true}
+  ^Handler handler)
 
-;; Stores UI thread object for quick reference.
-;;
-(def ^:private ^Thread ui-thread)
+(def ^{:doc "Stores UI thread object for quick reference."
+       :private true}
+  ^Thread ui-thread)
 
 (defn init-threading
   "Initializes `handler` and `ui-thread` vars to be used in threading

@@ -31,7 +31,7 @@
     "Returns an instance of AlertDialog.Builder with the properties from this
     builder.")
   (with-cancellation [builder cancellable?]
-    "Sets whether or not the dialog may be cancelled.")
+    "Sets whether or not the dialog may be canceled.")
   )
 
 (defrecord FunctionalAlertDialogBuilder

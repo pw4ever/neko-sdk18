@@ -26,7 +26,7 @@
 
 (defn static-field-value
   "Takes a keyword and converts it to a field name by getting the name from the
-  keyword, converting all hypens to underscores, capitalizing all letters, and
+  keyword, converting all hyphens to underscores, capitalizing all letters, and
   applying the transformation function."
   ([^Class class field xform]
    {:pre [(class? class)

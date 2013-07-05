@@ -26,7 +26,7 @@
   (:import android.content.Context
            java.io.File))
 
-(def #^{:doc "Whether or not compilation has been initialised"
+(def #^{:doc "Whether or not compilation has been initialized."
         :private true}
   cache-dir (atom nil))
 
@@ -54,7 +54,7 @@
           (dorun))))))
 
 (defn init
-  "Initialises the compilation path, creating or cleaning cache directory as
+  "Initializes the compilation path, creating or cleaning cache directory as
   necessary."
   ([^Context context dir-name]
    (locking cache-dir

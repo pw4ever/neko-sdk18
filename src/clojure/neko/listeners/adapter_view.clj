@@ -10,7 +10,7 @@
 ; this software.
 
 (ns neko.listeners.adapter-view
-  "Uility functions and macros for creating listeners corresponding to the
+  "Utility functions and macros for creating listeners corresponding to the
   android.widget.AdapterView class."
   {:author "Daniel Solano Gómez"})
 

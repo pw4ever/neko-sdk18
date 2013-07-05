@@ -21,7 +21,7 @@
   (generic-key [k] (.getName k)))
 
 ;; This type acts as a wrapper around Bundle instance to be able to
-;; access it like an ordinar map.
+;; access it like an ordinary map.
 ;;
 (deftype MapLikeBundle [^Bundle bundle]
   clojure.lang.Associative
