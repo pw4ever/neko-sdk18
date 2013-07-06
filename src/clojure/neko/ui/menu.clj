@@ -23,6 +23,11 @@
 
 ;; ## ActionBar menu
 
+(defn to-id
+  "Makes an ID from arbitrary object by calling .hashCode on it."
+  [obj]
+  (.hashCode ^Object obj))
+
 (defn make-menu
   "Inflates the given MenuBuilder instance with the declared menu item
   tree. Root of the tree is a sequence that contains element
@@ -43,8 +48,8 @@
      (make-menu menu Menu/NONE tree))
   ([menu group tree]
      (doseq [[element-kw attributes & subelements] tree]
-       (let [id (.hashCode (or (:id attributes) Menu/NONE))
-             order (.hashCode (or (:order attributes) Menu/NONE))]
+       (let [id (to-id (or (:id attributes) Menu/NONE))
+             order (to-id (or (:order attributes) Menu/NONE))]
          (case element-kw
            :group
            (make-menu menu id subelements)

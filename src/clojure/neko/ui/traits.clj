@@ -145,8 +145,8 @@ next-level elements."
   "Construct LayoutParams instance from the given arguments. Arguments
   could be either actual values or keywords `:fill` and `:wrap`."
   [width height]
-  (ViewGroup$LayoutParams. (kw/value :layout-params (or width :wrap))
-                           (kw/value :layout-params (or height :wrap))))
+  (ViewGroup$LayoutParams. ^int (kw/value :layout-params (or width :wrap))
+                           ^int (kw/value :layout-params (or height :wrap))))
 
 (defn- linear-layout-params
   "Construct LinearLayout-specific LayoutParams instance from the
