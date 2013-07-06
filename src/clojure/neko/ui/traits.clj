@@ -109,6 +109,36 @@ next-level elements."
     (.setText wdg ^int (res/get-string text))
     (.setText wdg ^CharSequence text)))
 
+(defn- kw->unit-id [unit-kw]
+  (case unit-kw
+    :px TypedValue/COMPLEX_UNIT_PX
+    :dp TypedValue/COMPLEX_UNIT_DIP
+    :dip TypedValue/COMPLEX_UNIT_DIP
+    :sp TypedValue/COMPLEX_UNIT_SP
+    :pt TypedValue/COMPLEX_UNIT_PT
+    :in TypedValue/COMPLEX_UNIT_IN
+    :mm TypedValue/COMPLEX_UNIT_MM
+    TypedValue/COMPLEX_UNIT_PX))
+
+(memoized
+ (defn- get-display-metrics
+   "Returns Android's DisplayMetrics object from application context."
+   []
+   (.. context/context (getResources) (getDisplayMetrics))))
+
+(defn to-dimension [value]
+  (if (vector? value)
+    (Math/round
+     ^float (TypedValue/applyDimension (kw->unit-id (second value))
+                                       (first value) (get-display-metrics)))
+    value))
+
+(deftrait :text-size
+  "Takes `:text-size` attribute which should be either integer or a
+  dimenstion vector, and sets it to the widget."
+  [^TextView wdg, {:keys [text-size]} _]
+  (.setTextSize wdg (to-dimension text-size)))
+
 ;; ### Layout parameters attributes
 
 (defn- default-layout-params
@@ -144,30 +174,6 @@ next-level elements."
   {:attributes-fn #(dissoc % :layout-width :layout-height
                            :layout-weight)})
 
-(defn- kw->unit-id [unit-kw]
-  (case unit-kw
-    :px TypedValue/COMPLEX_UNIT_PX
-    :dp TypedValue/COMPLEX_UNIT_DIP
-    :dip TypedValue/COMPLEX_UNIT_DIP
-    :sp TypedValue/COMPLEX_UNIT_SP
-    :pt TypedValue/COMPLEX_UNIT_PT
-    :in TypedValue/COMPLEX_UNIT_IN
-    :mm TypedValue/COMPLEX_UNIT_MM
-    TypedValue/COMPLEX_UNIT_PX))
-
-(memoized
- (defn- get-display-metrics
-   "Returns Android's DisplayMetrics object from application context."
-   []
-   (.. context/context (getResources) (getDisplayMetrics))))
-
-(defn- padding-value->pixels [value]
-  (if (vector? value)
-    (Math/round ^float
-     (TypedValue/applyDimension (kw->unit-id (second value)) (first value)
-                                (get-display-metrics)))
-    value))
-
 (deftrait :padding
   "Takes `:padding`, `:padding-bottom`, `:padding-left`,
   `:padding-right` and `:padding-top` and set element's padding
@@ -178,10 +184,10 @@ next-level elements."
   [wdg {:keys [padding padding-bottom padding-left
                padding-right padding-top]} _]
   (.setPadding ^View wdg
-               (padding-value->pixels (or padding-left padding 0))
-               (padding-value->pixels (or padding-top padding 0))
-               (padding-value->pixels (or padding-right padding 0))
-               (padding-value->pixels (or padding-bottom padding 0)))
+               (to-dimension (or padding-left padding 0))
+               (to-dimension (or padding-top padding 0))
+               (to-dimension (or padding-right padding 0))
+               (to-dimension (or padding-bottom padding 0)))
   {:attributes-fn #(dissoc % :padding :padding-bottom :padding-left
                            :padding-right :padding-top)})
 

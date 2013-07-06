@@ -23,7 +23,7 @@
 (def ^{:private true} keyword-mapping
   (atom
    ;; UI widgets
-   {:view {:traits [:def :layout-params :text :on-click :on-long-click :on-touch
+   {:view {:traits [:def :layout-params :on-click :on-long-click :on-touch
                     :on-create-context-menu :on-key :id :padding]
            :value-namespaces
            {:text-alignment View
@@ -41,7 +41,8 @@
     :text-view {:classname android.widget.TextView
                 :inherits :view
                 :value-namespaces
-                {:ellipsize android.text.TextUtils$TruncateAt}}
+                {:ellipsize android.text.TextUtils$TruncateAt}
+                :traits [:text :text-size]}
     :list-view {:classname android.widget.ListView
                 :inherits :view-group}
     :search-view {:classname android.widget.SearchView

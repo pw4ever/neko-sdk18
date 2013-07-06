@@ -105,7 +105,7 @@
   [^Class widget-type, ^String method-name, ^Class value-type]
   (if-not (= widget-type Object)
     (let [value-type (class-or-type value-type)
-          all-value-types (cons value-type (reverse (bases value-type)))]
+          all-value-types (cons value-type (supers value-type))]
       (loop [[t & r] all-value-types]
         (if t
           (if-let [method (try
