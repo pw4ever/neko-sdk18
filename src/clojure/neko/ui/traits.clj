@@ -14,9 +14,10 @@
   (:require [neko.ui.mapping :as kw]
             [neko.resource :as res]
             [neko.context :as context]
-            [neko.listeners.view :as view-listeners])
+            [neko.listeners.view :as view-listeners]
+            neko.listeners.search-view)
   (:use [neko.-utils :only [memoized]])
-  (:import [android.widget LinearLayout$LayoutParams TextView]
+  (:import [android.widget LinearLayout$LayoutParams TextView SearchView]
            [android.view View ViewGroup$LayoutParams]
            android.util.TypedValue
            java.util.HashMap))
@@ -232,6 +233,29 @@ next-level elements."
   arguments, and sets it as an OnTouchListener for the widget."
   [^View wdg, {:keys [on-touch]} _]
   (.setOnTouchListener wdg (view-listeners/on-touch-call on-touch)))
+
+(deftrait :on-query-text
+  "Takes `:on-query-text-change` and `:on-query-text-submit`
+  attributes, which should be functions of one or two arguments,
+  depending on the context of usage. If widget is used as an action
+  item in a menu, two arguments are passed to the function - query
+  text and the menu item, for which widget is being action item to.
+  Otherwise only query text is passed to the functions.
+
+  Then OnQueryTextListener object is created from the functions and
+  set to the widget."
+  #(some % [:on-query-text-change :on-query-text-submit])
+  [^SearchView wdg, {:keys [on-query-text-change on-query-text-submit]}
+   {:keys [menu-item]}]
+  (.setOnQueryTextListener
+   wdg (neko.listeners.search-view/on-query-text-call
+        (if (and menu-item on-query-text-change)
+          (fn [q] (on-query-text-change q menu-item))
+          on-query-text-change)
+        (if (and menu-item on-query-text-submit)
+          (fn [q] (on-query-text-submit q menu-item))
+          on-query-text-submit)))
+  {:attributes-fn #(dissoc % :on-query-text-change :on-query-text-submit)})
 
 ;; ### ID storing traits
 

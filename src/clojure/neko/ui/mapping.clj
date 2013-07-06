@@ -15,7 +15,7 @@
   elements and the values for the keywords representing values."
   (:require [clojure.string :as string])
   (:use [neko.-utils :only [keyword->static-field reflect-field]])
-  (:import [android.widget LinearLayout Button EditText ListView]
+  (:import [android.widget LinearLayout Button EditText ListView SearchView]
            android.app.ProgressDialog
            [android.view View ViewGroup$LayoutParams]))
 
@@ -44,6 +44,9 @@
                 {:ellipsize android.text.TextUtils$TruncateAt}}
     :list-view {:classname android.widget.ListView
                 :inherits :view-group}
+    :search-view {:classname android.widget.SearchView
+                  :inherits :view-group
+                  :traits [:on-query-text]}
 
     ;; Other
     :layout-params {:classname ViewGroup$LayoutParams
