@@ -28,10 +28,10 @@
   [widget-kw widget attributes]
   (doseq [[attribute value] attributes]
     (let [real-value (kw/value widget-kw value attribute)]
-     (.invoke (reflect-setter (type widget)
-                              (keyword->setter attribute)
-                              (type real-value))
-              widget (into-array (vector real-value))))))
+      (.invoke (reflect-setter (type widget)
+                               (keyword->setter attribute)
+                               (type real-value))
+               widget (into-array (vector real-value))))))
 
 (defn apply-attributes
   "Takes UI widget keyword, a widget object, a map of attributes and

@@ -12,7 +12,8 @@
 (ns neko.ui.menu
   "Provides utilities for declarative options menu generation.
   Intended to replace XML-based menu layouts."
-  (:require [neko.ui :as ui])
+  (:require [neko.context :as ctx]
+            [neko.ui :as ui])
   (:use [neko.ui.mapping :only [defelement]]
         [neko.ui.traits :only [deftrait]])
   (:import [android.view Menu MenuItem]
@@ -60,6 +61,7 @@
 ;; ## Element definitions and traits
 
 (defelement :item
+  :classname MenuItem
   :inherits nil
   :traits [:show-as-action :on-menu-item-click :action-view])
 
@@ -125,8 +127,9 @@
   Custom context can be used for UI inflation by providing `:context`
   attribute."
   [^MenuItem wdg, {:keys [action-view context]} _]
-  (let [view (cond (instance? View action-view) action-view
-                   context (ui/make-ui context action-view)
-                   :else (ui/make-ui action-view))]
+  (let [view (if (instance? View action-view)
+               action-view
+               (ui/make-ui-element (or context ctx/context)
+                                   action-view {:menu-item wdg}))]
     (.setActionView wdg ^View view))
   {:attributes-fn #(dissoc % :action-view :context)})

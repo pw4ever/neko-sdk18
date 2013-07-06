@@ -95,6 +95,7 @@ next-level elements."
   Example: `[:button {:def ok}]` defines a var `ok` which stores the
   button object."
   [wdg {:keys [def]} _]
+  (assert (and (symbol? def) (namespace def)))
   (intern (symbol (namespace def)) (symbol (name def)) wdg))
 
 ;; ### Basic traits

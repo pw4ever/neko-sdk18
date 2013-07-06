@@ -19,7 +19,7 @@
 (defn- get-trait-doc
   "Returns a docstring for the given trait keyword."
   [trait]
-  (when-let [doc (get-in (meta #'traits/transform-attributes)
+  (when-let [doc (get-in (meta #'traits/apply-trait)
                             [:trait-doc trait])]
     (str trait " - " doc)))
 
