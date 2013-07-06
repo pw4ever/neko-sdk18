@@ -15,9 +15,13 @@
   (:require [neko.context :as ctx]
             [neko.ui :as ui])
   (:use [neko.ui.mapping :only [defelement]]
-        [neko.ui.traits :only [deftrait]])
+        [neko.ui.traits :only [deftrait]]
+        [neko.-utils :only [call-if-nnil]])
   (:import [android.view Menu MenuItem]
-           android.view.View))
+           [android.view View ActionMode$Callback]
+           android.app.Activity))
+
+;; ## ActionBar menu
 
 (defn make-menu
   "Inflates the given MenuBuilder instance with the declared menu item
@@ -57,6 +61,43 @@
              (ui/apply-attributes :item (.getItem submenu)
                                   (dissoc attributes :id :order) {})
              (make-menu submenu subelements)))))))
+
+;; ## Contextual menu tools
+
+(def ^{:doc "Stores a mapping of activities to active action modes.
+  After the action mode is finished, it is removed from the mapping."
+       :private true}
+  action-modes (atom {}))
+
+(defn start-action-mode
+  "Tries starting action mode for an activity if it is not started
+  yet. Takes an activity as first argument, rest arguments should be
+  pairs of keys and functions.
+
+  `:on-create` takes ActionMode and Menu as arguments.
+  `:on-prepare` takes ActionMode and Menu as arguments.
+  `:on-clicked` takes ActionMode and MenuItem that was clicked.
+  `:on-destroy` takes ActionMode as argument."
+  [activity & {:keys [on-create on-prepare on-clicked on-destroy]}]
+  (when-not (@action-modes activity)
+    (let [callback (reify ActionMode$Callback
+                     (onCreateActionMode [this mode menu]
+                       (call-if-nnil on-create mode menu))
+                     (onPrepareActionMode [this mode menu]
+                       (call-if-nnil on-prepare mode menu))
+                     (onActionItemClicked [this mode item]
+                       (call-if-nnil on-clicked mode item))
+                     (onDestroyActionMode [this mode]
+                       (swap! action-modes dissoc activity)
+                       (call-if-nnil on-destroy mode)))
+          am (.startActionMode ^Activity activity callback)]
+      (swap! action-modes assoc activity am)
+      am)))
+
+(defn get-action-mode
+  "Returns action mode for the given activity."
+  [activity]
+  (@action-modes activity))
 
 ;; ## Element definitions and traits
 

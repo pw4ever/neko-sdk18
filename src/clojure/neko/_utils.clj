@@ -87,6 +87,15 @@
         capitalize
         (str "set"))))
 
+(defmacro call-if-nnil
+  "Expands into check whether function is defined, then executes it
+  and returns true or just returns false otherwise."
+  [f & arguments]
+  `(if ~f
+     (do (~f ~@arguments)
+         true)
+     false))
+
 ;; Reflection functions
 
 (defn class-or-type [cl]

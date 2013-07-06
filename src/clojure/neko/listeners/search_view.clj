@@ -1,4 +1,5 @@
 (ns neko.listeners.search-view
+  (:use [neko.-utils :only [call-if-nnil]])
   (:import android.widget.SearchView))
 
 (defn on-query-text-call
@@ -9,12 +10,6 @@
   [change-fn submit-fn]
   (reify android.widget.SearchView$OnQueryTextListener
     (onQueryTextChange [this query]
-      (if change-fn
-        (do (change-fn query)
-            true)
-        false))
+      (call-if-nnil change-fn query))
     (onQueryTextSubmit [this query]
-      (if submit-fn
-        (do (submit-fn query)
-            true)
-        false))))
+      (call-if-nnil submit-fn query))))
