@@ -66,8 +66,8 @@
                    (-> (partial ~log-fn ~tag)
                        (with-meta  {:private true}))))]
     `(do
-       ~(intern-logger "log-d" `log-debug)
-       ~(intern-logger "log-e" `log-error)
-       ~(intern-logger "log-i" `log-info)
-       ~(intern-logger "log-v" `log-verbose)
-       ~(intern-logger "log-w" `log-warn))))
+       ~(intern-logger "log-d" `d)
+       ~(intern-logger "log-e" `e)
+       ~(intern-logger "log-i" `i)
+       ~(intern-logger "log-v" `v)
+       ~(intern-logger "log-w" `w))))
