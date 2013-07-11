@@ -267,8 +267,9 @@ next-level elements."
 
 (deftrait :id-holder
   "Takes `:id-holder` attribute which should equal true and marks the
-  widget to be a holder of lower-level element IDs. IDs are stored in
-  a map which is accessible by calling `.getTag` on the holder widget.
+  widget to be a holder of lower-level elements. Elements are stored
+  by their IDs as keys in a map, which is accessible by calling
+  `.getTag` on the holder widget.
 
   Example:
 
@@ -279,11 +280,18 @@ next-level elements."
   (.setTag wdg (HashMap.))
   {:options-fn #(assoc % :id-holder wdg)})
 
+(defn to-id
+  "Makes an ID from arbitrary object by calling .hashCode on it."
+  [obj]
+  (.hashCode ^Object obj))
+
 (deftrait :id
-  "Takes `:id` attribute, which should be a keyword, and stores the
-  current widget in ID-holder's tag (see docs for `:id-holder`
-  trait)."
-  [wdg {:keys [id]} {:keys [^View id-holder]}]
-  (if (nil? id-holder)
-    (throw (Exception. ":id trait: id-holder is undefined in this UI tree."))
+  "Takes `:id` attribute, which can either be an integer or a
+  keyword (that would be transformed into integer as well) and sets it
+  as widget's ID attribute. Also, if an ID holder was declared in
+  this tree, stores the widget in id-holder's tag (see docs for
+  `:id-holder`trait)."
+  [^View wdg, {:keys [id]} {:keys [^View id-holder]}]
+  (.setId wdg (to-id id))
+  (when id-holder
     (.put ^HashMap (.getTag id-holder) id wdg)))

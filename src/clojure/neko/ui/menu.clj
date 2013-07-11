@@ -15,18 +15,13 @@
   (:require [neko.context :as ctx]
             [neko.ui :as ui])
   (:use [neko.ui.mapping :only [defelement]]
-        [neko.ui.traits :only [deftrait]]
+        [neko.ui.traits :only [deftrait to-id]]
         [neko.-utils :only [call-if-nnil]])
   (:import [android.view Menu MenuItem]
            [android.view View ActionMode$Callback]
            android.app.Activity))
 
 ;; ## ActionBar menu
-
-(defn to-id
-  "Makes an ID from arbitrary object by calling .hashCode on it."
-  [obj]
-  (.hashCode ^Object obj))
 
 (defn make-menu
   "Inflates the given MenuBuilder instance with the declared menu item
