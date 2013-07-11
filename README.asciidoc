@@ -2,7 +2,7 @@ Neko: The Clojure/Android Toolkit
 =================================
 Daniel Solano_Gómez
 
-Forked by Alexander Yakushev as part of Google Summer of Code 2012
+Forked by Alexander Yakushev as part of Google Summer of Code 2012/2013
 participation project.
 
 Neko is a toolkit designed to make Android development using Clojure easier and
@@ -19,120 +19,42 @@ one of the pioneer attempts to bring Clojure to Android development. My
 neko fork is inspired by ideas from his project and borrows some
 actual implementation code.
 
-Features
---------
+Documentation
+-------------
 
-WARNING: Note that the libraries are under heavy development.  APIs are subject
-to change.  In particular, `neko.threading` will be changed.
+A general overview of available namespaces, and detailed docs on some
+specific features can be found on the
+https://github.com/alexander-yakushev/neko/wiki[wiki].
 
-The detailed list of namespaces and features is available
-https://github.com/alexander-yakushev/neko/wiki/Namespaces[here].
+Marginalia docs are available http://alexander-yakushev.github.io/neko/[here].
 
-Requirements
-------------
+Currently this fork of neko is only usable together with
+https://github.com/clojure-android/lein-droid[lein-droid], so in order
+to get started developing for Clojure/Android, it will be useful for you to read this
+https://github.com/clojure-android/lein-droid/wiki/Tutorial[tutorial].
 
-Using Neko requires the following:
-
-Clojure 1.2 or newer::
-  Clojure 1.2 works on Android 2.2 and newer.  Clojure 1.3 and newer work on
-  Android 2.3 and newer.
-+
-If you would like to use dynamic compilation with Android 2.3 and newer, use
-the Clojure available from the `android` branch from
-https://github.com/sattvik/clojure/tree/android[this repository on
-  GitHub].  This branch is based off the latest Clojure development version.
-+
-If you would like to use dynamic compilation, but must support Android 2.1, you
-will need to use the version from branch `android-1.2.x`,  available
-https://github.com/sattvik/clojure/tree/android-1.2.x[here].  This is based off
-of Clojure 1.2.1.
-
-Android SDK Tools::
-  Neko has been developed with the latest revision of the Android SDK tools,
-  and is compatible with r17 and up of the Android SDK.
-+
-WARNING: Revisions 14 and 17 of the Android SDK introduced changes in the Ant
-build system.  Neko has been updated to use the build system in r17.  You will
-probably need to change your project if you have been using an older version of
-Neko/SDK.  For more detailed information, check the Android Tools Project site
-for information about the breaking changes in
-http://tools.android.com/recent/buildchangesinrevision14[r14] and
-http://tools.android.com/recent/dealingwithdependenciesinandroidprojects[r17].
-
-Android Platform SDK 7 (2.1/Eclair) or newer::
-  In order to maintain backwards-compatibility, Neko does not support any APIs
-  for newer versions of the platform.
-
-
-Getting started with Neko
--------------------------
-
-The following instructions should help you to add Clojure support to your
-project’s build and allow you to use the libraries within your application.
-
-=== 1. Install the Android SDK ===
-
-You can get this from https://developer.android.com/sdk/index.html[directly
-from Google].  You will need to be sure to also install a platform for
-development.  The
-http://wiki.cyanogenmod.com/index.php?title=Howto:_Install_the_Android_SDK[CyanogenMod
-wiki] has some more detailed instructions.
-
-=== 2. Create an Android project ===
-
-You can use
-https://github.com/alexander-yakushev/lein-droid[lein-droid]. This
-https://github.com/alexander-yakushev/lein-droid/wiki/Tutorial[tutorial]
-explains how to get started with it.
-
-=== 3. Get Neko ===
-
-If you created a project using lein-droid then you already have neko
-dependency in your project. In other case put the following line in
-the list of your dependencies:
-
----
-[neko/neko "2.0.0-beta1"]
----
-
-=== 4. Write your first Android application in Clojure ===
-
-The project created with lein-droid already contains a stub for an
-application with one activity and a few UI elements on it. You can
-change that file and then either recompile/redeploy the application or
-in application's runtime from the REPL.
-
-=== 5. Build and run it ===
-
-The build process is explained in detail in the lein-droid tutorial.
-
-=== 6. Make something wonderful ===
-
-From this point on, it is up to you to create something wonderful.
-
-
-Advanced topics
+Current version
 ---------------
 
-Here are some more things you can do with Neko:
+The latest version of Neko available at Clojars is `3.0.0-SNAPSHOT`.
+Note that this is a work in progress as I am hacking it for GSoC 2013
+right now. The last relatively stable version is `2.0.0-beta3`, but I
+generally recommend to stick to the latest 3.x branch.
 
-=== `clojure.properties` ===
+How to build Neko yourself
+------------
 
-You can place a `clojure.properties` file in the `build-support` directory from
-Neko (where `clojure.xml` lives).  This file will be sourced and used in any
-project in which you have enabled Clojure build support.
+If you wan't to modify/extend Neko source code and then use it in your
+applications, you can build it yourself. Use `lein droid jar` in
+neko's directory to create a JAR file which then can be pushed to
+Clojars under your name or installed into a local Maven repo.
 
-=== Reflection warnings ===
+Make sure that `:target-version` defined in `project.clj` matches the
+Android SDK version you have installed.
 
-To enable reflection warnings during compilation, simply set the
-`clojure.warn.reflection` property to `true`.  This is something that might be
-good to put in that `clojure.properties` file.
-
-=== Mixed Java/Clojure projects ===
-
-Neko will build all Java sources you have placed in `src/java` before any
-Clojure sources.
-
+If you have problems building Neko, try running `lein clean` first.
+Also you can use `DEBUG=1 lein droid jar` for additional
+build information.
 
 Legal information
 -----------------
