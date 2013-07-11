@@ -42,7 +42,7 @@ right now. The last relatively stable version is `2.0.0-beta3`, but I
 generally recommend to stick to the latest 3.x branch.
 
 How to build Neko yourself
-------------
+--------------------------
 
 If you wan't to modify/extend Neko source code and then use it in your
 applications, you can build it yourself. Use `lein droid jar` in
