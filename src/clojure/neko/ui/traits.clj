@@ -53,17 +53,19 @@ next-level elements."
   "Defines a trait with the given name.
 
   `match-pred` is a function on attributes map that should return a
-  logical truth if this trait should be executed against the argument
-  list. By default it checks if attribute with the same name as
+  logical truth if this trait should be executed against the widget
+  and the map. By default it checks if attribute with the same name as
   trait's is present in the attribute map.
 
-  `codegen-fn` is a function that should take the same arguments as
-  `transform-attributes` and return either the generated code directly
-  or a map with the following keys: `:code`, `:attribute-fn`,
-  `:options-fn`. In the former case `attribute-fn` defaults to
-  dissoc'ing trait's name from attribute map, and `options-fn`
-  defaults to identity function."
-  ^{:arglists '([name docstring? match-pred? codegen-fn])}
+  The parameter list is the following: `[widget attributes-map
+  options-map]`.
+
+  Body of the trait can optionally return a map with the following
+  keys: `:attribute-fn`, `:options-fn`, which values are functions to
+  be applied to attributes map and options map respectively after the
+  trait finishes its work. If they are not provided, `attribute-fn`
+  defaults to dissoc'ing trait's name from attribute map, and
+  `options-fn` defaults to identity function."
   [name & args]
   (let [[docstring args] (if (string? (first args))
                            [(first args) (next args)]
@@ -85,6 +87,9 @@ next-level elements."
                 (:options-fn result# identity)]
                [~dissoc-fn identity]))
            [identity identity])))))
+
+(alter-meta! #'deftrait
+             assoc :arglists '([name docstring? match-pred? [params*] body]))
 
 ;; ## Implementation of different traits
 
