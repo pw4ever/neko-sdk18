@@ -13,8 +13,10 @@
   "Utilities to aid in working with an activity."
   {:author "Daniel Solano Gómez"}
   (:import android.app.Activity
-           android.view.View)
-  (:use neko.-utils))
+           android.view.View
+           android.app.Fragment)
+  (:use [neko.ui :only [make-ui]]
+        neko.-utils))
 
 (def
   ^{:doc "The current activity to operate on."
@@ -183,3 +185,15 @@
                       (~func ~'this))))
               [:on-start :on-restart :on-resume
                :on-pause :on-stop :on-destroy]))))
+
+(defn simple-fragment
+  "Creates a fragment which contains the specified view. If a UI tree
+  was provided, it is inflated and then set as fragment's view."
+  ([context tree]
+     (simple-fragment (make-ui context tree)))
+  ([view-or-tree]
+     (proxy [Fragment] []
+       (onCreateView [inflater container bundle]
+         (if (instance? View view-or-tree)
+           view-or-tree
+           (make-ui view-or-tree))))))
