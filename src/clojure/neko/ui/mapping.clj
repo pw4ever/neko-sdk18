@@ -166,7 +166,7 @@
   - :classname, :inherits, :traits, :values, :attributes. "
   [kw-name & {:as args}]
   (swap! keyword-mapping assoc kw-name
-         (if-not (:inherits args)
+         (if-not (contains? args :inherits)
            (assoc args :inherits :view)
            args))
   (if-let [classname (:classname args)]
