@@ -23,6 +23,7 @@
   Note that additional invocations to init within the same process will not have
   any effect."
   {:author "Daniel Solano Gómez"}
+  (:use [neko.resource :only [get-resource]])
   (:import android.content.Context
            java.io.File))
 
@@ -53,6 +54,14 @@
           (map delete-file)
           (dorun))))))
 
+(defn get-data-readers [^Context context]
+  (->> (.. context (getResources)
+           (openRawResource (get-resource :raw :data-readers)))
+       slurp
+       read-string
+       (map (fn [[k v]] [k (resolve v)]))
+       (into {})))
+
 (defn init
   "Initializes the compilation path, creating or cleaning cache directory as
   necessary."
@@ -63,6 +72,8 @@
              path (.getAbsolutePath dir)]
          (reset! cache-dir dir)
          (System/setProperty "clojure.compile.path" path)
+         (alter-var-root #'clojure.core/*data-readers*
+                         (constantly (get-data-readers context)))
          (alter-var-root #'clojure.core/*compile-path* (constantly path))))))
   ([context]
    (init context default-cache-dir)))

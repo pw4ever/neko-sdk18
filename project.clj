@@ -4,7 +4,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[android/clojure "1.5.0"]]
-  :source-paths ["src/clojure"]
+  :source-paths ["src/" "src/clojure"]
   :java-source-paths ["src/java"]
 
   :android {:library true
