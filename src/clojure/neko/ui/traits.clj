@@ -110,9 +110,7 @@ next-level elements."
   "Sets widget's text to a string, integer ID or a keyword
   representing the string resource provided to `:text` attribute."
   [^TextView wdg, {:keys [text]} _]
-  (if (keyword? text)
-    (.setText wdg ^int (res/get-string text))
-    (.setText wdg ^CharSequence text)))
+  (.setText wdg ^CharSequence (res/get-string text)))
 
 (defn- kw->unit-id [unit-kw]
   (case unit-kw
