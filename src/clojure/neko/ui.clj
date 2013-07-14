@@ -99,3 +99,10 @@
      (make-ui-element context/context tree {}))
   ([context tree]
      (make-ui-element context tree {})))
+
+(defn config
+  "Takes a widget and key-value pairs of attributes, and applies these
+  attributes to the widget."
+  [widget & {:as attributes}]
+  (apply-attributes (kw/keyword-by-classname (type widget))
+                    widget attributes {}))
