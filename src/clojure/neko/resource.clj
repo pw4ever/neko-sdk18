@@ -139,10 +139,18 @@
   [name]
   (resource-symbol :id name))
 
+(defn resolve-id-reader
+  [name]
+  (resource-symbol :id name))
+
 (defmacro resolve-string
   "Finds the resource ID for the string with the given name in compile
   time. This is simply a convenient way of calling `(resolve-resource
   :string name)`."
+  [name]
+  (resource-symbol :string name))
+
+(defn resolve-string-reader
   [name]
   (resource-symbol :string name))
 
@@ -153,9 +161,17 @@
   [name]
   (resource-symbol :layout name))
 
+(defn resolve-layout-reader
+  [name]
+  (resource-symbol :layout name))
+
 (defmacro resolve-drawable
   "Finds the resource ID for the Drawable with the given name in compile
   time. This is simply a convenient way of calling `(resolve-resource
   :drawable name)`."
+  [name]
+  (resource-symbol :drawable name))
+
+(defn resolve-drawable-reader
   [name]
   (resource-symbol :drawable name))
