@@ -3,9 +3,9 @@
   :url "https://github.com/alexander-yakushev/neko"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure-android/clojure "1.5.1-SNAPSHOT"]]
+  :dependencies [[org.clojure-android/clojure "1.5.1-jb"]]
   :source-paths ["src" "src/clojure"]
   :java-source-paths ["src/java"]
 
   :android {:library true
-            :target-sdk "15"})
+            :target-sdk :ics})
