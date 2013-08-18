@@ -25,7 +25,7 @@
   {:author "Daniel Solano Gómez"}
   (:use [neko.resource :only [get-resource]])
   (:import android.content.Context
-           java.io.File))
+           [java.io File FileNotFoundException]))
 
 (def #^{:doc "Whether or not compilation has been initialized."
         :private true}
@@ -55,12 +55,13 @@
           (dorun))))))
 
 (defn get-data-readers [^Context context]
-  (->> (.. context (getResources)
-           (openRawResource (get-resource :raw :data-readers)))
-       slurp
-       read-string
-       (map (fn [[k v]] [k (resolve v)]))
-       (into {})))
+  (when-let [readers-file (try (.open (.getAssets context) "data_readers.clj")
+                               (catch FileNotFoundException e nil))]
+    (->> readers-file
+         slurp
+         read-string
+         (map (fn [[k v]] [k (resolve v)]))
+         (into {}))))
 
 (defn init
   "Initializes the compilation path, creating or cleaning cache directory as
