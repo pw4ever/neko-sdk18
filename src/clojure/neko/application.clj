@@ -11,43 +11,27 @@
 
 (ns neko.application
   "Contains tools to create and manipulate Application instances."
+  (:require neko.context neko.init)
   (:use [neko.-utils :only [simple-name]]
-        [neko.init :only [init]]
-        [neko.context :only [context]]
         [neko.resource :only [package-name]]
         [neko.threading :only [init-threading]])
   (:import android.app.Application
            android.content.Context))
 
 (defmacro defapplication
-  "Creates an application class with the given full package-qualified
-  name. Optional arguments should be provided in a key-value fashion.
+  [& args]
+  (throw (Exception. "defapplication is deprecated, please define
+  Application class from Java. Default `:on-create` moved to
+  `init-application`.")))
 
-  Available optional arguments:
+(defn init-application
+  "Performs necessary preparations for Neko and REPL development."
+  [context & {:keys [extends prefix on-create nrepl-port]
+              :or {extends android.app.Application
+                   prefix (str (simple-name name) "-")}}]
+  (alter-var-root #'neko.context/context (constantly context))
+  (alter-var-root #'package-name (constantly (.getPackageName context)))
+  (neko.init/init context :port (or nrepl-port 9999))
+  (init-threading))
 
-  :extends, :prefix - same as for `gen-class`.
 
-  :on-create - takes a one-argument function. Generates a handler for
-  application's `onCreate` event which automatically calls the
-  superOnCreate method and then calls the provided function onto the
-  Application object."
-  [name & {:keys [extends prefix on-create nrepl-port]
-           :or {extends android.app.Application
-                prefix (str (simple-name name) "-")}}]
-  `(do
-     (gen-class
-      :name ~name
-      :main false
-      :prefix ~prefix
-      :extends ~extends
-      :exposes-methods {~'onCreate ~'superOnCreate})
-     ~(when (not= on-create :later)
-        `(defn ~(symbol (str prefix "onCreate"))
-           [~(vary-meta 'this assoc :tag name)]
-           (.superOnCreate ~'this)
-           (alter-var-root #'context (constantly ~'this))
-           (alter-var-root #'package-name (constantly (.getPackageName ~'this)))
-           (init ~'this :port ~(or nrepl-port 9999))
-           (init-threading)
-           ~(when on-create
-              `(~on-create ~'this))))))

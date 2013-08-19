@@ -5,7 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure-android/clojure "1.5.1-jb"]]
   :source-paths ["src" "src/clojure"]
-  :java-source-paths ["src/java"]
+  :java-source-paths ["src/java" "gen"]
 
   :android {:library true
             :target-sdk :ics})
