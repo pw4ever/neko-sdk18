@@ -53,7 +53,7 @@ public class SplashActivity extends Activity {
     }
 
     public void proceed() {
-        startActivity(new Intent("org.clojure_android.neko.MAIN"));
+        startActivity(new Intent(getPackageName() + ".MAIN"));
         finish();
     }
 
