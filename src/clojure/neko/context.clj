@@ -12,7 +12,7 @@
 (ns neko.context
   "Utilities to aid in working with a context."
   {:author "Daniel Solano Gómez"}
-  (:use [neko.-utils :only [keyword->static-field integer-or-keyword?]])
+  (:use [clojure.string :only [upper-case]])
   (:import android.content.Context))
 
 (def ^{:doc "Stores Application instance that acts as context."}
@@ -26,7 +26,7 @@
   {:pre [(keyword? type)]}
   `(.getSystemService
     context
-    ~(keyword->static-field Context (keyword (str (name type) "-service")))))
+    ~(symbol (str (.getName Context) "/" (upper-case (name type)) "_SERVICE"))))
 
 (defn inflate-layout
   "Inflates the layout with the given ID."
