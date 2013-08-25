@@ -154,10 +154,9 @@
 (deftrait :on-menu-item-click
   "Takes :on-click attribute, which should be function of one
   argument, and sets it as an OnClickListener for the widget."
-  #(:on-click %)
+  {:attributes [:on-click]}
   [^MenuItem wdg, {:keys [on-click]} _]
-  (.setOnMenuItemClickListener wdg (on-menu-item-click-call on-click))
-  {:attributes-fn #(dissoc % :on-click)})
+  (.setOnMenuItemClickListener wdg (on-menu-item-click-call on-click)))
 
 ;; ### ActionView attribute
 
@@ -167,10 +166,11 @@
   the menu item. For UI tree syntax see docs for `neko.ui/make-ui`.
   Custom context can be used for UI inflation by providing `:context`
   attribute."
+  {:attributes [:action-view :context]
+   :applies? :action-view}
   [^MenuItem wdg, {:keys [action-view context]} _]
   (let [view (if (instance? View action-view)
                action-view
                (ui/make-ui-element (or context ctx/context)
                                    action-view {:menu-item wdg}))]
-    (.setActionView wdg ^View view))
-  {:attributes-fn #(dissoc % :action-view :context)})
+    (.setActionView wdg ^View view)))

@@ -49,6 +49,16 @@ next-level elements."
   (fn [trait widget attributes-map options-map]
     trait))
 
+(defn- add-attributes-to-meta
+  "Appends information about attribute to trait mapping to `meta`."
+  [meta attr-list trait]
+  (reduce (fn [m att]
+            (update-in m [:attributes att]
+                       #(if %
+                          (conj % trait)
+                          [trait])))
+          meta attr-list))
+
 (defmacro deftrait
   "Defines a trait with the given name.
 
@@ -70,22 +80,36 @@ next-level elements."
   (let [[docstring args] (if (string? (first args))
                            [(first args) (next args)]
                            [nil args])
-        [match-pred args] (if-not (vector? (first args))
-                            [(first args) (next args)]
-                            [name args])
+        [param-map args] (if (map? (first args))
+                           [(first args) (next args)]
+                           [{} args])
+        match-pred (cond (:applies? param-map)
+                         (:applies? param-map)
+
+                         (:attributes param-map)
+                         `(fn [kw#] (some kw# ~(:attributes param-map)))
+
+                         :else name)
         codegen-body args
-        dissoc-fn `(fn [a#] (dissoc a# ~name))]
+        dissoc-fn (if (:attributes param-map)
+                    `(fn [a#] (dissoc a# ~@(:attributes param-map)))
+                    `(fn [a#] (dissoc a# ~name)))]
     `(do
        (alter-meta! #'apply-trait
-                    assoc-in [:trait-doc ~name] ~docstring)
+                    (fn [m#]
+                      (-> m#
+                          (assoc-in [:trait-doc ~name] ~docstring)
+                          (add-attributes-to-meta
+                           (or ~(:attributes param-map) [~name]) ~name))))
        (defmethod apply-trait ~name
          [trait# widget# attributes# options#]
          (if (~match-pred attributes#)
-           (let [result# ((fn ~@codegen-body) widget# attributes# options#)]
+           (let [result# ((fn ~@codegen-body) widget# attributes# options#)
+                 attr-fn# ~dissoc-fn]
              (if (map? result#)
-               [(:attributes-fn result# ~dissoc-fn)
+               [(:attributes-fn result# attr-fn#)
                 (:options-fn result# identity)]
-               [~dissoc-fn identity]))
+               [attr-fn# identity]))
            [identity identity])))))
 
 (alter-meta! #'deftrait
@@ -164,7 +188,7 @@ next-level elements."
   "Takes `:layout-width`, `:layout-height` and `:layout-weight`
   attributes and sets a proper LayoutParams according to container
   type."
-  #(some % [:layout-width :layout-height :layout-weight])
+  {:attributes [:layout-width :layout-height :layout-weight]}
   [^View wdg, {:keys [layout-width layout-height layout-weight]}
    {:keys [container-type]}]
   (case (kw/keyword-by-classname container-type)
@@ -173,9 +197,7 @@ next-level elements."
      wdg (linear-layout-params layout-width layout-height layout-weight))
 
     (.setLayoutParams
-     wdg (default-layout-params layout-width layout-height)))
-  {:attributes-fn #(dissoc % :layout-width :layout-height
-                           :layout-weight)})
+     wdg (default-layout-params layout-width layout-height))))
 
 (deftrait :padding
   "Takes `:padding`, `:padding-bottom`, `:padding-left`,
@@ -183,21 +205,20 @@ next-level elements."
   according to their values. Values might be either integers or
   vectors like `[number unit-kw]`, where unit keyword is one of the
   following: :px, :dip, :sp, :pt, :in, :mm."
-  #(some % [:padding :padding-bottom :padding-left :padding-right :padding-top])
+  {:attributes [:padding :padding-bottom :padding-left
+                :padding-right :padding-top]}
   [wdg {:keys [padding padding-bottom padding-left
                padding-right padding-top]} _]
   (.setPadding ^View wdg
                (to-dimension (or padding-left padding 0))
                (to-dimension (or padding-top padding 0))
                (to-dimension (or padding-right padding 0))
-               (to-dimension (or padding-bottom padding 0)))
-  {:attributes-fn #(dissoc % :padding :padding-bottom :padding-left
-                           :padding-right :padding-top)})
+               (to-dimension (or padding-bottom padding 0))))
 
 (deftrait :container
   "Puts the type of the widget onto the options map so subelement can
   use the container type to choose the correct LayoutParams instance."
-  (constantly true)
+  {:applies? (constantly true)}
   [wdg _ __]
   {:options-fn #(assoc % :container-type (type wdg))})
 
@@ -253,7 +274,7 @@ next-level elements."
 
   Then OnQueryTextListener object is created from the functions and
   set to the widget."
-  #(some % [:on-query-text-change :on-query-text-submit])
+  {:attributes [:on-query-text-change :on-query-text-submit]}
   [^SearchView wdg, {:keys [on-query-text-change on-query-text-submit]}
    {:keys [menu-item]}]
   (.setOnQueryTextListener
@@ -263,8 +284,7 @@ next-level elements."
           on-query-text-change)
         (if (and menu-item on-query-text-submit)
           (fn [q] (on-query-text-submit q menu-item))
-          on-query-text-submit)))
-  {:attributes-fn #(dissoc % :on-query-text-change :on-query-text-submit)})
+          on-query-text-submit))))
 
 ;; ### ID storing traits
 
