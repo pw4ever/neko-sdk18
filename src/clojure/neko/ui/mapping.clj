@@ -58,6 +58,11 @@
                                :spinner ProgressDialog/STYLE_SPINNER}}
     }))
 
+(defn get-keyword-mapping
+  "Returns the current state of `keyword-mapping`."
+  []
+  @keyword-mapping)
+
 (def ^{:private true} reverse-mapping
   (atom
    {android.widget.Button :button

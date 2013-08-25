@@ -52,13 +52,13 @@
   given, describes the trait. No-arguments version briefly describes
   all available UI elements."
   ([]
-     (let [all-elements @@#'mapping/keyword-mapping]
+     (let [all-elements (mapping/get-keyword-mapping)]
        (doseq [[el-type parameters] all-elements]
          (print (get-element-doc el-type parameters false)))))
   ([kw]
      (describe kw nil))
   ([kw modifier]
-     (let [parameters (get @@#'mapping/keyword-mapping kw)
+     (let [parameters ((mapping/get-keyword-mapping) kw)
            trait-doc (get-trait-doc kw)]
        (cond
         parameters (print "Elements found:\n"
