@@ -16,14 +16,14 @@
             [neko.ui.mapping :as mapping])
   (:use [clojure.string :only [join]]))
 
-(defn- get-trait-doc
+(defn get-trait-doc
   "Returns a docstring for the given trait keyword."
   [trait]
   (when-let [doc (get-in (meta #'traits/apply-trait)
                             [:trait-doc trait])]
     (str trait " - " doc)))
 
-(defn- get-element-doc
+(defn get-element-doc
   "Returns a docsting generated from the element mapping. Verbose flag
   switches the detailed description of element's traits."
   [el-type el-mapping verbose?]
@@ -31,13 +31,14 @@
         traits (mapping/all-traits el-type)]
    (format "%s - %s\n%s%s%s\n"
            el-type
-           (or classname "no matching class")
+           (or (and classname (.getName ^Class classname))
+               "no matching class")
            (if (empty? traits) ""
                (format "Implements traits: %s\n"
                        (if verbose?
                          (join (for [t traits]
                                  (str "\n" (get-trait-doc t))))
-                         (pr-str traits))))
+                         (join (map (partial str "\n  ") traits)))))
            (if (empty? attributes) ""
                (format "Default attributes: %s\n"
                        (pr-str attributes)))

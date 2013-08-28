@@ -106,4 +106,3 @@
         :candidates #'candidates
         :doc #'doc)
        (catch Exception ex nil)))
-

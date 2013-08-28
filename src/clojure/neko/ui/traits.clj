@@ -56,7 +56,7 @@ next-level elements."
             (update-in m [:attributes att]
                        #(if %
                           (conj % trait)
-                          [trait])))
+                          #{trait})))
           meta attr-list))
 
 (defmacro deftrait
