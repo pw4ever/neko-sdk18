@@ -17,10 +17,14 @@
             [neko.listeners.view :as view-listeners]
             neko.listeners.search-view)
   (:use [neko.-utils :only [memoized]])
-  (:import [android.widget LinearLayout$LayoutParams TextView SearchView]
+  (:import [android.widget LinearLayout$LayoutParams TextView SearchView
+            ImageView]
            [android.view View ViewGroup$LayoutParams]
+           android.graphics.Bitmap android.graphics.drawable.Drawable
+           android.net.Uri
            android.util.TypedValue
-           java.util.HashMap))
+           java.util.HashMap
+           clojure.lang.Keyword))
 
 ;; ## Infrastructure for traits and attributes
 
@@ -165,6 +169,18 @@ next-level elements."
   dimenstion vector, and sets it to the widget."
   [^TextView wdg, {:keys [text-size]} _]
   (.setTextSize wdg (to-dimension text-size)))
+
+(deftrait :image
+  "Takes `:image` attribute which can be a resource ID, resource
+  keyword, Drawable, Bitmap or URI and sets it ImageView widget's
+  image source." [^ImageView wdg, {:keys [image]} _]
+  (condp instance? image
+    Bitmap (.setImageBitmap wdg image)
+    Drawable (.setImageDrawable wdg image)
+    Keyword (.setImageDrawable wdg (neko.resource/get-drawable image))
+    Uri (.setImageURI wdg image)
+    ;; Otherwise assume `image` to be resource ID.
+    :else (.setImageResource wdg image)))
 
 ;; ### Layout parameters attributes
 

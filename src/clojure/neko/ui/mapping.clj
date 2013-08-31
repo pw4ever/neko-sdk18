@@ -51,6 +51,7 @@
                   :traits [:on-query-text]}
     :image-view {:classname android.widget.ImageView
                  :inherits :view
+                 :traits [:image]
                  :value-namespaces
                  {:scale-type android.widget.ImageView$ScaleType}}
 
