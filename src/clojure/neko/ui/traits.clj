@@ -53,7 +53,7 @@ next-level elements."
   (fn [trait widget attributes-map options-map]
     trait))
 
-(defn- add-attributes-to-meta
+(defn add-attributes-to-meta
   "Appends information about attribute to trait mapping to `meta`."
   [meta attr-list trait]
   (reduce (fn [m att]
