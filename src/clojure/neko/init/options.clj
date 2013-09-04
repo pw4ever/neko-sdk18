@@ -37,3 +37,8 @@
   ^{:dynamic true
     :doc "Application's root package name."}
   *package-name*)
+
+(def
+  ^{:dynamic true
+    :doc "Port to start nRepl server on."}
+  *nrepl-port*)
