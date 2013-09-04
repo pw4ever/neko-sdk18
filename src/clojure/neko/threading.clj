@@ -12,8 +12,7 @@
 (ns neko.threading
   "Utilities used to manage multiple threads on Android."
   {:author "Daniel Solano Gómez"}
-  (:use [neko.activity :only [*activity*]]
-        [neko.debug :only [safe-for-ui]])
+  (:use [neko.debug :only [safe-for-ui]])
   (:import android.app.Activity
            android.view.View
            clojure.lang.IFn
@@ -49,21 +48,11 @@
 
 (defn on-ui*
   "Runs the given nullary function on the UI thread.  If this function is
-  called on the UI thread, it will evaluate immediately.
-
-  Also dynamically binds the current value of `*activity*` inside the
-  thread."
+  called on the UI thread, it will evaluate immediately."
   [f]
   (if (on-ui-thread?)
     (f)
-    (let [dynamic-activity (when (bound? #'*activity*) *activity*)]
-      (.post handler
-             (fn []
-               (safe-for-ui
-                (if dynamic-activity
-                  (binding [*activity* dynamic-activity]
-                    (f))
-                  (f))))))))
+    (.post handler (fn [] (safe-for-ui (f))))))
 
 (defmacro on-ui
   "Runs the macro body on the UI thread.  If this macro is called on the UI
