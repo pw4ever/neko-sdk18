@@ -52,6 +52,7 @@
   []
   (try (require 'neko.compliment.android-resources)
        ((resolve 'neko.compliment.android-resources/init-source))
+       (require 'neko.compliment.ui-widgets-and-attributes)
        ((resolve 'neko.compliment.ui-widgets-and-attributes/init-source))
        (catch Exception ex nil)))
 

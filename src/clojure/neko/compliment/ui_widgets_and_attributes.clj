@@ -1,4 +1,4 @@
-(ns clojure.neko.compliment.ui-widgets-and-attributes
+(ns neko.compliment.ui-widgets-and-attributes
   "Compliment source for keywords that represent UI widget keywords
   and their traits."
   (:require [neko.ui.mapping :as mapping]

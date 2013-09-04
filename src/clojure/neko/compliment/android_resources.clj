@@ -9,12 +9,12 @@
   [x]
   (re-matches #":.*" x))
 
-(def {^:doc "Stores cached resources to allow faster lookup."
-      ^:private true}
+(def ^{:doc "Stores cached resources to allow faster lookup."
+       :private true}
   resource-cache (atom {}))
 
-(def {^:doc "Resource types to be completed."
-      ^:private true}
+(def ^{:doc "Resource types to be completed."
+       :private true}
   resource-types [:id :string :drawable :layout])
 
 (defn res->keyword
@@ -63,8 +63,6 @@
   "Returns a list of resource keywords completions for the keyword
   prefix. If prefix doesn't have a namespace, assumes application
   package to be a source."
-  "Returns a list of potential namespace completions for a given
-  namespace."
   [^String prefix, ns context]
   (when (keyword-symbol? prefix)
     (let [[_ pkg-name] (re-matches #":(.+)/.*" prefix)]
