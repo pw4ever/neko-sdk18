@@ -24,14 +24,18 @@
   Application class from Java. Default `:on-create` moved to
   `init-application`.")))
 
+(def ^{:doc "Represents if initialization was already performed."
+       :private true}
+  initialized? (atom false))
+
 (defn init-application
   "Performs necessary preparations for Neko and REPL development."
   [context & {:keys [extends prefix on-create nrepl-port]
               :or {extends android.app.Application
                    prefix (str (simple-name name) "-")}}]
-  (alter-var-root #'neko.context/context (constantly context))
-  (alter-var-root #'package-name (constantly (.getPackageName context)))
-  (neko.init/init context :port (or nrepl-port 9999))
-  (init-threading))
-
-
+  (when-not @initialized?
+    (alter-var-root #'neko.context/context (constantly context))
+    (alter-var-root #'package-name (constantly (.getPackageName context)))
+    (neko.init/init context :port (or nrepl-port 9999))
+    (init-threading)
+    (reset! initialized? true)))
