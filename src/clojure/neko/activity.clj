@@ -15,6 +15,7 @@
   (:import android.app.Activity
            android.view.View
            android.app.Fragment)
+  (:require neko.init)
   (:use [neko.ui :only [make-ui]]
         neko.-utils))
 
@@ -148,7 +149,7 @@
               ^android.os.Bundle ~'savedInstanceState]
              (.superOnCreate ~'this ~'savedInstanceState)
              (def ~(vary-meta def assoc :tag name) ~'this)
-             (neko.application/init-application ~'this)
+             (neko.init/init ~'this)
              (~on-create ~'this ~'savedInstanceState)))
        ~(when on-create-options-menu
           `(defn ~(symbol (str prefix "onCreateOptionsMenu"))
