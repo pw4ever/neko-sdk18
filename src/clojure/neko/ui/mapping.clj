@@ -24,8 +24,9 @@
 (def ^{:private true} keyword-mapping
   (atom
    ;; UI widgets
-   {:view {:traits [:def :layout-params :on-click :on-long-click :on-touch
-                    :on-create-context-menu :on-key :id :padding]
+   {:view {:traits [:def :id :padding :on-click :on-long-click :on-touch
+                    :on-create-context-menu :on-key
+                    :default-layout-params :linear-layout-params]
            :value-namespaces
            {:text-alignment View
             :text-direction View

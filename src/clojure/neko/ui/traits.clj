@@ -186,36 +186,29 @@ next-level elements."
 
 ;; ### Layout parameters attributes
 
-(defn- default-layout-params
-  "Construct LayoutParams instance from the given arguments. Arguments
-  could be either actual values or keywords `:fill` and `:wrap`."
-  [width height]
-  (ViewGroup$LayoutParams. ^int (kw/value :layout-params (or width :wrap))
-                           ^int (kw/value :layout-params (or height :wrap))))
+(deftrait :default-layout-params
+  "Takes `:layout-width` and `:layout-height` attributes and sets
+   LayoutParams, if the container type is not specified."
+  {:attributes [:layout-width :layout-height]
+   :applies? (nil? container-type)}
+  [^View wdg, {:keys [layout-width layout-height]} {:keys [container-type]}]
+  (let [^int width  (kw/value :layout-params (or layout-width  :wrap))
+        ^int height (kw/value :layout-params (or layout-height :wrap))]
+   (.setLayoutParams wdg (ViewGroup$LayoutParams. width height))))
 
-(defn- linear-layout-params
-  "Construct LinearLayout-specific LayoutParams instance from the
-  given arguments. Arguments could be either actual values or keywords
-  `:fill` and `:wrap`."
-  [width height weight]
-  (LinearLayout$LayoutParams. (kw/value :layout-params (or width :wrap))
-                              (kw/value :layout-params (or height :wrap))
-                              (or weight 0)))
-
-(deftrait :layout-params
+(deftrait :linear-layout-params
   "Takes `:layout-width`, `:layout-height` and `:layout-weight`
-  attributes and sets a proper LayoutParams according to container
-  type."
-  {:attributes [:layout-width :layout-height :layout-weight]}
+  attributes and sets LinearLayout.LayoutParams if current container
+  is LinearLayout. Values could be either numbers of `:fill` or
+  `:wrap`."
+  {:attributes [:layout-width :layout-height :layout-weight]
+   :applies? (= (kw/keyword-by-classname container-type) :linear-layout)}
   [^View wdg, {:keys [layout-width layout-height layout-weight]}
    {:keys [container-type]}]
-  (case (kw/keyword-by-classname container-type)
-    :linear-layout
-    (.setLayoutParams
-     wdg (linear-layout-params layout-width layout-height layout-weight))
-
-    (.setLayoutParams
-     wdg (default-layout-params layout-width layout-height))))
+  (let [width  (kw/value :layout-params (or layout-width  :wrap))
+        height (kw/value :layout-params (or layout-height :wrap))
+        weight (or layout-weight 0)]
+    (.setLayoutParams wdg (LinearLayout$LayoutParams. width height weight))))
 
 (deftrait :padding
   "Takes `:padding`, `:padding-bottom`, `:padding-left`,
