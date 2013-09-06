@@ -87,14 +87,15 @@ next-level elements."
         [param-map args] (if (map? (first args))
                            [(first args) (next args)]
                            [{} args])
+        attrs-sym (gensym "attributes")
         match-pred (cond (:applies? param-map)
                          (:applies? param-map)
 
                          (:attributes param-map)
-                         `(fn [kw#] (some kw# ~(:attributes param-map)))
+                         `(some ~attrs-sym ~(:attributes param-map))
 
-                         :else name)
-        codegen-body args
+                         :else `(~name ~attrs-sym))
+        [arglist & codegen-body] args
         dissoc-fn (if (:attributes param-map)
                     `(fn [a#] (dissoc a# ~@(:attributes param-map)))
                     `(fn [a#] (dissoc a# ~name)))]
@@ -106,15 +107,16 @@ next-level elements."
                           (add-attributes-to-meta
                            (or ~(:attributes param-map) [~name]) ~name))))
        (defmethod apply-trait ~name
-         [trait# widget# attributes# options#]
-         (if (~match-pred attributes#)
-           (let [result# ((fn ~@codegen-body) widget# attributes# options#)
-                 attr-fn# ~dissoc-fn]
-             (if (map? result#)
-               [(:attributes-fn result# attr-fn#)
-                (:options-fn result# identity)]
-               [attr-fn# identity]))
-           [identity identity])))))
+         [trait# widget# ~attrs-sym options#]
+         (let [~arglist [widget# ~attrs-sym options#]]
+           (if ~match-pred
+             (let [result# (do ~@codegen-body)
+                   attr-fn# ~dissoc-fn]
+               (if (map? result#)
+                 [(:attributes-fn result# attr-fn#)
+                  (:options-fn result# identity)]
+                 [attr-fn# identity]))
+             [identity identity]))))))
 
 (alter-meta! #'deftrait
              assoc :arglists '([name docstring? match-pred? [params*] body]))
