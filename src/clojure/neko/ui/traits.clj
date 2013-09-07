@@ -18,7 +18,7 @@
             neko.listeners.search-view)
   (:use [neko.-utils :only [memoized]])
   (:import [android.widget LinearLayout$LayoutParams TextView SearchView
-            ImageView]
+            ImageView RelativeLayout RelativeLayout$LayoutParams]
            [android.view View ViewGroup$LayoutParams]
            android.graphics.Bitmap android.graphics.drawable.Drawable
            android.net.Uri
@@ -97,7 +97,7 @@ next-level elements."
                          :else `(~name ~attrs-sym))
         [arglist & codegen-body] args
         dissoc-fn (if (:attributes param-map)
-                    `(fn [a#] (dissoc a# ~@(:attributes param-map)))
+                    `(fn [a#] (apply dissoc a# ~(:attributes param-map)))
                     `(fn [a#] (dissoc a# ~name)))]
     `(do
        (alter-meta! #'apply-trait
@@ -120,6 +120,14 @@ next-level elements."
 
 (alter-meta! #'deftrait
              assoc :arglists '([name docstring? match-pred? [params*] body]))
+
+;; ## Utility functions
+
+(defn to-id
+  "Makes an ID from arbitrary object by calling .hashCode on it.
+  Returns the absolute value."
+  [obj]
+  (Math/abs (.hashCode ^Object obj)))
 
 ;; ## Implementation of different traits
 
@@ -209,6 +217,56 @@ next-level elements."
         height (kw/value :layout-params (or layout-height :wrap))
         weight (or layout-weight 0)]
     (.setLayoutParams wdg (LinearLayout$LayoutParams. width height weight))))
+
+;; #### Relative layout
+
+(def ^:private relative-layout-attributes
+  {:standalone {:layout-align-parent-bottom  RelativeLayout/ALIGN_PARENT_BOTTOM
+                :layout-align-parent-end     RelativeLayout/ALIGN_PARENT_END
+                :layout-align-parent-left    RelativeLayout/ALIGN_PARENT_LEFT
+                :layout-align-parent-right   RelativeLayout/ALIGN_PARENT_RIGHT
+                :layout-align-parent-start   RelativeLayout/ALIGN_PARENT_START
+                :layout-align-parent-top     RelativeLayout/ALIGN_PARENT_TOP
+                :layout-center-horizontal    RelativeLayout/CENTER_HORIZONTAL
+                :layout-center-vertical      RelativeLayout/CENTER_VERTICAL
+                :layout-center-in-parent     RelativeLayout/CENTER_IN_PARENT}
+   :with-id    {:layout-above                RelativeLayout/ABOVE
+                :layout-align-baseline       RelativeLayout/ALIGN_BASELINE
+                :layout-align-bottom         RelativeLayout/ALIGN_BOTTOM
+                :layout-align-end            RelativeLayout/ALIGN_END
+                :layout-align-left           RelativeLayout/ALIGN_LEFT
+                :layout-align-right          RelativeLayout/ALIGN_RIGHT
+                :layout-align-start          RelativeLayout/ALIGN_START
+                :layout-align-top            RelativeLayout/ALIGN_TOP
+                :layout-below                RelativeLayout/BELOW
+                :layout-to-end-of            RelativeLayout/END_OF
+                :layout-to-left-of           RelativeLayout/LEFT_OF
+                :layout-to-right-of          RelativeLayout/RIGHT_OF
+                :layout-to-start-of          RelativeLayout/START_OF}})
+
+(def ^:private all-relative-attributes
+  (apply concat [:layout-width :layout-height
+                 :layout-align-with-parent-if-missing]
+         (map keys (vals relative-layout-attributes))))
+
+(deftrait :relative-layout-params
+  {:attributes all-relative-attributes
+   :applies? (= (kw/keyword-by-classname container-type) :relative-layout)}
+  [^View wdg, {:keys [layout-width layout-height
+                      layout-align-with-parent-if-missing] :as attributes}
+   {:keys [container-type]}]
+  (let [width  (kw/value :layout-params (or layout-width  :wrap))
+        height (kw/value :layout-params (or layout-height :wrap))
+        lp (RelativeLayout$LayoutParams. width height)]
+    (when-not (nil? layout-align-with-parent-if-missing)
+      (set! (. lp alignWithParent) layout-align-with-parent-if-missing))
+    (doseq [[attr-name attr-id] (:standalone relative-layout-attributes)]
+      (when (= (attr-name attributes) true)
+        (.addRule lp attr-id)))
+    (doseq [[attr-name attr-id] (:with-id relative-layout-attributes)]
+      (when (contains? attributes attr-name)
+        (.addRule lp attr-id (to-id (attr-name attributes)))))
+    (.setLayoutParams wdg lp)))
 
 (deftrait :padding
   "Takes `:padding`, `:padding-bottom`, `:padding-left`,
@@ -313,11 +371,6 @@ next-level elements."
   [^View wdg, _ __]
   (.setTag wdg (HashMap.))
   {:options-fn #(assoc % :id-holder wdg)})
-
-(defn to-id
-  "Makes an ID from arbitrary object by calling .hashCode on it."
-  [obj]
-  (.hashCode ^Object obj))
 
 (deftrait :id
   "Takes `:id` attribute, which can either be an integer or a
