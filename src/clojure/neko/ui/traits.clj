@@ -221,11 +221,13 @@ next-level elements."
 ;; #### Relative layout
 
 (def ^:private relative-layout-attributes
+  ;; Hard-coded number values are attributes that appeared since
+  ;; Android Jellybean.
   {:standalone {:layout-align-parent-bottom  RelativeLayout/ALIGN_PARENT_BOTTOM
-                :layout-align-parent-end     RelativeLayout/ALIGN_PARENT_END
+                :layout-align-parent-end     21 ; RelativeLayout/ALIGN_PARENT_END
                 :layout-align-parent-left    RelativeLayout/ALIGN_PARENT_LEFT
                 :layout-align-parent-right   RelativeLayout/ALIGN_PARENT_RIGHT
-                :layout-align-parent-start   RelativeLayout/ALIGN_PARENT_START
+                :layout-align-parent-start   20 ; RelativeLayout/ALIGN_PARENT_START
                 :layout-align-parent-top     RelativeLayout/ALIGN_PARENT_TOP
                 :layout-center-horizontal    RelativeLayout/CENTER_HORIZONTAL
                 :layout-center-vertical      RelativeLayout/CENTER_VERTICAL
@@ -233,16 +235,17 @@ next-level elements."
    :with-id    {:layout-above                RelativeLayout/ABOVE
                 :layout-align-baseline       RelativeLayout/ALIGN_BASELINE
                 :layout-align-bottom         RelativeLayout/ALIGN_BOTTOM
-                :layout-align-end            RelativeLayout/ALIGN_END
+                :layout-align-end            19 ; RelativeLayout/ALIGN_END
                 :layout-align-left           RelativeLayout/ALIGN_LEFT
                 :layout-align-right          RelativeLayout/ALIGN_RIGHT
-                :layout-align-start          RelativeLayout/ALIGN_START
+                :layout-align-start          18 ; RelativeLayout/ALIGN_START
                 :layout-align-top            RelativeLayout/ALIGN_TOP
                 :layout-below                RelativeLayout/BELOW
-                :layout-to-end-of            RelativeLayout/END_OF
+                :layout-to-end-of            17 ; RelativeLayout/END_OF
                 :layout-to-left-of           RelativeLayout/LEFT_OF
                 :layout-to-right-of          RelativeLayout/RIGHT_OF
-                :layout-to-start-of          RelativeLayout/START_OF}})
+                :layout-to-start-of          16 ; RelativeLayout/START_OF
+                }})
 
 (def ^:private all-relative-attributes
   (apply concat [:layout-width :layout-height
