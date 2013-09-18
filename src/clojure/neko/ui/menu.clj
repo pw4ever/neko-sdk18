@@ -167,8 +167,8 @@
   Custom context can be used for UI inflation by providing `:context`
   attribute."
   {:attributes [:action-view :context]
-   :applies? :action-view}
-  [^MenuItem wdg, {:keys [action-view context]} _]
+   :applies? (:action-view attrs)}
+  [^MenuItem wdg, {:keys [action-view context] :as attrs} _]
   (let [view (if (instance? View action-view)
                action-view
                (ui/make-ui-element (or context ctx/context)
