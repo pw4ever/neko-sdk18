@@ -38,7 +38,9 @@
              :inherits :text-view
              :attributes {:text "Default button"}}
     :linear-layout {:classname android.widget.LinearLayout
-                    :inherits :view-group}
+                    :inherits :view-group
+                    :value-namespaces
+                    {:gravity android.view.Gravity}}
     :relative-layout {:classname android.widget.RelativeLayout
                       :inherits :view-group}
     :edit-text {:classname android.widget.EditText
