@@ -209,14 +209,18 @@ next-level elements."
   attributes and sets LinearLayout.LayoutParams if current container
   is LinearLayout. Values could be either numbers of `:fill` or
   `:wrap`."
-  {:attributes [:layout-width :layout-height :layout-weight]
+  {:attributes [:layout-width :layout-height :layout-weight :layout-gravity]
    :applies? (= (kw/keyword-by-classname container-type) :linear-layout)}
-  [^View wdg, {:keys [layout-width layout-height layout-weight]}
+  [^View wdg, {:keys [layout-width layout-height layout-weight layout-gravity]}
    {:keys [container-type]}]
   (let [width  (kw/value :layout-params (or layout-width  :wrap))
         height (kw/value :layout-params (or layout-height :wrap))
-        weight (or layout-weight 0)]
-    (.setLayoutParams wdg (LinearLayout$LayoutParams. width height weight))))
+        weight (or layout-weight 0)
+        params (LinearLayout$LayoutParams. width height weight)]
+    (when layout-gravity
+      (set! (. params gravity)
+            (kw/value :layout-params layout-gravity :gravity)))
+    (.setLayoutParams wdg params)))
 
 ;; #### Relative layout
 
