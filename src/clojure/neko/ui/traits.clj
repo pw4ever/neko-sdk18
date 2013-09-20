@@ -194,6 +194,16 @@ next-level elements."
 
 ;; ### Layout parameters attributes
 
+(def ^:private margin-attributes [:layout-margin-left :layout-margin-top
+                                  :layout-margin-right :layout-margin-bottom])
+
+(defn- apply-margins-to-layout-params
+  "Takes a LayoutParams object that implements MarginLayoutParams
+  class and an attribute map, and sets margins for this object."
+  [params attribute-map]
+  (let [[l t r b] (map #(to-dimension (attribute-map % 0)) margin-attributes)]
+    (.setMargins params l t r b)))
+
 (deftrait :default-layout-params
   "Takes `:layout-width` and `:layout-height` attributes and sets
    LayoutParams, if the container type is not specified."
@@ -205,18 +215,21 @@ next-level elements."
    (.setLayoutParams wdg (ViewGroup$LayoutParams. width height))))
 
 (deftrait :linear-layout-params
-  "Takes `:layout-width`, `:layout-height` and `:layout-weight`
-  attributes and sets LinearLayout.LayoutParams if current container
-  is LinearLayout. Values could be either numbers of `:fill` or
-  `:wrap`."
-  {:attributes [:layout-width :layout-height :layout-weight :layout-gravity]
+  "Takes `:layout-width`, `:layout-height`, `:layout-weight`,
+  `:layout-gravity` and different layout margin attributes and sets
+  LinearLayout.LayoutParams if current container is LinearLayout.
+  Values could be either numbers of `:fill` or `:wrap`."
+  {:attributes (concat margin-attributes [:layout-width :layout-height
+                                          :layout-weight :layout-gravity])
    :applies? (= (kw/keyword-by-classname container-type) :linear-layout)}
-  [^View wdg, {:keys [layout-width layout-height layout-weight layout-gravity]}
+  [^View wdg, {:keys [layout-width layout-height layout-weight layout-gravity]
+               :as attributes}
    {:keys [container-type]}]
   (let [width  (kw/value :layout-params (or layout-width  :wrap))
         height (kw/value :layout-params (or layout-height :wrap))
         weight (or layout-weight 0)
         params (LinearLayout$LayoutParams. width height weight)]
+    (apply-margins-to-layout-params params attributes)
     (when layout-gravity
       (set! (. params gravity)
             (kw/value :layout-params layout-gravity :gravity)))
@@ -257,7 +270,7 @@ next-level elements."
          (map keys (vals relative-layout-attributes))))
 
 (deftrait :relative-layout-params
-  {:attributes all-relative-attributes
+  {:attributes (concat all-relative-attributes margin-attributes)
    :applies? (= (kw/keyword-by-classname container-type) :relative-layout)}
   [^View wdg, {:keys [layout-width layout-height
                       layout-align-with-parent-if-missing] :as attributes}
@@ -273,6 +286,7 @@ next-level elements."
     (doseq [[attr-name attr-id] (:with-id relative-layout-attributes)]
       (when (contains? attributes attr-name)
         (.addRule lp attr-id (to-id (attr-name attributes)))))
+    (apply-margins-to-layout-params lp attributes)
     (.setLayoutParams wdg lp)))
 
 (deftrait :padding
