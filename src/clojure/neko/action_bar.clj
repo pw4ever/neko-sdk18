@@ -12,7 +12,7 @@
 (defn tab-listener
   "Creates a TabListener from the provided functions for selected,
   unselected and reselected events."
-  [{:keys [on-tab-selected on-tab-unselected on-tab-reselected]}]
+  [& {:keys [on-tab-selected on-tab-unselected on-tab-reselected]}]
   (reify ActionBar$TabListener
     (onTabSelected [this tab ft]
       (call-if-nnil on-tab-selected tab ft))
