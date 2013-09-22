@@ -1,4 +1,5 @@
 (ns neko.action-bar
+  "Provides utilities to manipulate application ActionBar."
   (:require neko.ui)
   (:use [neko.ui.mapping :only [defelement]]
         [neko.ui.traits :only [deftrait]]
@@ -98,6 +99,6 @@
   "Configures activity's action bar according to the attributes
   provided in key-value fashion. For more information,
   see `(describe :action-bar)`."
-  [^Activity activity & {:as attributes}]
+  [^Activity activity, attributes-map]
   (let [action-bar (.getActionBar activity)]
-    (neko.ui/apply-attributes :action-bar action-bar attributes {})))
+    (neko.ui/apply-attributes :action-bar action-bar attributes-map {})))
