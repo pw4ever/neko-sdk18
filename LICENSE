@@ -1,67 +1,3 @@
-Neko: The Clojure/Android Toolkit
-=================================
-Daniel Solano_Gómez
-
-Forked by Alexander Yakushev as part of Google Summer of Code 2012/2013
-participation project.
-
-Neko is a toolkit designed to make Android development using Clojure easier and
-more fun.  It accomplishes this by making adding Clojure support to your
-Android project easy and providing functional wrappers and alternatives to
-Android’s Java API.
-
-Acknowledgement
----------------
-
-I thank Remco van 't Veer for his
-https://github.com/remvee/clj-android[clj-android] library which was
-one of the pioneer attempts to bring Clojure to Android development. My
-neko fork is inspired by ideas from his project and borrows some
-actual implementation code.
-
-Documentation
--------------
-
-A general overview of available namespaces, and detailed docs on some
-specific features can be found on the
-https://github.com/alexander-yakushev/neko/wiki[wiki].
-
-Marginalia docs are available http://alexander-yakushev.github.io/neko/[here].
-
-Currently this fork of neko is only usable together with
-https://github.com/clojure-android/lein-droid[lein-droid], so in order
-to get started developing for Clojure/Android, it will be useful for you to read this
-https://github.com/clojure-android/lein-droid/wiki/Tutorial[tutorial].
-
-Current version
----------------
-
-The latest version of Neko available at Clojars is `3.0.0-SNAPSHOT`.
-Note that this is a work in progress as I am hacking it for GSoC 2013
-right now. The last relatively stable version is `2.0.0-beta3`, but I
-generally recommend to stick to the latest 3.x branch.
-
-How to build Neko yourself
---------------------------
-
-If you wan't to modify/extend Neko source code and then use it in your
-applications, you can build it yourself. Use `lein droid jar` in
-neko's directory to create a JAR file which then can be pushed to
-Clojars under your name or installed into a local Maven repo.
-
-Make sure that `:target-version` defined in `project.clj` matches the
-Android SDK version you have installed.
-
-If you have problems building Neko, try running `lein clean` first.
-Also you can use `DEBUG=1 lein droid jar` for additional
-build information.
-
-Legal information
------------------
-
-Copyright © 2011 Sattvik Software & Technology Resources, Ltd. Co. +
-All rights reserved.
-
 === Eclipse Public License - v 1.0 ===
 
 THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS ECLIPSE PUBLIC
@@ -207,7 +143,7 @@ Contributors related to those performance claims and warranties, and if a court
 requires any other Contributor to pay any damages as a result, the Commercial
 Contributor must pay those damages.
 
-==== 5. NO WARRANTY ====
+v==== 5. NO WARRANTY ====
 
 EXCEPT AS EXPRESSLY SET FORTH IN THIS AGREEMENT, THE PROGRAM IS
 PROVIDED ON AN “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS
@@ -281,5 +217,3 @@ the intellectual property laws of the United States of America. No party
 to this Agreement will bring a legal action under this Agreement more
 than one year after the cause of action arose. Each party waives its
 rights to a jury trial in any resulting litigation.
-
-// vim:set spell ft=asciidoc:

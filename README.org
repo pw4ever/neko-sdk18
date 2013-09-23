@@ -1,0 +1,63 @@
+
+* Neko: The Clojure/Android Toolkit
+
+  Neko is a toolkit designed to make Android development using Clojure
+  easier and more fun. It accomplishes this by making adding Clojure
+  support to your Android project easy and providing functional
+  wrappers and alternatives to Android’s Java API.
+
+  Neko was originally written by [[https://github.com/sattvik][Daniel Solano Gómez]]. This version is
+  a fork by Alexander Yakushev as part of Google Summer of Code
+  2012/2013 participation project.
+
+** Installation
+
+   Just add the following line to the dependencies of your
+   Clojure/Android project:
+
+   : [neko "3.0.0-preview1"]
+
+   If you use [[https://github.com/clojure-android/lein-droid][lein-droid]] to create and build your project (which you
+   should), the Neko dependency should be already there.
+
+** Documentation
+
+   For your first dive into Clojure on Android development, see this
+   [[https://github.com/clojure-android/lein-droid/wiki/Tutorial][Tutorial]].
+
+   For detailed information about the available features and
+   utilities, please consult the [[https://github.com/alexander-yakushev/neko/wiki][wiki]].
+
+   Marginalia docs are available [[http://alexander-yakushev.github.io/neko/][here]].
+
+** How to build Neko yourself
+
+   If you wan't to modify/extend Neko source code and then use it in
+   your applications, you can build it yourself. Use =lein droid jar=
+   in neko's directory to create a JAR file which then can be pushed
+   to Clojars under your name or installed into a local Maven repo.
+
+   Make sure that =:target-version= defined in =project.clj= matches
+   the Android SDK version you have installed.
+
+   If you have problems building Neko, try running =lein clean= first.
+   Also you can use =DEBUG=1 lein droid jar= for additional build
+   information.
+
+** Acknowledgments
+
+   I thank Remco van 't Veer for his [[https://github.com/remvee/clj-android][clj-android]] library which was one
+   of the pioneer attempts to bring Clojure to Android development.
+   Some features in my Neko fork are inspired by ideas from his
+   project.
+
+   I also thank all the [[https://github.com/alexander-yakushev/neko/graphs/contributors][contributors]] to Neko.
+
+** Legal information
+
+   Copyright © 2011-2013 Sattvik Software & Technology Resources, Ltd.
+   Co., Alexander Yakushev
+
+   All rights reserved.
+
+   Licensed under Eclipse Public License v1.0. See [[https://github.com/alexander-yakushev/neko/blob/master/LICENSE][LICENSE]].
