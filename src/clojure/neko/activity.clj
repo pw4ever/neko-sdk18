@@ -118,7 +118,7 @@
   - same as :on-create but require a one-argument function."
   [name & {:keys [extends prefix on-create on-create-options-menu
                   on-options-item-selected on-activity-result
-                  on-new-intent def]
+                  on-new-intent def state]
            :as options}]
   (let [options (or options {}) ;; Handle no-options case
         sname (simple-name name)
@@ -129,6 +129,8 @@
         :name ~name
         :main false
         :prefix ~prefix
+        ~@(when state
+            '(:init "init" :state "state"))
         :extends ~(or extends Activity)
         :exposes-methods {~'onCreate ~'superOnCreate
                           ~'onStart ~'superOnStart
@@ -143,6 +145,9 @@
                           ~'onActivityResult ~'superOnActivityResult
                           ~'onNewIntent ~'superOnNewIntent
                           ~'onDestroy ~'superOnDestroy})
+       ~(when state
+          `(defn ~(symbol (str prefix "init"))
+             [] [[] ~state]))
        ~(when on-create
           `(defn ~(symbol (str prefix "onCreate"))
              [~(vary-meta 'this assoc :tag name),
