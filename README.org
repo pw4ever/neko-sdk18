@@ -18,21 +18,21 @@
    : [neko "3.0.0-preview1"]
 
    If you use [[https://github.com/clojure-android/lein-droid][lein-droid]] to create and build your project (which you
-   should), the Neko dependency should be already there.
+   should), the Neko dependency will already be there.
 
 ** Documentation
 
    For your first dive into Clojure on Android development, see this
    [[https://github.com/clojure-android/lein-droid/wiki/Tutorial][Tutorial]].
 
-   For detailed information about the available features and
-   utilities, please consult the [[https://github.com/alexander-yakushev/neko/wiki][wiki]].
+   For detailed information on available features and utilities,
+   please consult the [[https://github.com/alexander-yakushev/neko/wiki][wiki]].
 
    Marginalia docs are available [[http://alexander-yakushev.github.io/neko/][here]].
 
 ** How to build Neko yourself
 
-   If you wan't to modify/extend Neko source code and then use it in
+   If you want to modify/extend Neko source code and then use it in
    your applications, you can build it yourself. Use =lein droid jar=
    in neko's directory to create a JAR file which then can be pushed
    to Clojars under your name or installed into a local Maven repo.
