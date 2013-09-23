@@ -119,7 +119,7 @@ next-level elements."
              [identity identity]))))))
 
 (alter-meta! #'deftrait
-             assoc :arglists '([name docstring? match-pred? [params*] body]))
+             assoc :arglists '([name docstring? param-map? [params*] body]))
 
 ;; ## Utility functions
 
