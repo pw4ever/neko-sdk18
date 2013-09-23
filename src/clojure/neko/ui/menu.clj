@@ -42,7 +42,8 @@
   ([menu tree]
      (make-menu menu Menu/NONE tree))
   ([menu group tree]
-     (doseq [[element-kw attributes & subelements] tree]
+     (doseq [[element-kw attributes & subelements] tree
+             :when element-kw]
        (let [id (to-id (or (:id attributes) Menu/NONE))
              order (to-id (or (:order attributes) Menu/NONE))]
          (case element-kw
