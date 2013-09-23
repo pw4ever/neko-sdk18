@@ -79,7 +79,7 @@
         wdg (construct-element widget-kw context
                                (:constructor-args attributes))
         new-opts (apply-attributes widget-kw wdg attributes options)]
-    (doseq [element inside-elements]
+    (doseq [element inside-elements :when element]
       (.addView ^android.view.ViewGroup wdg
                 (make-ui-element context element new-opts)))
     wdg))
