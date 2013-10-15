@@ -11,8 +11,10 @@
 
 (ns neko.ui.adapters
   "Contains custom adapters for ListView and Spinner."
-  (:use [neko.threading :only [on-ui]])
-  (:import neko.ui.adapters.InterchangeableListAdapter))
+  (:use [neko.threading :only [on-ui]]
+        [neko.ui :only [make-ui-element]])
+  (:import neko.ui.adapters.InterchangeableListAdapter
+           android.view.View))
 
 (defn ref-adapter
   "Takes a function that creates a View, a function that updates a
@@ -31,7 +33,14 @@
      {:pre [(fn? create-view-fn) (fn? update-view-fn)
             (instance? clojure.lang.IFn access-fn)
             (instance? clojure.lang.IDeref ref-type)]}
-     (let [adapter (InterchangeableListAdapter. create-view-fn update-view-fn
+     (let [create-fn (fn []
+                       (let [view (create-view-fn)]
+                         (if (instance? View view)
+                           view
+                           (make-ui-element
+                            neko.context/context view
+                            {:container-type :abs-listview-layout}))))
+           adapter (InterchangeableListAdapter. create-fn update-view-fn
                                                 (access-fn @ref-type))]
        (add-watch ref-type ::adapter-watch
                   (fn [_ __ ___ new-state]
