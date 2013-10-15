@@ -54,13 +54,14 @@
   ([res-type res-name]
      (get-resource context/context res-type res-name))
   ([^Context context, res-type res-name]
-     (if (keyword? res-name)
-       (.getIdentifier (.getResources context)
-                       (kw-to-res-name res-name)
-                       (name res-type)
-                       (or (namespace res-name)
-                           (.getPackageName context)))
-       res-name)))
+     (let [resid (if (keyword? res-name)
+                      (.getIdentifier (.getResources context)
+                                      (kw-to-res-name res-name)
+                                      (name res-type)
+                                      (or (namespace res-name)
+                                          (.getPackageName context)))
+                      res-name)]
+       (if (= resid 0) nil resid))))
 
 (defn get-id
   "Finds the ID for the XML item with the given name. This is simply a
@@ -92,10 +93,10 @@
         [res-name & format-args] args]
     (if (string? res-name)
       res-name
-      (if format-args
-        (.getString context (get-resource context :string res-name)
-                    (to-array format-args))
-        (.getString context (get-resource context :string res-name))))))
+      (when-let [id (get-resource context :string res-name)]
+        (if format-args
+          (.getString context id (to-array format-args))
+          (.getString context id))))))
 
 (alter-meta! #'get-string
              assoc :arglists '([res-name & format-args?] [context res-name & format-args?]))
@@ -109,8 +110,8 @@
   ([^Context context, res-name]
      (if (instance? Drawable res-name)
        res-name
-       (.getDrawable (.getResources context)
-                     (get-resource context :drawable res-name)))))
+       (when-let [id (get-resource context :drawable res-name)]
+         (.getDrawable (.getResources context) id)))))
 
 ;; Compile time resource resolution
 
