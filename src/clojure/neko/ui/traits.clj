@@ -221,7 +221,7 @@ next-level elements."
   Values could be either numbers of `:fill` or `:wrap`."
   {:attributes (concat margin-attributes [:layout-width :layout-height
                                           :layout-weight :layout-gravity])
-   :applies? (= (kw/keyword-by-classname container-type) :linear-layout)}
+   :applies? (= container-type :linear-layout)}
   [^View wdg, {:keys [layout-width layout-height layout-weight layout-gravity]
                :as attributes}
    {:keys [container-type]}]
@@ -271,7 +271,7 @@ next-level elements."
 
 (deftrait :relative-layout-params
   {:attributes (concat all-relative-attributes margin-attributes)
-   :applies? (= (kw/keyword-by-classname container-type) :relative-layout)}
+   :applies? (= container-type :relative-layout)}
   [^View wdg, {:keys [layout-width layout-height
                       layout-align-with-parent-if-missing] :as attributes}
    {:keys [container-type]}]
@@ -310,7 +310,7 @@ next-level elements."
   use the container type to choose the correct LayoutParams instance."
   {:applies? (constantly true)}
   [wdg _ __]
-  {:options-fn #(assoc % :container-type (type wdg))})
+  {:options-fn #(assoc % :container-type (kw/keyword-by-classname (type wdg)))})
 
 ;; ### Listener traits
 
