@@ -18,7 +18,8 @@
             neko.listeners.search-view)
   (:use [neko.-utils :only [memoized]])
   (:import [android.widget LinearLayout$LayoutParams TextView SearchView
-            ImageView RelativeLayout RelativeLayout$LayoutParams]
+            ImageView RelativeLayout RelativeLayout$LayoutParams
+            AbsListView$LayoutParams]
            [android.view View ViewGroup$LayoutParams]
            android.graphics.Bitmap android.graphics.drawable.Drawable
            android.net.Uri
@@ -288,6 +289,20 @@ next-level elements."
         (.addRule lp attr-id (to-id (attr-name attributes)))))
     (apply-margins-to-layout-params lp attributes)
     (.setLayoutParams wdg lp)))
+
+(deftrait :listview-layout-params
+  {:attributes [:layout-width :layout-height :layout-view-type]
+   :applies? (= container-type :abs-listview-layout)}
+  [^View wdg, {:keys [layout-width layout-height layout-view-type]
+               :as attributes}
+   {:keys [container-type]}]
+  (neko.log/d "TAG" "called")
+  (let [width  (kw/value :layout-params (or layout-width  :wrap))
+        height (kw/value :layout-params (or layout-height :wrap))]
+    (.setLayoutParams
+     wdg (if layout-view-type
+           (AbsListView$LayoutParams. width height layout-view-type)
+           (AbsListView$LayoutParams. width height)))))
 
 (deftrait :padding
   "Takes `:padding`, `:padding-bottom`, `:padding-left`,

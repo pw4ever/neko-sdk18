@@ -27,7 +27,7 @@
    {:view {:traits [:def :id :padding :on-click :on-long-click :on-touch
                     :on-create-context-menu :on-key
                     :default-layout-params :linear-layout-params
-                    :relative-layout-params]
+                    :relative-layout-params :listview-layout-params]
            :value-namespaces
            {:text-alignment View
             :text-direction View
