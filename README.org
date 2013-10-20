@@ -15,7 +15,7 @@
    Just add the following line to the dependencies of your
    Clojure/Android project:
 
-   : [neko "3.0.0-preview1"]
+   [[https://clojars.org/neko][https://clojars.org/neko/latest-version.svg]]
 
    If you use [[https://github.com/clojure-android/lein-droid][lein-droid]] to create and build your project (which you
    should), the Neko dependency will already be there.
