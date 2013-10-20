@@ -6,6 +6,7 @@
   :dependencies [[org.clojure-android/clojure "1.5.1-jb"]]
   :source-paths ["src" "src/clojure"]
   :java-source-paths ["src/java" "gen"]
+  :javac-options ["-target" "1.6" "-source" "1.6" "-Xlint:-options"]
 
   :android {:library true
             :target-sdk :ics})
