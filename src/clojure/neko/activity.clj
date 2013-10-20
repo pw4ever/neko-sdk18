@@ -154,7 +154,7 @@
               ^android.os.Bundle ~'savedInstanceState]
              (.superOnCreate ~'this ~'savedInstanceState)
              (def ~(vary-meta def assoc :tag name) ~'this)
-             (neko.init/init ~'this)
+             (neko.init/init (.getApplicationContext ~'this))
              (~on-create ~'this ~'savedInstanceState)))
        ~(when on-create-options-menu
           `(defn ~(symbol (str prefix "onCreateOptionsMenu"))
