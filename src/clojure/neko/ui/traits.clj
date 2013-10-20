@@ -296,7 +296,6 @@ next-level elements."
   [^View wdg, {:keys [layout-width layout-height layout-view-type]
                :as attributes}
    {:keys [container-type]}]
-  (neko.log/d "TAG" "called")
   (let [width  (kw/value :layout-params (or layout-width  :wrap))
         height (kw/value :layout-params (or layout-height :wrap))]
     (.setLayoutParams
