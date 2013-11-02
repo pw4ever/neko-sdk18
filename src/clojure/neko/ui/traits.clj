@@ -177,9 +177,11 @@ next-level elements."
 
 (deftrait :text-size
   "Takes `:text-size` attribute which should be either integer or a
-  dimenstion vector, and sets it to the widget."
+  dimension vector, and sets it to the widget."
   [^TextView wdg, {:keys [text-size]} _]
-  (.setTextSize wdg (to-dimension text-size)))
+  (if (vector? text-size)
+    (.setTextSize wdg (kw->unit-id (second text-size)) (first text-size))
+    (.setTextSize wdg text-size)))
 
 (deftrait :image
   "Takes `:image` attribute which can be a resource ID, resource
