@@ -60,6 +60,8 @@
                  :traits [:image]
                  :value-namespaces
                  {:scale-type android.widget.ImageView$ScaleType}}
+    :web-view {:classname android.webkit.WebView
+               :inherits :view}
 
     ;; Other
     :layout-params {:classname ViewGroup$LayoutParams
