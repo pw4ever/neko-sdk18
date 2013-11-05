@@ -47,7 +47,7 @@
                           options/*nrepl-port*)]
       `(let [port# (or ~port ~build-port 9999)]
          (apply start-repl :port port# ~other-args)
-         (neko.log/i "neko.init" (str "Nrepl started at port " port#))))))
+         (neko.log/i "Nrepl started at port" port#)))))
 
 (defn enable-compliment-sources
   "Initializes compliment sources if theirs namespaces are present."
