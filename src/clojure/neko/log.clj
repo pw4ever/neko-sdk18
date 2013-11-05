@@ -29,10 +29,10 @@
         {:keys [exception tag]} (if (odd? (count kwargs))
                                   (butlast kwargs)
                                   kwargs)
-        my-ns (str *ns*)]
+        tag (or tag (str *ns*))]
     (if exception
-      `(. Log ~logfn ~(or tag my-ns) (pr-str ~@strings) ~exception)
-      `(. Log ~logfn ~(or tag my-ns) (pr-str ~@strings)))))
+      `(. Log ~logfn ~tag (apply str (interpose " " [~@strings])) ~exception)
+      `(. Log ~logfn ~tag (apply str (interpose " " [~@strings]))))))
 
 (defmacro e
   "Log an ERROR message, applying pr-str to all the arguments and taking
