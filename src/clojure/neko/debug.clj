@@ -11,7 +11,6 @@
 
 (ns neko.debug
   "Contains useful tools to be used while developing the application."
-  (:use [neko.init.options :only [*release-build*]])
   (:require [neko log notify]))
 
 ;; This atom stores the last exception happened on the UI thread.
@@ -31,7 +30,7 @@
   [] @ui-exception)
 
 (defmacro catch-all-exceptions [func]
-  (if *release-build*
+  (if (:neko.init/release-build *compiler-options*)
     `(~func)
     `(try (~func)
           (catch Throwable e#

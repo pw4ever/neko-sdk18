@@ -11,8 +11,7 @@
 
 (ns neko.init
   "Contains functions for neko initialization and setting runtime options."
-  (:require [neko.init.options :as options]
-            [neko context log resource compilation threading]))
+  (:require [neko context log resource compilation threading]))
 
 (defmacro
   ^{:private true
@@ -20,9 +19,9 @@
     conditions are met."}
   enable-dynamic-compilation
   [context classes-dir]
-  (when (or (not options/*release-build*)
-            options/*start-nrepl-server*
-            options/*enable-dynamic-compilation*)
+  (when (or (not (::release-build *compiler-options*))
+            (::start-nrepl-sever *compiler-options*)
+            (::enable-dynamic-compilation *compiler-options*))
     `(neko.compilation/init ~context ~classes-dir)))
 
 (defn start-repl
@@ -41,10 +40,9 @@
     :doc "Expands into nREPL server initialization if conditions are met."}
   start-nrepl-server
   [port other-args]
-  (when (or (not options/*release-build*)
-            options/*start-nrepl-server*)
-    (let [build-port (and (bound? #'options/*nrepl-port*)
-                          options/*nrepl-port*)]
+  (when (or (not (::release-build *compiler-options*))
+            (::start-nrepl-sever *compiler-options*))
+    (let [build-port (::nrepl-port *compiler-options*)]
       `(let [port# (or ~port ~build-port 9999)]
          (apply start-repl :port port# ~other-args)
          (neko.log/i "Nrepl started at port" port#)))))

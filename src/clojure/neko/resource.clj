@@ -13,12 +13,11 @@
   "Provides utilities to resolve application resources."
   (:require [clojure.string :as string]
             [neko.context :as context])
-  (:use [neko.init.options :only [*package-name*]])
   (:import android.content.Context android.graphics.drawable.Drawable))
 
 ;; ## Runtime resource resolution
 
-(def package-name *package-name*)
+(def package-name (:neko.init/package-name *compiler-options*))
 
 (defn- kw-to-res-name
   "Takes the name of the keyword and turns all hyphens and periods to
