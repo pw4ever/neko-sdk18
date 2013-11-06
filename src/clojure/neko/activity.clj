@@ -153,7 +153,9 @@
              [~(vary-meta 'this assoc :tag name),
               ^android.os.Bundle ~'savedInstanceState]
              (.superOnCreate ~'this ~'savedInstanceState)
-             (def ~(vary-meta def assoc :tag name) ~'this)
+             ~(when (and (not (:neko.init/release-build *compiler-options*))
+                         def)
+                `(def ~(vary-meta def assoc :tag name) ~'this))
              (neko.init/init (.getApplicationContext ~'this))
              (~on-create ~'this ~'savedInstanceState)))
        ~(when on-create-options-menu
