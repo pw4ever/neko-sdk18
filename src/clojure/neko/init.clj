@@ -11,7 +11,8 @@
 
 (ns neko.init
   "Contains functions for neko initialization and setting runtime options."
-  (:require [neko context log resource compilation threading]))
+  (:require [neko context log resource compilation threading])
+  (:import android.content.Context))
 
 (defmacro
   ^{:private true
@@ -72,7 +73,8 @@
               :as args}]
   (when-not @initialized?
     (alter-var-root #'neko.context/context (constantly context))
-    (alter-var-root #'neko.resource/package-name (constantly (.getPackageName context)))
+    (alter-var-root #'neko.resource/package-name
+                    (constantly (.getPackageName ^Context context)))
     (enable-dynamic-compilation context classes-dir)
     ;; Ensure that `:port` is provided, pass all other arguments as-is.
     (start-nrepl-server port (mapcat identity (dissoc args :classes-dir :port)))

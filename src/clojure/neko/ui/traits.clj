@@ -20,7 +20,8 @@
   (:import [android.widget LinearLayout$LayoutParams TextView SearchView
             ImageView RelativeLayout RelativeLayout$LayoutParams
             AbsListView$LayoutParams]
-           [android.view View ViewGroup$LayoutParams]
+           [android.view View ViewGroup$LayoutParams
+            ViewGroup$MarginLayoutParams]
            android.graphics.Bitmap android.graphics.drawable.Drawable
            android.net.Uri
            android.util.TypedValue
@@ -203,7 +204,7 @@ next-level elements."
 (defn- apply-margins-to-layout-params
   "Takes a LayoutParams object that implements MarginLayoutParams
   class and an attribute map, and sets margins for this object."
-  [params attribute-map]
+  [^ViewGroup$MarginLayoutParams params, attribute-map]
   (let [[l t r b] (map #(to-dimension (attribute-map % 0)) margin-attributes)]
     (.setMargins params l t r b)))
 
@@ -278,8 +279,8 @@ next-level elements."
   [^View wdg, {:keys [layout-width layout-height
                       layout-align-with-parent-if-missing] :as attributes}
    {:keys [container-type]}]
-  (let [width  (kw/value :layout-params (or layout-width  :wrap))
-        height (kw/value :layout-params (or layout-height :wrap))
+  (let [^int width  (kw/value :layout-params (or layout-width  :wrap))
+        ^int height (kw/value :layout-params (or layout-height :wrap))
         lp (RelativeLayout$LayoutParams. width height)]
     (when-not (nil? layout-align-with-parent-if-missing)
       (set! (. lp alignWithParent) layout-align-with-parent-if-missing))
@@ -298,8 +299,8 @@ next-level elements."
   [^View wdg, {:keys [layout-width layout-height layout-view-type]
                :as attributes}
    {:keys [container-type]}]
-  (let [width  (kw/value :layout-params (or layout-width  :wrap))
-        height (kw/value :layout-params (or layout-height :wrap))]
+  (let [^int width  (kw/value :layout-params (or layout-width  :wrap))
+        ^int height (kw/value :layout-params (or layout-height :wrap))]
     (.setLayoutParams
      wdg (if layout-view-type
            (AbsListView$LayoutParams. width height layout-view-type)

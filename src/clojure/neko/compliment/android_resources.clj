@@ -2,7 +2,8 @@
   "Compliment source for keywords that represent Android resources."
   (:require [neko.context :as app]
             [clojure.string :as string]
-            [neko.resource :as droid-res]))
+            [neko.resource :as droid-res])
+  (:import java.lang.reflect.Field))
 
 (defn keyword-symbol?
   "Tests if prefix is a keyword."
@@ -32,9 +33,9 @@
   If `append-ns` is true, add namespace name to resource keywords."
   [pkg-name type append-ns]
   (into {}
-        (when-let [cls ((resolve 'compliment.utils/resolve-class)
-                        (symbol (str pkg-name ".R$" (name type))))]
-          (for [field (.getDeclaredFields cls)
+        (when-let [^Class cls ((resolve 'compliment.utils/resolve-class)
+                               (symbol (str pkg-name ".R$" (name type))))]
+          (for [^Field field (.getDeclaredFields cls)
                 :let [field-name (.getName field)]]
             [(if append-ns
                (str ":" pkg-name "/" (res->keyword field-name))
@@ -74,7 +75,7 @@
 
 (defn- get-field-doc
   "Returns a docstring for the given R class field member."
-  [field]
+  [^Field field]
   (let [[_ pkg type name] (re-matches #".+ ([^$]+)\$(\w+)\.(.+)" (str field))]
     (str (string/capitalize type) " resource: " pkg "/" name
          (when (= type "string")
