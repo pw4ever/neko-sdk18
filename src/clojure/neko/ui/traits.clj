@@ -211,7 +211,7 @@ next-level elements."
   "Takes `:layout-width` and `:layout-height` attributes and sets
    LayoutParams, if the container type is not specified."
   {:attributes [:layout-width :layout-height]
-   :applies? (nil? container-type)}
+   :applies? (and (or layout-width layout-height) (nil? container-type))}
   [^View wdg, {:keys [layout-width layout-height]} {:keys [container-type]}]
   (let [^int width  (kw/value :layout-params (or layout-width  :wrap))
         ^int height (kw/value :layout-params (or layout-height :wrap))]
