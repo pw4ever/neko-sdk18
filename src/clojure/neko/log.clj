@@ -24,42 +24,45 @@
   {:author "Adam Clements"}
   (:import android.util.Log))
 
-(defn- logger [logfn args]
-  (let [[strings kwargs] (split-with (complement #{:exception :tag}) args)
-        {:keys [exception tag]} (if (odd? (count kwargs))
-                                  (butlast kwargs)
-                                  kwargs)
-        tag (or tag (str *ns*))]
-    (if exception
-      `(. Log ~logfn ~tag (apply str (interpose " " [~@strings])) ~exception)
-      `(. Log ~logfn ~tag (apply str (interpose " " [~@strings]))))))
+(defn- logger [logfn priority-kw args]
+  (when-not ((set (:neko.init/ignore-log-priority *compiler-options*))
+             priority-kw)
+    (println priority-kw)
+    (let [[strings kwargs] (split-with (complement #{:exception :tag}) args)
+          {:keys [exception tag]} (if (odd? (count kwargs))
+                                    (butlast kwargs)
+                                    kwargs)
+          tag (or tag (str *ns*))]
+      (if exception
+        `(. Log ~logfn ~tag (apply str (interpose " " [~@strings])) ~exception)
+        `(. Log ~logfn ~tag (apply str (interpose " " [~@strings])))))))
 
 (defmacro e
   "Log an ERROR message, applying pr-str to all the arguments and taking
    an optional keyword :exception or :tag at the end which will print the
    exception stacktrace or override the TAG respectively"
-  [& args] (logger 'e args))
+  [& args] (logger 'e :error args))
 
 (defmacro d
   "Log a DEBUG message, applying pr-str to all the arguments and taking
    an optional keyword :exception or :tag at the end which will print the
    exception stacktrace or override the TAG respectively"
-  [& args] (logger 'd args))
+  [& args] (logger 'd :debug args))
 
 (defmacro i
   "Log an INFO message, applying pr-str to all the arguments and taking
    an optional keyword :exception or :tag at the end which will print the
    exception stacktrace or override the TAG respectively"
-  [& args] (logger 'i args))
+  [& args] (logger 'i :info args))
 
 (defmacro v
   "Log a VERBOSE message, applying pr-str to all the arguments and taking
    an optional keyword :exception or :tag at the end which will print the
    exception stacktrace or override the TAG respectively"
-  [& args] (logger 'v args))
+  [& args] (logger 'v :verbose args))
 
 (defmacro w
   "Log a WARN message, applying pr-str to all the arguments and taking
    an optional keyword :exception or :tag at the end which will print the
    exception stacktrace or override the TAG respectively"
-  [& args] (logger 'w args))
+  [& args] (logger 'w :warn args))
