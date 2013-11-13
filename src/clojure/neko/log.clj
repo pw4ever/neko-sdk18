@@ -27,7 +27,6 @@
 (defn- logger [logfn priority-kw args]
   (when-not ((set (:neko.init/ignore-log-priority *compiler-options*))
              priority-kw)
-    (println priority-kw)
     (let [[strings kwargs] (split-with (complement #{:exception :tag}) args)
           {:keys [exception tag]} (if (odd? (count kwargs))
                                     (butlast kwargs)
