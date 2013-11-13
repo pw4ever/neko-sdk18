@@ -2865,8 +2865,8 @@ net.brehaut.ClojureTools = (function (SH) {
     build_tree: build_tree
   };
 })(SyntaxHighlighter);
-</script><title>neko -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name">neko</h1><h2 class="project-version">3.0.0-preview1</h2><br /><p>Neko is a toolkit designed to make Android development using Clojure easier and more fun.</p>
-</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure-android/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.5.1-jb</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#neko.-utils">neko.-utils</a></li><li><a href="#neko.action-bar">neko.action-bar</a></li><li><a href="#neko.activity">neko.activity</a></li><li><a href="#neko.application">neko.application</a></li><li><a href="#neko.compilation">neko.compilation</a></li><li><a href="#neko.compliment.android-resources">neko.compliment.android-resources</a></li><li><a href="#neko.compliment.ui-widgets-and-attributes">neko.compliment.ui-widgets-and-attributes</a></li><li><a href="#neko.context">neko.context</a></li><li><a href="#neko.data">neko.data</a></li><li><a href="#neko.data.sqlite">neko.data.sqlite</a></li><li><a href="#neko.debug">neko.debug</a></li><li><a href="#neko.dialog.alert">neko.dialog.alert</a></li><li><a href="#neko.doc">neko.doc</a></li><li><a href="#neko.find-view">neko.find-view</a></li><li><a href="#neko.init">neko.init</a></li><li><a href="#neko.init.options">neko.init.options</a></li><li><a href="#neko.listeners.adapter-view">neko.listeners.adapter-view</a></li><li><a href="#neko.listeners.dialog">neko.listeners.dialog</a></li><li><a href="#neko.listeners.search-view">neko.listeners.search-view</a></li><li><a href="#neko.listeners.text-view">neko.listeners.text-view</a></li><li><a href="#neko.listeners.view">neko.listeners.view</a></li><li><a href="#neko.log">neko.log</a></li><li><a href="#neko.notify">neko.notify</a></li><li><a href="#neko.resource">neko.resource</a></li><li><a href="#neko.threading">neko.threading</a></li><li><a href="#neko.ui">neko.ui</a></li><li><a href="#neko.ui.adapters">neko.ui.adapters</a></li><li><a href="#neko.ui.listview">neko.ui.listview</a></li><li><a href="#neko.ui.mapping">neko.ui.mapping</a></li><li><a href="#neko.ui.menu">neko.ui.menu</a></li><li><a href="#neko.ui.traits">neko.ui.traits</a></li><li><a href="#"></a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.-utils" name="neko.-utils"><h1 class="project-name">neko.-utils</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Internal utilities used by Neko, not intended for external consumption.</p>
+</script><title>neko -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name">neko</h1><h2 class="project-version">3.0.0</h2><br /><p>Neko is a toolkit designed to make Android development using Clojure easier and more fun.</p>
+</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure-android/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.5.1-jb</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#neko.-utils">neko.-utils</a></li><li><a href="#neko.action-bar">neko.action-bar</a></li><li><a href="#neko.activity">neko.activity</a></li><li><a href="#neko.application">neko.application</a></li><li><a href="#neko.compilation">neko.compilation</a></li><li><a href="#neko.compliment.android-resources">neko.compliment.android-resources</a></li><li><a href="#neko.compliment.ui-widgets-and-attributes">neko.compliment.ui-widgets-and-attributes</a></li><li><a href="#neko.context">neko.context</a></li><li><a href="#neko.data">neko.data</a></li><li><a href="#neko.data.sqlite">neko.data.sqlite</a></li><li><a href="#neko.debug">neko.debug</a></li><li><a href="#neko.dialog.alert">neko.dialog.alert</a></li><li><a href="#neko.doc">neko.doc</a></li><li><a href="#neko.find-view">neko.find-view</a></li><li><a href="#neko.init">neko.init</a></li><li><a href="#neko.listeners.adapter-view">neko.listeners.adapter-view</a></li><li><a href="#neko.listeners.dialog">neko.listeners.dialog</a></li><li><a href="#neko.listeners.search-view">neko.listeners.search-view</a></li><li><a href="#neko.listeners.text-view">neko.listeners.text-view</a></li><li><a href="#neko.listeners.view">neko.listeners.view</a></li><li><a href="#neko.log">neko.log</a></li><li><a href="#neko.notify">neko.notify</a></li><li><a href="#neko.resource">neko.resource</a></li><li><a href="#neko.threading">neko.threading</a></li><li><a href="#neko.ui">neko.ui</a></li><li><a href="#neko.ui.adapters">neko.ui.adapters</a></li><li><a href="#neko.ui.listview">neko.ui.listview</a></li><li><a href="#neko.ui.mapping">neko.ui.mapping</a></li><li><a href="#neko.ui.menu">neko.ui.menu</a></li><li><a href="#neko.ui.traits">neko.ui.traits</a></li><li><a href="#"></a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.-utils" name="neko.-utils"><h1 class="project-name">neko.-utils</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Internal utilities used by Neko, not intended for external consumption.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.-utils
   {:author &quot;Daniel Solano Gómez&quot;}
   (:require [clojure.string :as string])
@@ -3150,7 +3150,7 @@ net.brehaut.ClojureTools = (function (SH) {
 </td><td class="codes"><pre class="brush: clojure">(defmacro defactivity
   [name &amp; {:keys [extends prefix on-create on-create-options-menu
                   on-options-item-selected on-activity-result
-                  on-new-intent def]
+                  on-new-intent def state]
            :as options}]
   (let [options (or options {}) ;; Handle no-options case
         sname (simple-name name)
@@ -3161,6 +3161,8 @@ net.brehaut.ClojureTools = (function (SH) {
         :name ~name
         :main false
         :prefix ~prefix
+        ~@(when state
+            '(:init &quot;init&quot; :state &quot;state&quot;))
         :extends ~(or extends Activity)
         :exposes-methods {~'onCreate ~'superOnCreate
                           ~'onStart ~'superOnStart
@@ -3175,13 +3177,18 @@ net.brehaut.ClojureTools = (function (SH) {
                           ~'onActivityResult ~'superOnActivityResult
                           ~'onNewIntent ~'superOnNewIntent
                           ~'onDestroy ~'superOnDestroy})
+       ~(when state
+          `(defn ~(symbol (str prefix &quot;init&quot;))
+             [] [[] ~state]))
        ~(when on-create
           `(defn ~(symbol (str prefix &quot;onCreate&quot;))
              [~(vary-meta 'this assoc :tag name),
               ^android.os.Bundle ~'savedInstanceState]
              (.superOnCreate ~'this ~'savedInstanceState)
-             (def ~(vary-meta def assoc :tag name) ~'this)
-             (neko.init/init ~'this)
+             ~(when (and (not (:neko.init/release-build *compiler-options*))
+                         def)
+                `(def ~(vary-meta def assoc :tag name) ~'this))
+             (neko.init/init (.getApplicationContext ~'this))
              (~on-create ~'this ~'savedInstanceState)))
        ~(when on-create-options-menu
           `(defn ~(symbol (str prefix &quot;onCreateOptionsMenu&quot;))
@@ -3306,7 +3313,8 @@ net.brehaut.ClojureTools = (function (SH) {
 </td><td class="codes"><pre class="brush: clojure">(ns neko.compliment.android-resources
   (:require [neko.context :as app]
             [clojure.string :as string]
-            [neko.resource :as droid-res]))</pre></td></tr><tr><td class="docs"><p>Tests if prefix is a keyword.</p>
+            [neko.resource :as droid-res])
+  (:import java.lang.reflect.Field))</pre></td></tr><tr><td class="docs"><p>Tests if prefix is a keyword.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn keyword-symbol?
   [x]
   (re-matches #&quot;:.*&quot; x))</pre></td></tr><tr><td class="docs"><p>Stores cached resources to allow faster lookup.</p>
@@ -3327,9 +3335,9 @@ net.brehaut.ClojureTools = (function (SH) {
 </td><td class="codes"><pre class="brush: clojure">(defn- get-package-resources
   [pkg-name type append-ns]
   (into {}
-        (when-let [cls ((resolve 'compliment.utils/resolve-class)
-                        (symbol (str pkg-name &quot;.R$&quot; (name type))))]
-          (for [field (.getDeclaredFields cls)
+        (when-let [^Class cls ((resolve 'compliment.utils/resolve-class)
+                               (symbol (str pkg-name &quot;.R$&quot; (name type))))]
+          (for [^Field field (.getDeclaredFields cls)
                 :let [field-name (.getName field)]]
             [(if append-ns
                (str &quot;:&quot; pkg-name &quot;/&quot; (res-&gt;keyword field-name))
@@ -3360,7 +3368,7 @@ net.brehaut.ClojureTools = (function (SH) {
         res-str))))</pre></td></tr><tr><td class="docs"><h2>Documentation</h2>
 </td><td class="codes"></td></tr><tr><td class="docs"><p>Returns a docstring for the given R class field member.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn- get-field-doc
-  [field]
+  [^Field field]
   (let [[_ pkg type name] (re-matches #&quot;.+ ([^$]+)\$(\w+)\.(.+)&quot; (str field))]
     (str (string/capitalize type) &quot; resource: &quot; pkg &quot;/&quot; name
          (when (= type &quot;string&quot;)
@@ -3745,20 +3753,18 @@ together.</p>
   (.insert ^SQLiteDatabase (.db tagged-db) (name table-name) nil
            (map-to-content tagged-db table-name data-map)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.debug" name="neko.debug"><h1 class="project-name">neko.debug</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Contains useful tools to be used while developing the application.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.debug
-  (:use [neko.init.options :only [*release-build*]]
-        [neko.log :only [log-exception]]
-        [neko.notify :only [toast]]))</pre></td></tr><tr><td class="docs"><p>This atom stores the last exception happened on the UI thread.</p>
+  (:require [neko log notify]))</pre></td></tr><tr><td class="docs"><p>This atom stores the last exception happened on the UI thread.</p>
 </td><td class="codes"><pre class="brush: clojure">(def ^:private ui-exception (atom nil))</pre></td></tr><tr><td class="docs"><p>Displays an exception message using a Toast and stores the
   exception for the future reference.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn handle-exception-from-ui-thread
   [e]
   (reset! ui-exception e)
-  (log-exception e)
-  (toast (str e) :long))</pre></td></tr><tr><td class="docs"><p>Returns an uncaught exception happened on UI thread.</p>
+  (neko.log/e &quot;Exception raised on UI thread.&quot; :exception e)
+  (neko.notify/toast (str e) :long))</pre></td></tr><tr><td class="docs"><p>Returns an uncaught exception happened on UI thread.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn ui-e
   [] @ui-exception)</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defmacro catch-all-exceptions [func]
-  (if *release-build*
+  (if (:neko.init/release-build *compiler-options*)
     `(~func)
     `(try (~func)
           (catch Throwable e#
@@ -3949,17 +3955,17 @@ argument, simplifying the above call to:</p>
      :post [(nil-or-view? %)]}
     (find-view *activity* (.intValue id))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.init" name="neko.init"><h1 class="project-name">neko.init</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Contains functions for neko initialization and setting runtime options.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.init
-  (:require [neko.init.options :as options]
-            [neko context log resource compilation threading]))</pre></td></tr><tr><td class="docs"><p>Expands into dynamic compilation initialization if
+  (:require [neko context log resource compilation threading])
+  (:import android.content.Context))</pre></td></tr><tr><td class="docs"><p>Expands into dynamic compilation initialization if
     conditions are met.</p>
 </td><td class="codes"><pre class="brush: clojure">(defmacro
   ^{:private true
     :doc }
   enable-dynamic-compilation
   [context classes-dir]
-  (when (or (not options/*release-build*)
-            options/*start-nrepl-server*
-            options/*enable-dynamic-compilation*)
+  (when (or (not (::release-build *compiler-options*))
+            (::start-nrepl-sever *compiler-options*)
+            (::enable-dynamic-compilation *compiler-options*))
     `(neko.compilation/init ~context ~classes-dir)))</pre></td></tr><tr><td class="docs"><p>Starts a remote nREPL server. Creates a <code>user</code> namespace because
   nREPL expects it to be there while initializing. References nrepl's
   <code>start-server</code> function on demand because the project can be
@@ -3975,13 +3981,12 @@ argument, simplifying the above call to:</p>
     :doc }
   start-nrepl-server
   [port other-args]
-  (when (or (not options/*release-build*)
-            options/*start-nrepl-server*)
-    (let [build-port (and (bound? #'options/*nrepl-port*)
-                          options/*nrepl-port*)]
+  (when (or (not (::release-build *compiler-options*))
+            (::start-nrepl-sever *compiler-options*))
+    (let [build-port (::nrepl-port *compiler-options*)]
       `(let [port# (or ~port ~build-port 9999)]
          (apply start-repl :port port# ~other-args)
-         (neko.log/i &quot;neko.init&quot; (str &quot;Nrepl started at port &quot; port#))))))</pre></td></tr><tr><td class="docs"><p>Initializes compliment sources if theirs namespaces are present.</p>
+         (neko.log/i &quot;Nrepl started at port&quot; port#)))))</pre></td></tr><tr><td class="docs"><p>Initializes compliment sources if theirs namespaces are present.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn enable-compliment-sources
   []
   (try (require 'neko.compliment.android-resources)
@@ -4003,40 +4008,14 @@ argument, simplifying the above call to:</p>
               :as args}]
   (when-not @initialized?
     (alter-var-root #'neko.context/context (constantly context))
-    (alter-var-root #'neko.resource/package-name (constantly (.getPackageName context)))
+    (alter-var-root #'neko.resource/package-name
+                    (constantly (.getPackageName ^Context context)))
     (enable-dynamic-compilation context classes-dir)
     ;; Ensure that `:port` is provided, pass all other arguments as-is.
     (start-nrepl-server port (mapcat identity (dissoc args :classes-dir :port)))
     (neko.threading/init-threading)
     (enable-compliment-sources)
-    (reset! initialized? true)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.init.options" name="neko.init.options"><h1 class="project-name">neko.init.options</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Vars in this namespace are bound in compile time for build-specific
-  macro bodies. To be able to use this vars in runtime the should be
-  initialized manually on application start.</p>
-</td><td class="codes"><pre class="brush: clojure">(ns neko.init.options)</pre></td></tr><tr><td class="docs"><p>True if the current build is a release one.</p>
-</td><td class="codes"><pre class="brush: clojure">(def
-  ^{:dynamic true
-    :doc }
-  *release-build*)</pre></td></tr><tr><td class="docs"><p>True if dynamic compilation should be enabled (regardless of the
-    build type).</p>
-</td><td class="codes"><pre class="brush: clojure">(def
-  ^{:dynamic true
-    :doc
-    }
-  *enable-dynamic-compilation*)</pre></td></tr><tr><td class="docs"><p>True if nREPL server should be started (regardless of the build
-    type).</p>
-</td><td class="codes"><pre class="brush: clojure">(def
-  ^{:dynamic true
-    :doc
-     }
-  *start-nrepl-server*)</pre></td></tr><tr><td class="docs"><p>Application's root package name.</p>
-</td><td class="codes"><pre class="brush: clojure">(def
-  ^{:dynamic true
-    :doc }
-  *package-name*)</pre></td></tr><tr><td class="docs"><p>Port to start nRepl server on.</p>
-</td><td class="codes"><pre class="brush: clojure">(def
-  ^{:dynamic true
-    :doc }
-  *nrepl-port*)</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.listeners.adapter-view" name="neko.listeners.adapter-view"><h1 class="project-name">neko.listeners.adapter-view</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Utility functions and macros for creating listeners corresponding to the
+    (reset! initialized? true)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.listeners.adapter-view" name="neko.listeners.adapter-view"><h1 class="project-name">neko.listeners.adapter-view</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Utility functions and macros for creating listeners corresponding to the
   android.widget.AdapterView class.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.listeners.adapter-view
   {:author &quot;Daniel Solano Gómez&quot;})</pre></td></tr><tr><td class="docs"><p>Takes a function and yields an AdapterView.OnItemClickListener object that
@@ -4476,72 +4455,52 @@ argument, simplifying the above call to:</p>
   otherwise logical false.</p>
 </td><td class="codes"><pre class="brush: clojure">(defmacro on-touch
   [&amp; body]
-  `(on-touch-call (fn [~'view ~'event] ~@body)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.log" name="neko.log"><h1 class="project-name">neko.log</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Utility for logging in Android.  To use this utility simply use the deflog
-  macro as follows:</p>
+  `(on-touch-call (fn [~'view ~'event] ~@body)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.log" name="neko.log"><h1 class="project-name">neko.log</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Utility for logging in Android. There are five logging macros: <code>i</code>,
+  <code>d</code>, <code>e</code>, <code>v</code>, <code>w</code>; for different purposes. Each of them takes
+  variable number of arguments and optional keyword arguments at the
+  end: <code>:exception</code> and <code>:tag</code>. If <code>:tag</code> is not provided, current
+  namespace is used instead. Examples:</p>
 
-<pre><code>(deflog "MyTag")
+<pre><code>(require '[neko.log :as log])
+
+(neko.log/d "Some log string" {:foo 1, :bar 2})
+(neko.log/i "Logging to custom tag" [1 2 3] :tag "custom")
+(neko.log/e "Something went wrong" [1 2 3] :exception ex)
 </code></pre>
-
-<p>  This will intern a number of functions in your namespace, namely: log-d,
-  log-v, log-i, log-w, log-e, and log-wtf.  These functions will perform the
-  equivalent of calling the corresponding method on the android.util.Log
-  class with the tag given in the deflog macro call.</p>
-
-<p>  For example, given the above deflog call,</p>
-
-<pre><code>(log-d "Some log string")
-</code></pre>
-
-<p>  is equivalent to:</p>
-
-<pre><code>(android.util.Log/d "MyTag" "Some log string")
-</code></pre>
-
-<p>  Calls to log-wtf on platforms that do not support Log.wtf() will be
-  downgraded to Log.e() calls.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.log
-  {:author &quot;Daniel Solano Gómez&quot;}
-  (:require neko.context)
-  (:import android.util.Log))</pre></td></tr><tr><td class="docs"><p>Macro for generating log functions.</p>
-</td><td class="codes"><pre class="brush: clojure">(defmacro deflogfn
-  {:private true}
-  [fn-name doc-string method-name]
-  `(defn ~fn-name
-     ~doc-string
-     ([^String tag#, ^String message#]
-      (. Log (~method-name tag# message#)))
-     ([^String tag#, ^String, message#, ^Throwable throwable#]
-      (. Log (~method-name tag# message# throwable#)))))</pre></td></tr><tr><td class="docs"><p>Sends a DEBUG log message.</p>
-
-<p>Sends a ERROR log message.</p>
-
-<p>Sends a INFO log message.</p>
-
-<p>Sends a VERBOSE log message.</p>
-
-<p>Sends a WARN log message.</p>
-</td><td class="codes"><pre class="brush: clojure">(deflogfn d  d)
-(deflogfn e  e)
-(deflogfn i  i)
-(deflogfn v  v)
-(deflogfn w  w)</pre></td></tr><tr><td class="docs"><p>Takes a Throwable instance and logs its stacktrace with error priority.</p>
-</td><td class="codes"><pre class="brush: clojure">(defn log-exception
-  [throwable]
-  (e (.getPackageName neko.context/context)
-     (android.util.Log/getStackTraceString throwable)))</pre></td></tr><tr><td class="docs"><p>Creates a number of logging functions for the given tag.</p>
-</td><td class="codes"><pre class="brush: clojure">(defmacro deflog
-  [tag]
-  (let [intern-logger
-        (fn [log-name log-fn]
-          `(intern *ns* (symbol ~log-name)
-                   (-&gt; (partial ~log-fn ~tag)
-                       (with-meta  {:private true}))))]
-    `(do
-       ~(intern-logger &quot;log-d&quot; `d)
-       ~(intern-logger &quot;log-e&quot; `e)
-       ~(intern-logger &quot;log-i&quot; `i)
-       ~(intern-logger &quot;log-v&quot; `v)
-       ~(intern-logger &quot;log-w&quot; `w))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.notify" name="neko.notify"><h1 class="project-name">neko.notify</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Provides convenient wrappers for Toast and Notification APIs.</p>
+  {:author &quot;Adam Clements&quot;}
+  (:import android.util.Log))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn- logger [logfn priority-kw args]
+  (when-not ((set (:neko.init/ignore-log-priority *compiler-options*))
+             priority-kw)
+    (let [[strings kwargs] (split-with (complement #{:exception :tag}) args)
+          {:keys [exception tag]} (if (odd? (count kwargs))
+                                    (butlast kwargs)
+                                    kwargs)
+          tag (or tag (str *ns*))]
+      (if exception
+        `(. Log ~logfn ~tag (apply str (interpose &quot; &quot; [~@strings])) ~exception)
+        `(. Log ~logfn ~tag (apply str (interpose &quot; &quot; [~@strings])))))))</pre></td></tr><tr><td class="docs"><p>Log an ERROR message, applying pr-str to all the arguments and taking
+   an optional keyword :exception or :tag at the end which will print the
+   exception stacktrace or override the TAG respectively</p>
+</td><td class="codes"><pre class="brush: clojure">(defmacro e
+  [&amp; args] (logger 'e :error args))</pre></td></tr><tr><td class="docs"><p>Log a DEBUG message, applying pr-str to all the arguments and taking
+   an optional keyword :exception or :tag at the end which will print the
+   exception stacktrace or override the TAG respectively</p>
+</td><td class="codes"><pre class="brush: clojure">(defmacro d
+  [&amp; args] (logger 'd :debug args))</pre></td></tr><tr><td class="docs"><p>Log an INFO message, applying pr-str to all the arguments and taking
+   an optional keyword :exception or :tag at the end which will print the
+   exception stacktrace or override the TAG respectively</p>
+</td><td class="codes"><pre class="brush: clojure">(defmacro i
+  [&amp; args] (logger 'i :info args))</pre></td></tr><tr><td class="docs"><p>Log a VERBOSE message, applying pr-str to all the arguments and taking
+   an optional keyword :exception or :tag at the end which will print the
+   exception stacktrace or override the TAG respectively</p>
+</td><td class="codes"><pre class="brush: clojure">(defmacro v
+  [&amp; args] (logger 'v :verbose args))</pre></td></tr><tr><td class="docs"><p>Log a WARN message, applying pr-str to all the arguments and taking
+   an optional keyword :exception or :tag at the end which will print the
+   exception stacktrace or override the TAG respectively</p>
+</td><td class="codes"><pre class="brush: clojure">(defmacro w
+  [&amp; args] (logger 'w :warn args))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.notify" name="neko.notify"><h1 class="project-name">neko.notify</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Provides convenient wrappers for Toast and Notification APIs.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.notify
   (:use [neko.context :only [context]])
   (:import android.content.Context android.widget.Toast
@@ -4616,10 +4575,9 @@ represent the notification IDs.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.resource
   (:require [clojure.string :as string]
             [neko.context :as context])
-  (:use [neko.init.options :only [*package-name*]])
   (:import android.content.Context android.graphics.drawable.Drawable))</pre></td></tr><tr><td class="docs"><h2>Runtime resource resolution</h2>
 </td><td class="codes"></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(def package-name *package-name*)</pre></td></tr><tr><td class="docs"><p>Takes the name of the keyword and turns all hyphens and periods to
+</td><td class="codes"><pre class="brush: clojure">(def package-name (:neko.init/package-name *compiler-options*))</pre></td></tr><tr><td class="docs"><p>Takes the name of the keyword and turns all hyphens and periods to
   underscores.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn- kw-to-res-name
   [kw]
@@ -4653,13 +4611,14 @@ represent the notification IDs.</p>
   ([res-type res-name]
      (get-resource context/context res-type res-name))
   ([^Context context, res-type res-name]
-     (if (keyword? res-name)
-       (.getIdentifier (.getResources context)
-                       (kw-to-res-name res-name)
-                       (name res-type)
-                       (or (namespace res-name)
-                           (.getPackageName context)))
-       res-name)))</pre></td></tr><tr><td class="docs"><p>Finds the ID for the XML item with the given name. This is simply a
+     (let [resid (if (keyword? res-name)
+                      (.getIdentifier (.getResources context)
+                                      (kw-to-res-name res-name)
+                                      (name res-type)
+                                      (or (namespace res-name)
+                                          (.getPackageName context)))
+                      res-name)]
+       (if (= resid 0) nil resid))))</pre></td></tr><tr><td class="docs"><p>Finds the ID for the XML item with the given name. This is simply a
   convenient way of calling <code>(get-resource :id name)</code>.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn get-id
   ([res-name]
@@ -4685,10 +4644,10 @@ represent the notification IDs.</p>
         [res-name &amp; format-args] args]
     (if (string? res-name)
       res-name
-      (if format-args
-        (.getString context (get-resource context :string res-name)
-                    (to-array format-args))
-        (.getString context (get-resource context :string res-name))))))</pre></td></tr><tr><td class="docs">
+      (when-let [id (get-resource context :string res-name)]
+        (if format-args
+          (.getString context id (to-array format-args))
+          (.getString context id))))))</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(alter-meta! #'get-string
              assoc :arglists '([res-name &amp; format-args?] [context res-name &amp; format-args?]))</pre></td></tr><tr><td class="docs"><p>Gets a Drawable object associated with the given ID or name from
   the context. The name will be resolved using get-resource. If
@@ -4699,8 +4658,8 @@ represent the notification IDs.</p>
   ([^Context context, res-name]
      (if (instance? Drawable res-name)
        res-name
-       (.getDrawable (.getResources context)
-                     (get-resource context :drawable res-name)))))</pre></td></tr><tr><td class="docs"><p>Compile time resource resolution</p>
+       (when-let [id (get-resource context :drawable res-name)]
+         (.getDrawable (.getResources context) id)))))</pre></td></tr><tr><td class="docs"><p>Compile time resource resolution</p>
 </td><td class="codes"></td></tr><tr><td class="docs"><p>Returns a symbol that represents a resource field specified by type
   and name keywords. If <code>name</code> is not a keyword, just returns it back.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn- resource-symbol
@@ -4898,8 +4857,10 @@ represent the notification IDs.</p>
   (apply-attributes (kw/keyword-by-classname (type widget))
                     widget attributes {}))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#neko.ui.adapters" name="neko.ui.adapters"><h1 class="project-name">neko.ui.adapters</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Contains custom adapters for ListView and Spinner.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns neko.ui.adapters
-  (:use [neko.threading :only [on-ui]])
-  (:import neko.ui.adapters.InterchangeableListAdapter))</pre></td></tr><tr><td class="docs"><p>Takes a function that creates a View, a function that updates a
+  (:use [neko.threading :only [on-ui]]
+        [neko.ui :only [make-ui-element]])
+  (:import neko.ui.adapters.InterchangeableListAdapter
+           android.view.View))</pre></td></tr><tr><td class="docs"><p>Takes a function that creates a View, a function that updates a
   view according to the element and a reference type that stores the
   data. Returns an Adapter object that displays ref-type contents.
   When ref-type is updated, Adapter gets updated as well.</p>
@@ -4916,7 +4877,14 @@ represent the notification IDs.</p>
      {:pre [(fn? create-view-fn) (fn? update-view-fn)
             (instance? clojure.lang.IFn access-fn)
             (instance? clojure.lang.IDeref ref-type)]}
-     (let [adapter (InterchangeableListAdapter. create-view-fn update-view-fn
+     (let [create-fn (fn []
+                       (let [view (create-view-fn)]
+                         (if (instance? View view)
+                           view
+                           (make-ui-element
+                            neko.context/context view
+                            {:container-type :abs-listview-layout}))))
+           adapter (InterchangeableListAdapter. create-fn update-view-fn
                                                 (access-fn @ref-type))]
        (add-watch ref-type ::adapter-watch
                   (fn [_ __ ___ new-state]
@@ -4967,7 +4935,7 @@ represent the notification IDs.</p>
    {:view {:traits [:def :id :padding :on-click :on-long-click :on-touch
                     :on-create-context-menu :on-key
                     :default-layout-params :linear-layout-params
-                    :relative-layout-params]
+                    :relative-layout-params :listview-layout-params]
            :value-namespaces
            {:text-alignment View
             :text-direction View
@@ -5000,6 +4968,8 @@ represent the notification IDs.</p>
                  :traits [:image]
                  :value-namespaces
                  {:scale-type android.widget.ImageView$ScaleType}}
+    :web-view {:classname android.webkit.WebView
+               :inherits :view}
     ;; Other
     :layout-params {:classname ViewGroup$LayoutParams
                     :values {:fill ViewGroup$LayoutParams/FILL_PARENT
@@ -5250,8 +5220,10 @@ represent the notification IDs.</p>
             neko.listeners.search-view)
   (:use [neko.-utils :only [memoized]])
   (:import [android.widget LinearLayout$LayoutParams TextView SearchView
-            ImageView RelativeLayout RelativeLayout$LayoutParams]
-           [android.view View ViewGroup$LayoutParams]
+            ImageView RelativeLayout RelativeLayout$LayoutParams
+            AbsListView$LayoutParams]
+           [android.view View ViewGroup$LayoutParams
+            ViewGroup$MarginLayoutParams]
            android.graphics.Bitmap android.graphics.drawable.Drawable
            android.net.Uri
            android.util.TypedValue
@@ -5381,10 +5353,12 @@ next-level elements.</p>
      ^float (TypedValue/applyDimension (kw-&gt;unit-id (second value))
                                        (first value) (get-display-metrics)))
     value))</pre></td></tr><tr><td class="docs"><p>Takes <code>:text-size</code> attribute which should be either integer or a
-  dimenstion vector, and sets it to the widget.</p>
+  dimension vector, and sets it to the widget.</p>
 </td><td class="codes"><pre class="brush: clojure">(deftrait :text-size
   [^TextView wdg, {:keys [text-size]} _]
-  (.setTextSize wdg (to-dimension text-size)))</pre></td></tr><tr><td class="docs"><p>Takes <code>:image</code> attribute which can be a resource ID, resource
+  (if (vector? text-size)
+    (.setTextSize wdg (kw-&gt;unit-id (second text-size)) (first text-size))
+    (.setTextSize wdg text-size)))</pre></td></tr><tr><td class="docs"><p>Takes <code>:image</code> attribute which can be a resource ID, resource
   keyword, Drawable, Bitmap or URI and sets it ImageView widget's
   image source.</p>
 </td><td class="codes"><pre class="brush: clojure">(deftrait :image
@@ -5401,13 +5375,13 @@ next-level elements.</p>
                                   :layout-margin-right :layout-margin-bottom])</pre></td></tr><tr><td class="docs"><p>Takes a LayoutParams object that implements MarginLayoutParams
   class and an attribute map, and sets margins for this object.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn- apply-margins-to-layout-params
-  [params attribute-map]
+  [^ViewGroup$MarginLayoutParams params, attribute-map]
   (let [[l t r b] (map #(to-dimension (attribute-map % 0)) margin-attributes)]
     (.setMargins params l t r b)))</pre></td></tr><tr><td class="docs"><p>Takes <code>:layout-width</code> and <code>:layout-height</code> attributes and sets
    LayoutParams, if the container type is not specified.</p>
 </td><td class="codes"><pre class="brush: clojure">(deftrait :default-layout-params
   {:attributes [:layout-width :layout-height]
-   :applies? (nil? container-type)}
+   :applies? (and (or layout-width layout-height) (nil? container-type))}
   [^View wdg, {:keys [layout-width layout-height]} {:keys [container-type]}]
   (let [^int width  (kw/value :layout-params (or layout-width  :wrap))
         ^int height (kw/value :layout-params (or layout-height :wrap))]
@@ -5418,7 +5392,7 @@ next-level elements.</p>
 </td><td class="codes"><pre class="brush: clojure">(deftrait :linear-layout-params
   {:attributes (concat margin-attributes [:layout-width :layout-height
                                           :layout-weight :layout-gravity])
-   :applies? (= (kw/keyword-by-classname container-type) :linear-layout)}
+   :applies? (= container-type :linear-layout)}
   [^View wdg, {:keys [layout-width layout-height layout-weight layout-gravity]
                :as attributes}
    {:keys [container-type]}]
@@ -5464,12 +5438,12 @@ next-level elements.</p>
          (map keys (vals relative-layout-attributes))))</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(deftrait :relative-layout-params
   {:attributes (concat all-relative-attributes margin-attributes)
-   :applies? (= (kw/keyword-by-classname container-type) :relative-layout)}
+   :applies? (= container-type :relative-layout)}
   [^View wdg, {:keys [layout-width layout-height
                       layout-align-with-parent-if-missing] :as attributes}
    {:keys [container-type]}]
-  (let [width  (kw/value :layout-params (or layout-width  :wrap))
-        height (kw/value :layout-params (or layout-height :wrap))
+  (let [^int width  (kw/value :layout-params (or layout-width  :wrap))
+        ^int height (kw/value :layout-params (or layout-height :wrap))
         lp (RelativeLayout$LayoutParams. width height)]
     (when-not (nil? layout-align-with-parent-if-missing)
       (set! (. lp alignWithParent) layout-align-with-parent-if-missing))
@@ -5480,7 +5454,19 @@ next-level elements.</p>
       (when (contains? attributes attr-name)
         (.addRule lp attr-id (to-id (attr-name attributes)))))
     (apply-margins-to-layout-params lp attributes)
-    (.setLayoutParams wdg lp)))</pre></td></tr><tr><td class="docs"><p>Takes <code>:padding</code>, <code>:padding-bottom</code>, <code>:padding-left</code>,
+    (.setLayoutParams wdg lp)))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(deftrait :listview-layout-params
+  {:attributes [:layout-width :layout-height :layout-view-type]
+   :applies? (= container-type :abs-listview-layout)}
+  [^View wdg, {:keys [layout-width layout-height layout-view-type]
+               :as attributes}
+   {:keys [container-type]}]
+  (let [^int width  (kw/value :layout-params (or layout-width  :wrap))
+        ^int height (kw/value :layout-params (or layout-height :wrap))]
+    (.setLayoutParams
+     wdg (if layout-view-type
+           (AbsListView$LayoutParams. width height layout-view-type)
+           (AbsListView$LayoutParams. width height)))))</pre></td></tr><tr><td class="docs"><p>Takes <code>:padding</code>, <code>:padding-bottom</code>, <code>:padding-left</code>,
   <code>:padding-right</code> and <code>:padding-top</code> and set element's padding
   according to their values. Values might be either integers or
   vectors like <code>[number unit-kw]</code>, where unit keyword is one of the
@@ -5499,7 +5485,7 @@ next-level elements.</p>
 </td><td class="codes"><pre class="brush: clojure">(deftrait :container
   {:applies? (constantly true)}
   [wdg _ __]
-  {:options-fn #(assoc % :container-type (type wdg))})</pre></td></tr><tr><td class="docs"><h3>Listener traits</h3>
+  {:options-fn #(assoc % :container-type (kw/keyword-by-classname (type wdg)))})</pre></td></tr><tr><td class="docs"><h3>Listener traits</h3>
 </td><td class="codes"></td></tr><tr><td class="docs"><p>Takes :on-click attribute, which should be function of one
   argument, and sets it as an OnClickListener for the widget.</p>
 </td><td class="codes"><pre class="brush: clojure">(deftrait :on-click
@@ -5571,11 +5557,11 @@ next-level elements.</p>
   [^View wdg, {:keys [id]} {:keys [^View id-holder]}]
   (.setId wdg (to-id id))
   (when id-holder
-    (.put ^HashMap (.getTag id-holder) id wdg)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#" name=""><h1 class="project-name"></h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Data readers for converting resource keywords into integer IDs.</p>
+    (.put ^HashMap (.getTag id-holder) id wdg)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#" name=""><h1 class="project-name"></h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">{res/id neko.resource/resolve-id-reader
  res/layout neko.resource/resolve-layout-reader
  res/string neko.resource/resolve-string-reader
- res/drawable neko.resource/resolve-drawable-reader}</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr></table><div class="footer">Generated by <a href="https://github.com/fogus/marginalia">Marginalia</a>.&nbsp;&nbsp;Syntax highlighting provided by Alex Gorbatchev's <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a>marginalia.html$floating_toc_html@5637dde9</div><script type="text/javascript">SyntaxHighlighter.defaults['gutter'] = false;
+ res/drawable neko.resource/resolve-drawable-reader}</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr></table><div class="footer">Generated by <a href="https://github.com/fogus/marginalia">Marginalia</a>.&nbsp;&nbsp;Syntax highlighting provided by Alex Gorbatchev's <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a></div><script type="text/javascript">SyntaxHighlighter.defaults['gutter'] = false;
 SyntaxHighlighter.all();
 
 // hackity hack
