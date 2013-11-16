@@ -101,8 +101,9 @@
   [^TaggedDatabase tagged-db table data-map]
   (let [^ContentValues cv (ContentValues.)]
     (doseq [[col {type :type}] (get-in (.schema tagged-db)
-                                       [:tables table :columns])]
-      (when-let [value (get data-map col)]
+                                       [:tables table :columns])
+            :when (contains? data-map col)]
+      (let [value (get data-map col)]
         (condp = type
           Integer (.put cv (name col) ^Integer value)
           Double (.put cv (name col) ^Double value)
