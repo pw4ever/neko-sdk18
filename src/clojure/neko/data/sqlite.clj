@@ -26,7 +26,7 @@
 (def ^{:private true
        :doc "Set of types available to be stored in a database. Byte
   actually stands for array of bytes, or Blob in SQLite."}
-  supported-types #{Integer String Boolean Double Byte})
+  supported-types #{Integer Long String Boolean Double Byte})
 
 (defn make-schema
   "Creates a schema from arguments and validates it."
@@ -106,6 +106,7 @@
       (let [value (get data-map col)]
         (condp = type
           Integer (.put cv (name col) ^Integer value)
+          Long (.put cv (name col) ^Long value)
           Double (.put cv (name col) ^Double value)
           String (.put cv (name col) ^String value)
           Boolean (.put cv (name col) ^Boolean value)
@@ -118,6 +119,7 @@
   (condp = type
     Boolean (= (.getInt cur i) 1)
     Integer (.getInt cur i)
+    Long (.getLong cur i)
     String (.getString cur i)
     Double (.getDouble cur i)
     Byte (.getBlob cur i)))
