@@ -72,17 +72,19 @@
   to it, then recursively create its subelements and add them to the
   widget."
   [context tree options]
-  (let [[widget-kw attributes & inside-elements] tree
-        _ (assert (and (keyword? widget-kw) (map? attributes)))
-        ;; Remove :constructor-args from attribues since it is used
-        ;; by constructor and is not a real attribute.
-        wdg (construct-element widget-kw context
-                               (:constructor-args attributes))
-        new-opts (apply-attributes widget-kw wdg attributes options)]
-    (doseq [element inside-elements :when element]
-      (.addView ^android.view.ViewGroup wdg
-                (make-ui-element context element new-opts)))
-    wdg))
+  (if (sequential? tree)
+    (let [[widget-kw attributes & inside-elements] tree
+          _ (assert (and (keyword? widget-kw) (map? attributes)))
+          ;; Remove :constructor-args from attribues since it is used
+          ;; by constructor and is not a real attribute.
+          wdg (construct-element widget-kw context
+                                 (:constructor-args attributes))
+          new-opts (apply-attributes widget-kw wdg attributes options)]
+      (doseq [element inside-elements :when element]
+        (.addView ^android.view.ViewGroup wdg
+                  (make-ui-element context element new-opts)))
+      wdg)
+    tree))
 
 (defn make-ui
   "Takes a tree of elements and creates Android UI elements according
