@@ -44,7 +44,7 @@
   current element will receive the initial options map, and
   modifications will only appear visible to the subsequent elements."
   [widget-kw widget attributes options]
-  (let [all-attributes attributes #_(merge (kw/default-attributes widget-kw) attributes)]
+  (let [all-attributes (merge (kw/default-attributes widget-kw) attributes)]
     (loop [[trait & rest] (kw/all-traits widget-kw),
            attrs all-attributes, new-opts options]
       (if trait
