@@ -44,16 +44,15 @@
   current element will receive the initial options map, and
   modifications will only appear visible to the subsequent elements."
   [widget-kw widget attributes options]
-  (let [all-attributes (merge (kw/default-attributes widget-kw) attributes)]
-    (loop [[trait & rest] (kw/all-traits widget-kw),
-           attrs all-attributes, new-opts options]
-      (if trait
-        (let [[attributes-fn options-fn]
-              (apply-trait trait widget attrs options)]
-          (recur rest (attributes-fn attrs) (options-fn new-opts)))
-        (do
-          (apply-default-setters-from-attributes widget-kw widget attrs)
-          new-opts)))))
+  (loop [[trait & rest] (kw/all-traits widget-kw),
+         attrs attributes, new-opts options]
+    (if trait
+      (let [[attributes-fn options-fn]
+            (apply-trait trait widget attrs options)]
+        (recur rest (attributes-fn attrs) (options-fn new-opts)))
+      (do
+        (apply-default-setters-from-attributes widget-kw widget attrs)
+        new-opts))))
 
 ;; ## Widget creation
 
@@ -75,11 +74,18 @@
   (if (sequential? tree)
     (let [[widget-kw attributes & inside-elements] tree
           _ (assert (and (keyword? widget-kw) (map? attributes)))
-          ;; Remove :constructor-args from attribues since it is used
-          ;; by constructor and is not a real attribute.
-          wdg (construct-element widget-kw context
-                                 (:constructor-args attributes))
-          new-opts (apply-attributes widget-kw wdg attributes options)]
+          attributes (merge (kw/default-attributes widget-kw) attributes)
+          wdg (if-let [constr (:custom-constructor attributes)]
+                (apply constr context (:constructor-args attributes))
+                (construct-element widget-kw context
+                                   (:constructor-args attributes)))
+          new-opts (apply-attributes
+                    widget-kw wdg
+                    ;; Remove :custom-constructor and
+                    ;; :constructor-args since they are not real
+                    ;; attributes.
+                    (dissoc attributes :constructor-args :custom-constructor)
+                    options)]
       (doseq [element inside-elements :when element]
         (.addView ^android.view.ViewGroup wdg
                   (make-ui-element context element new-opts)))
