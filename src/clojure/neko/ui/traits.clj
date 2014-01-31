@@ -198,14 +198,17 @@ next-level elements."
 
 ;; ### Layout parameters attributes
 
-(def ^:private margin-attributes [:layout-margin-left :layout-margin-top
+(def ^:private margin-attributes [:layout-margin
+                                  :layout-margin-left :layout-margin-top
                                   :layout-margin-right :layout-margin-bottom])
 
 (defn- apply-margins-to-layout-params
   "Takes a LayoutParams object that implements MarginLayoutParams
   class and an attribute map, and sets margins for this object."
   [^ViewGroup$MarginLayoutParams params, attribute-map]
-  (let [[l t r b] (map #(to-dimension (attribute-map % 0)) margin-attributes)]
+  (let [common (to-dimension (attribute-map :layout-margin 0))
+        [l t r b] (map #(to-dimension (attribute-map % common))
+                       (rest margin-attributes))]
     (.setMargins params l t r b)))
 
 (deftrait :default-layout-params
