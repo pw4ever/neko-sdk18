@@ -3,5 +3,10 @@ target/
 gen/
 libs/
 docs/
+checkouts/
 local.properties
 clojure.properties
+pom.xml
+pom.xml.asc
+/.lein-*
+/.nrepl-port
