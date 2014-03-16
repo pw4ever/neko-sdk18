@@ -49,7 +49,7 @@
                 :inherits :view
                 :value-namespaces
                 {:ellipsize android.text.TextUtils$TruncateAt}
-                :traits [:text :text-size]}
+                :traits [:text :text-size :on-editor-action]}
     :list-view {:classname android.widget.ListView
                 :inherits :view-group}
     :search-view {:classname android.widget.SearchView
