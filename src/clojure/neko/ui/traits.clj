@@ -15,6 +15,7 @@
             [neko.resource :as res]
             [neko.context :as context]
             [neko.listeners.view :as view-listeners]
+            [neko.listeners.text-view :as text-view-listeners]
             neko.listeners.search-view)
   (:use [neko.-utils :only [memoized]])
   (:import [android.widget LinearLayout$LayoutParams TextView SearchView
@@ -395,6 +396,13 @@ next-level elements."
         (if (and menu-item on-query-text-submit)
           (fn [q] (on-query-text-submit q menu-item))
           on-query-text-submit))))
+
+(deftrait :on-editor-action
+  "Takes :on-editor-action attribute, which should be function
+  of three arguments, and sets it as OnEditorAction for the
+  TexView widget"
+  [^TextView wdg, {:keys [on-editor-action]}]
+  (.setOnEditorActionListener wdg (text-view-listeners/on-editor-action-call on-editor-action)))
 
 ;; ### ID storing traits
 
