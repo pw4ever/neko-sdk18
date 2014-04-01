@@ -12,12 +12,13 @@
 (ns neko.activity
   "Utilities to aid in working with an activity."
   {:author "Daniel Solano Gómez"}
+  (:require neko.init
+            [neko.ui :refer [make-ui]]
+            [neko.-utils :refer :all])
   (:import android.app.Activity
            android.view.View
-           android.app.Fragment)
-  (:require neko.init)
-  (:use [neko.ui :only [make-ui]]
-        neko.-utils))
+           android.app.Fragment
+           java.util.WeakHashMap))
 
 (def
   ^{:doc "The current activity to operate on."
@@ -96,6 +97,20 @@
                                                 k))))))]
     (doall (map request-feature features))))
 
+(def ^WeakHashMap all-activities
+  "Weak hashmap that contains mapping of namespaces or
+  keywords to Activity objects."
+  (WeakHashMap.))
+
+(defmacro ^Activity *a
+  "If called without arguments, returns the activity for the current
+  namespace. A version with one argument will return the activity for
+  the given object (be it a namespace or any other object)."
+  ([]
+     `(get all-activities ~*ns*))
+  ([key]
+     `(get all-activities ~key)))
+
 (defmacro defactivity
   "Creates an activity with the given full package-qualified name.
   Optional arguments should be provided in a key-value fashion.
@@ -118,7 +133,7 @@
   - same as :on-create but require a one-argument function."
   [name & {:keys [extends prefix on-create on-create-options-menu
                   on-options-item-selected on-activity-result
-                  on-new-intent def state]
+                  on-new-intent def state key]
            :as options}]
   (let [options (or options {}) ;; Handle no-options case
         sname (simple-name name)
@@ -156,6 +171,7 @@
              ~(when (and (not (:neko.init/release-build *compiler-options*))
                          def)
                 `(def ~(vary-meta def assoc :tag name) ~'this))
+             (.put all-activities ~(or key *ns*) ~'this)
              (neko.init/init (.getApplicationContext ~'this))
              (~on-create ~'this ~'savedInstanceState)))
        ~(when on-create-options-menu
