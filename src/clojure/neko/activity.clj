@@ -43,24 +43,30 @@
   (and (bound? #'*activity*)
        (activity? *activity*)))
 
+(defn get-decor-view
+  "Returns the root view of the given activity."
+  [^Activity activity]
+  (.. activity getWindow getDecorView))
+
 (defn set-content-view!
   "Sets the content for the activity.  The view may be one of:
 
+  + neko.ui tree
   + A view object, which will be used directly
   + An integer presumed to be a valid layout ID."
   ([view]
-   {:pre [(or (instance? View view)
-              (integer? view))]}
    (set-content-view! *activity* view))
-  ([^Activity activity view]
-   {:pre [(activity? activity)
-          (or (instance? View view)
-              (integer? view))]}
+  ([^Activity activity, view]
+   {:pre [(activity? activity)]}
    (cond
-     (instance? View view)
+    (instance? View view)
        (.setContentView activity ^View view)
-     (integer? view)
-       (.setContentView activity ^Integer view))))
+    (integer? view)
+       (.setContentView activity ^Integer view)
+    :else
+       (let [dv (get-decor-view activity)]
+         (.setTag dv (java.util.HashMap.))
+         (neko.ui/make-ui-element activity view {:id-holder dv})))))
 
 (defn request-window-features!
   "Requests the given features for the activity.  The features should be
