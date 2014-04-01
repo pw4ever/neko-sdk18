@@ -28,6 +28,7 @@
 (defmacro with-activity
   "Evaluates body such that *activity* is bound to the given activity."
   [activity & body]
+  (println "WARNING: with-activity and any usage of *activity* is deprecated.")
   `(binding [*activity* ~activity]
      ~@body))
 
