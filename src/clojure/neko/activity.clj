@@ -137,8 +137,10 @@
            :as options}]
   (let [options (or options {}) ;; Handle no-options case
         sname (simple-name name)
-        prefix (or prefix (str sname "-"))
-        def (or def (symbol (unicaseize sname)))]
+        prefix (or prefix (str sname "-"))]
+    (when def
+      (println "WARNING: :def attribute in defactivity is deprecated.
+Use (*a) to get the current activity."))
     `(do
        (gen-class
         :name ~name
