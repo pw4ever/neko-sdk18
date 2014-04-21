@@ -66,7 +66,9 @@
     :else
        (let [dv (get-decor-view activity)]
          (.setTag dv (java.util.HashMap.))
-         (neko.ui/make-ui-element activity view {:id-holder dv})))))
+         (.setContentView activity
+                          (neko.ui/make-ui-element activity view
+                                                   {:id-holder dv}))))))
 
 (defn request-window-features!
   "Requests the given features for the activity.  The features should be
