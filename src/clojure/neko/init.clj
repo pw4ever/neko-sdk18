@@ -46,14 +46,20 @@
   nREPL expects it to be there while initializing. References nrepl's
   `start-server` function on demand because the project can be
   compiled without nrepl dependency."
-  [& repl-args]
+  [middleware & repl-args]
   (binding [*ns* (create-ns 'user)]
     (refer-clojure)
     (use 'clojure.tools.nrepl.server)
     (require '[clojure.tools.nrepl.middleware.interruptible-eval :as ie])
     (with-redefs-fn {(resolve 'ie/configure-thread-factory)
                      android-thread-factory}
-      #(apply (resolve 'start-server) repl-args))))
+      #(apply (resolve 'start-server)
+              :handler (apply (resolve 'default-handler)
+                              (map (fn [sym]
+                                     (require (symbol (namespace sym)))
+                                     (resolve sym))
+                                   middleware))
+              repl-args))))
 
 (defmacro
   ^{:private true
@@ -62,9 +68,10 @@
   [port other-args]
   (when (or (not (::release-build *compiler-options*))
             (::start-nrepl-sever *compiler-options*))
-    (let [build-port (::nrepl-port *compiler-options*)]
+    (let [build-port (::nrepl-port *compiler-options*)
+          mware (list `quote (::nrepl-middleware *compiler-options*))]
       `(let [port# (or ~port ~build-port 9999)]
-         (apply start-repl :port port# ~other-args)
+         (apply start-repl ~mware :port port# ~other-args)
          (neko.log/i "Nrepl started at port" port#)))))
 
 (defn enable-compliment-sources
