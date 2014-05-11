@@ -31,10 +31,10 @@
           {:keys [exception tag]} (if (odd? (count kwargs))
                                     (butlast kwargs)
                                     kwargs)
-          tag (or tag (str *ns*))]
-      (if exception
-        `(. Log ~logfn ~tag (apply str (interpose " " [~@strings])) ~exception)
-        `(. Log ~logfn ~tag (apply str (interpose " " [~@strings])))))))
+          tag (or tag (str *ns*))
+          ex-form (if exception [exception] ())]
+      `(binding [*print-readably* nil]
+         (. Log ~logfn ~tag (pr-str ~@strings) ~@ex-form)))))
 
 (defmacro e
   "Log an ERROR message, applying pr-str to all the arguments and taking
