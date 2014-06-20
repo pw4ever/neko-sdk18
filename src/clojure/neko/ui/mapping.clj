@@ -51,7 +51,8 @@
                 {:ellipsize android.text.TextUtils$TruncateAt}
                 :traits [:text :text-size :on-editor-action]}
     :list-view {:classname android.widget.ListView
-                :inherits :view-group}
+                :inherits :view-group
+                :traits [:on-item-click]}
     :search-view {:classname android.widget.SearchView
                   :inherits :view-group
                   :traits [:on-query-text]}

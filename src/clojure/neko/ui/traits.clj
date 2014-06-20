@@ -16,9 +16,10 @@
             [neko.context :as context]
             [neko.listeners.view :as view-listeners]
             [neko.listeners.text-view :as text-view-listeners]
+            [neko.listeners.adapter-view :as adapter-view]
             neko.listeners.search-view)
   (:use [neko.-utils :only [memoized]])
-  (:import [android.widget LinearLayout$LayoutParams TextView SearchView
+  (:import [android.widget LinearLayout$LayoutParams ListView TextView SearchView
             ImageView RelativeLayout RelativeLayout$LayoutParams
             AbsListView$LayoutParams]
            [android.view View ViewGroup$LayoutParams
@@ -431,3 +432,16 @@ next-level elements."
   (.setId wdg (to-id id))
   (when id-holder
     (.put ^HashMap (.getTag id-holder) id wdg)))
+
+(deftrait :on-item-click
+  "Takes :on-item-click attribute, which should be function of four arguments
+
+    parent   AdapterView of the originating click
+    view     Item view
+    position Item view position
+    id       Item view row id
+
+  and sets it as an OnItemClickListener for the widget."
+  [^ListView wdg, {:keys [on-item-click]} _]
+  (.setOnItemClickListener wdg (adapter-view/on-item-click-call on-item-click)))
+
