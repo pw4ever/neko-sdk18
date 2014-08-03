@@ -13,9 +13,7 @@ doc: $(DOC)
 
 # https://groups.google.com/d/msg/clojure-android/ATO-DZNZExY/2LmV6FuP4hEJ
 $(DOC): $(SRC)
-	lein droid jar
-	lein marg
+	lein do droid jar, marg, pom
 
 build:
-	lein droid jar
-	lein marg
+	lein do droid jar, marg, pom
