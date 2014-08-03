@@ -156,9 +156,8 @@
              ~(when (and (not (:neko.init/release-build *compiler-options*))
                          def)
                 `(def ~(vary-meta def assoc :tag name) ~'this))
-             ;; give on-create a chance to customize neko.init/start-repl
-             (~on-create ~'this ~'savedInstanceState)
-             (neko.init/init (.getApplicationContext ~'this))))
+             (neko.init/init (.getApplicationContext ~'this))
+             (~on-create ~'this ~'savedInstanceState)))
        ~(when on-create-options-menu
           `(defn ~(symbol (str prefix "onCreateOptionsMenu"))
              [~(vary-meta 'this assoc :tag name),
