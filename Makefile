@@ -1,4 +1,4 @@
-.PHONY: all doc build
+.PHONY: all doc build push
 
 DOC:=docs/uberdoc.html
 SRC:=$(shell find src -type f) project.clj
@@ -17,3 +17,7 @@ $(DOC): $(SRC)
 
 build:
 	lein do droid jar, marg, pom
+
+push:
+	-git checkout gh-pages; git push
+	-git checkout master; git push
