@@ -1,4 +1,4 @@
-(defproject org.clojars.pw4ever/neko-sdk18 "3.0.3-SNAPSHOT"
+(defproject org.clojars.pw4ever/neko-sdk18 "3.0.3"
   :description "Neko is a toolkit designed to make Android development using Clojure easier and more fun."
   :url "https://github.com/clojure-android/neko"
   :license {:name "Eclipse Public License"
